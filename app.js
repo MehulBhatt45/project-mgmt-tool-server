@@ -3,8 +3,11 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var mongoose = require('mongoose')
+var mongoose = require('mongoose');
+
 var usersRouter = require('./routes/users');
+
+var projectRouter = require('./routes/project');
 
 var app = express();
 
@@ -18,8 +21,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// for userController
 app.use('/users', usersRouter);
+app.use('/project',projectRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -37,10 +40,12 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-mongoose.connect("mongodb://localhost:27017/projectmgmt",{useNewUrlParser: true});
 
-app.listen(5000);
+// Define mongoose Component
+mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
+.then(() => console.log("Connected"))
+.catch(err => console.log(err));
 
-console.log("server is running at http://localhost:5000/");
+app.listen(4000);
 
 module.exports = app;
