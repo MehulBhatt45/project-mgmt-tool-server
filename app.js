@@ -9,6 +9,9 @@ var usersRouter = require('./routes/users');
 
 var projectRouter = require('./routes/project');
 
+var taskRouter = require('./routes/task');
+
+
 var app = express();
 
 // view engine setup
@@ -23,6 +26,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/users', usersRouter);
 app.use('/project',projectRouter);
+app.use('/task',taskRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
