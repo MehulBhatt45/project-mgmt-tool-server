@@ -14,6 +14,37 @@ userController.addUser = function(req,res){
 	console.log(req.body);
 }
 
+userController.getUser = function(req,res){
+	userModel.find({},function(err,getuser){
+		if(err){
+			res.status(500).send(err);
+		}
+		res.status(200).send(getuser);
+	})
+	console.log(req.body);
+}
+
+
+
+userController.updateUserById = function(req,res){
+	userModel.findOneAndUpdate({_id:req.params.id},{$set:req.body},function(err,getuser){
+		if(err){
+			res.status(500).send(err);
+		}
+		res.status(200).send(getuser);
+	})
+	console.log(req.body);
+}
+userController.deleteUserById = function(req,res){
+	userModel.findOneAndRemove({_id:req.params.id},{$set:req.body},function(err,getuser){
+		if(err){
+			res.status(500).send(err);
+		}
+		res.status(200).send(getuser);
+	})
+	console.log(req.body);
+}
+
 userController.logIn = function(req,res){
 	console.log("req.method" , req.method);
 	if(req.method == 'POST' && req.body.email && req.body.password){
