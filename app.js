@@ -4,6 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
+var bcrypt = require('bcrypt');
+const SALT_WORK_FACTOR = 10;
+
 
 var userRouter = require('./routes/user');
 
@@ -26,7 +29,7 @@ app.use('/project',projectRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
+	next(createError(404));
 });
 
 // error handler
