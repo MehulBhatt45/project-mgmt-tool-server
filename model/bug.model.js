@@ -1,9 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var TaskSchema = new Schema({
+var BugSchema = new Schema({
 
-	taskid:String,
 	title: String,
 	desc: String,
 	attachment:String,
@@ -12,32 +11,28 @@ var TaskSchema = new Schema({
 	status:String,
 	comment:[],
 	priority:String,
-	startDate:String,
-	dueDate:String,
+	bugid:String,
 	timelog:{type:Date , default:Date.now},
+	startDate:String,
+	dueDate:String
 
 });
 
-let TaskCounter=1;
+let BugCounter=1;
 
-TaskSchema.pre('save', function(next) {	
-	TaskCounter++; 
-	this.taskid = 'TSK-'+TaskCounter;
+BugSchema.pre('save', function(next) {	
+	BugCounter++; 
+	this.bugid = 'BUG-'+BugCounter;
 
 	next();
 
 });
 
-TaskSchema.pre('find', function(next) {
+BugSchema.pre('find', function(next) {	
 	this.populate('projectId');
 	next();
 
 });
-TaskSchema.pre('findOne', function(next) {
-	this.populate('projectId');
-	next();
-
-});
 
 
-module.exports = mongoose.model('Task', TaskSchema);
+module.exports = mongoose.model('Bug', BugSchema);

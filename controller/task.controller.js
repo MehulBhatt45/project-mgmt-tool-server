@@ -2,16 +2,17 @@ var taskModel = require('./../model/task.model');
 let taskController = {};
 
 taskController.addTask = function(req,res){
-
+	console.log("Request body==>>>>",req.body);
 	var task = new taskModel(req.body);
+
 
 	task.save(function(err,SavedTask){
 		console.log("err==========>>>",err);
 		res.status(200).send(SavedTask);
 		console.log("saved console",SavedTask);
 	})
-
 }
+
 taskController.getTaskById = function(req,res){
 
 	var taskId = req.params.taskId;
@@ -54,6 +55,5 @@ taskController.updateTaskById = function(req,res){
 	})
 
 }
-
 
 module.exports = taskController;
