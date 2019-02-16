@@ -15,12 +15,12 @@ commentController.addComment = function(req,res){
 }
 
 commentController.getAllComment = function(req,res){
-	commentModel.find({},function(err,user){
+	commentModel.find({},function(err,comment){
 		if (err)
 		{
 			res.status(500).send(err);
 		}
-		res.status(200).send(user);
+		res.status(200).send(comment);
 	})
 }
 
@@ -38,9 +38,19 @@ commentController.getCommentByUserId = function(req,res){
 }
 
 
+commentController.getCommentByCommentId = function(req,res){
+	commentModel.findOne({_id: req.params.id},function(err,comment){
+		if (err) {
+			res.status(500).send(err);
+		}
+		res.status(200).send(comment);
+	})
+}
+
+
 commentController.deleteCommentByUserId = function(req,res){
 	console.log("req params ==========>",req.body, req.params);
-	commentModel.findOne({_id: req.body.userId})
+	commentModel.findOne({userId: req.body.userId})
 	.exec((err,user)=>{
 		if (err) {
 			res.status(500).send(err); 
@@ -60,6 +70,16 @@ commentController.deleteCommentByUserId = function(req,res){
 
 	})
 }
+
+commentController.deleteCommentByCommentId = function(req,res){
+	commentModel.findOneAndRemove({_id: req.params.id}, function(err,comment){
+		if (err) {
+			res.status(500).send(err);
+		}
+		res.status(200).send(comment);
+	})
+}
+
 
 commentController.updateCommentByUserId = function(req,res){
 	console.log("req params ==========>",req.body, req.params);
@@ -82,6 +102,17 @@ commentController.updateCommentByUserId = function(req,res){
 		}
 		else { res.status(401).json({ msg: "Unauthorized Access"}); }
 
+	})
+}
+
+commentController.updateCommentByCommentId = function(req,res){
+	commentModel.findOneAndUpdate({_id: req.params.id},req.body, {upsert: true, new: true}, 
+		function(err, comment){
+			if (err)
+			 {
+			 	res.status(500).send(err);
+			 }
+			 res.status(200).send(comment);
 	})
 }
 

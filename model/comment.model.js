@@ -1,14 +1,14 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var commentSchema = new Schema({
+var CommentSchema = new Schema({
 
 	content: String,
-	userId: { type: Schema.Types.ObjectId, ref: 'user'},
-	taskId: { type: Schema.Types.ObjectId, ref: 'task'},
-	issueId: { type: Schema.Types.ObjectId, ref: 'ssue'},
-	bugId: { type: Schema.Types.ObjectId, ref: 'bug'},
-	postedOn: { type: Date, default: Date.now },
+	userId: { type: Schema.Types.ObjectId, ref: 'User'},
+	taskId: { type: Schema.Types.ObjectId, ref: 'Task'},
+	issueId: { type: Schema.Types.ObjectId, ref: 'Issue'},
+	bugId: { type: Schema.Types.ObjectId, ref: 'Bug'},
+	postedOn: { type: Date, default: Date.now }
 	
 
 })
-module.exports = mongoose.model('comment',commentSchema);
+module.exports = mongoose.model('Comment',CommentSchema);
