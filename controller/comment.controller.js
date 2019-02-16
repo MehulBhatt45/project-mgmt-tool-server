@@ -15,7 +15,13 @@ commentController.addComment = function(req,res){
 }
 
 commentController.getAllComment = function(req,res){
-	
+	commentModel.find({},function(err,user){
+		if (err)
+		 {
+		 	res.status(500).send(err);
+		 }
+		 res.status(200).send(user);
+	})
 }
 
 commentController.deleteCommentByUserId = function(req,res){
