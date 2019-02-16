@@ -10,11 +10,6 @@ var userSchema = new Schema({
 })
 
 
-// userSchema.virtual('password').set(function (password) {
-//         this.password = password;
-//     });
-
-
 userSchema.pre('save', function(next) {
     var user = this;
     if (!user.isModified('password')) return next();

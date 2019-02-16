@@ -12,6 +12,8 @@ var userRouter = require('./routes/user');
 
 var projectRouter = require('./routes/project');
 
+var commentRouter = require('./routes/comment');
+
 var app = express();
 
 // view engine setup`
@@ -26,6 +28,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/user', userRouter);
 app.use('/project',projectRouter);
+app.use('/comment',commentRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
