@@ -7,7 +7,7 @@ var TaskSchema = new Schema({
 	title: String,
 	desc: String,
 	attachment:String,
-	assignTo:{ type: Schema.Types.ObjectId, ref: 'User'},
+	assignTo:{ type: Schema.Types.ObjectId, ref: 'user'},
 	projectId:{ type: Schema.Types.ObjectId, ref: 'Project'},	
 	status:String,
 	comment:[],
@@ -30,11 +30,13 @@ TaskSchema.pre('save', function(next) {
 
 TaskSchema.pre('find', function(next) {
 	this.populate('projectId');
+	this.populate('assignTo');
 	next();
 
 });
 TaskSchema.pre('findOne', function(next) {
 	this.populate('projectId');
+	this.populate('assignTo');
 	next();
 
 });

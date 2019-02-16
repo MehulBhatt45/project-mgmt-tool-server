@@ -57,6 +57,16 @@ projectController.updateProjectById = function(req,res){
 
 }
 
+projectController.getAllProjectOrderByTitle = function(req,res){
+
+	projectModel.find({}).sort([['title','descending']]).exec(function(err,project){
+		console.log("hello...");
+		console.log("err==========>>>",err);
+		res.send(project);
+		console.log(project);
+	})
+
+}
 
 
 module.exports = projectController;

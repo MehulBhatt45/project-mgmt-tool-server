@@ -6,7 +6,7 @@ var ProjectSchema = new Schema({
 	title: String,
 	desc: String,
 	content: String,
-	pmanagerId:[{ type: Schema.Types.ObjectId, ref: 'User'}],
+	pmanagerId:[{ type: Schema.Types.ObjectId, ref: 'user'}],
 	taskId:[{ type: Schema.Types.ObjectId, ref: 'Task'}],
 	IssueId:[{ type: Schema.Types.ObjectId, ref: 'Issue'}],
 	BugId:{ type: Schema.Types.ObjectId, ref: 'Bug'},

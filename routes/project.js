@@ -8,6 +8,7 @@ router.get('/all', projectController.getAllProject);
 router.get('/:projectId', projectController.getProjectById);
 router.delete('/:projectId', projectController.deleteProjectById);
 router.put('/:projectId', projectController.updateProjectById);
+router.get('/title', projectController.getAllProjectOrderByTitle);
 
 
 module.exports = router;

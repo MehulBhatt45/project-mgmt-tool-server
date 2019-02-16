@@ -6,7 +6,7 @@ var RequirementSchema = new Schema({
 	title: String,
 	desc: String,
 	attachment:String,
-	assignTo:{ type: Schema.Types.ObjectId, ref: 'User'},
+	assignTo:{ type: Schema.Types.ObjectId, ref: 'user'},
 	projectId:{ type: Schema.Types.ObjectId, ref: 'Project'},	
 	status:String,
 	comment:[],
@@ -17,7 +17,7 @@ var RequirementSchema = new Schema({
 	dueDate:String
 
 });
-
+ 
 let RequeCounter=1;
 
 RequirementSchema.pre('save', function(next) {	

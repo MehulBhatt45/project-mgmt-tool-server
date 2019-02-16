@@ -1,6 +1,6 @@
 var userModel = require('./../model/user.model');
 var userController = {};
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 
 
 userController.addUser = function(req,res){
@@ -22,7 +22,7 @@ userController.addUser = function(req,res){
 		res.status(200).send(User);
 	}
 })
-	console.log(req.body);
+	console.log("body=====>>>>",req.body);
 }
 
 userController.updateUserById = function(req,res){
