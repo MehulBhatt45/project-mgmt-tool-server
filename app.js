@@ -4,21 +4,22 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
-
+var bcrypt = require('bcrypt');
+const SALT_WORK_FACTOR = 10;
 
 //All Controller Router Variable deifne hear
 
-var usersRouter = require('./routes/users');
+var userRouter = require('./routes/user');
 var projectRouter = require('./routes/project');
 var taskRouter = require('./routes/task');
 var bugRouter = require('./routes/bug');
 var issueRouter = require('./routes/issue');
 var requeRouter = require('./routes/requirement');
-
+var commentRouter = require('./routes/comment');
 
 var app = express();
 
-// view engine setup
+// view engine setup`
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
@@ -30,17 +31,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 //All Controller Router deifne hear
-app.use('/users', usersRouter);
 app.use('/project',projectRouter);
 app.use('/task',taskRouter);
 app.use('/bug',bugRouter);
 app.use('/issue',issueRouter);
 app.use('/reque',requeRouter);
+app.use('/comment',commentRouter);
+app.use('/user', userRouter);
 
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
+	next(createError(404));
 });
 
 // error handler
@@ -53,6 +55,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 // Define mongoose Component
 mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
