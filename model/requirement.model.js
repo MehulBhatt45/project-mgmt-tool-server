@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var IssueSchema = new Schema({
+var RequirementSchema = new Schema({
 
 	title: String,
 	desc: String,
@@ -11,28 +11,22 @@ var IssueSchema = new Schema({
 	status:String,
 	comment:[],
 	priority:String,
-	issueid:String,
+	reqid:String,
 	timelog:{type:Date , default:Date.now},
 	startDate:String,
 	dueDate:String
 
 });
 
-let IssueCounter=1;
+let RequeCounter=1;
 
-IssueSchema.pre('save', function(next) {	
-	IssueCounter++; 
-	this.issueid = 'ISSU-'+IssueCounter;
+RequirementSchema.pre('save', function(next) {	
+	RequeCounter++; 
+	this.reqid = 'REQUE-'+RequeCounter;
 
 	next();
 
 });
 
-IssueSchema.pre('find', function(next) {	
-	this.populate('projectId');
-	next();
 
-});
-
-
-module.exports = mongoose.model('Issue', IssueSchema);
+module.exports = mongoose.model('Requirement', RequirementSchema);

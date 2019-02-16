@@ -5,6 +5,7 @@ var issueController = require('./../controller/issue.controller');
 router.post('/', issueController.addIssue);
 router.get('/:issueId', issueController.getIssueById);
 router.get('/', issueController.getAllIssue);
-
+router.delete('/:issueId', issueController.deleteIssueById);
+router.put('/:issueId', issueController.updateIssueById);
 
 module.exports = router;

@@ -13,6 +13,7 @@ var projectRouter = require('./routes/project');
 var taskRouter = require('./routes/task');
 var bugRouter = require('./routes/bug');
 var issueRouter = require('./routes/issue');
+var requeRouter = require('./routes/requirement');
 
 
 var app = express();
@@ -34,6 +35,8 @@ app.use('/project',projectRouter);
 app.use('/task',taskRouter);
 app.use('/bug',bugRouter);
 app.use('/issue',issueRouter);
+app.use('/reque',requeRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -32,7 +32,26 @@ issueController.getAllIssue = function(req,res){
 	})
 }
 
+issueController.deleteIssueById = function(req,res){
 
+	var issueId = req.params.issueId;
+	issueModel.findOneAndDelete({_id:issueId}).exec(function(err,Issue){
+		console.log("err==========>>>",err);
+		res.status(200).send(Issue);
+		console.log("saved console",Issue);
+	})
+}
 
+issueController.updateIssueById = function(req,res){
+
+	var issueId = req.params.issueId;
+
+	issueModel.findOneAndUpdate({_id:issueId},{$set:req.body},{upsert:true},function(err,UpdatedIssue){
+		console.log("err==========>>>",err);
+		res.status(200).send(UpdatedIssue);
+		console.log("saved console",UpdatedIssue);
+	})
+
+}
 
 module.exports = issueController;
