@@ -56,4 +56,35 @@ taskController.updateTaskById = function(req,res){
 
 }
 
+taskController.getAllTaskOrderByDueDate = function(req,res){
+	taskModel.find({})
+	.sort([['duedate', 'ascending']])
+	.exec(function(err,project){
+		console.log("err==========>>>",err);
+		res.send(project);
+		console.log(project);
+	})
+}
+
+taskController.getAllTaskOrderByTitle = function(req,res){
+	taskModel.find({})
+	.sort([['title', 'ascending']])
+	.exec(function(err,project){
+		console.log("err==========>>>",err);
+		res.send(project);
+		console.log(project);
+	})
+}
+
+taskController.getAllTaskOrderByStartDate = function(req,res){
+	taskModel.find({})
+	.sort([['startDate', 'ascending']])
+	.exec(function(err,project){
+		console.log("err==========>>>",err);
+		res.send(project);
+		console.log(project);
+	})
+}
+
+
 module.exports = taskController;

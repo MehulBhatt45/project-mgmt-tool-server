@@ -59,7 +59,7 @@ projectController.updateProjectById = function(req,res){
 
 projectController.getAllProjectOrderByTitle = function(req,res){
 	projectModel.find({})
-	.sort('title ascending')
+	.sort([['title', 'ascending']])
 	.exec(function(err,project){
 		console.log("err==========>>>",err);
 		res.send(project);
