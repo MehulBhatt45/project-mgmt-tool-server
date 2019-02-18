@@ -9,6 +9,11 @@ var CommentSchema = new Schema({
 	bugId: { type: Schema.Types.ObjectId, ref: 'Bug'},
 	postedOn: { type: Date, default: Date.now }
 	
-
 })
+
+// CommentSchema.pre('find', function(next) {	
+// 	this.populate('issueId');
+// 	next();
+
+// });
 module.exports = mongoose.model('Comment',CommentSchema);

@@ -3,7 +3,7 @@ var router = express.Router();
 var projectController = require('./../controller/project.controller');
 
 /* GET home page. */
-router.post('/', projectController.addProject);
+router.post('/addProject', projectController.addProject);
 router.get('/all', projectController.getAllProject);
 router.get('/:projectId', projectController.getProjectById);
 router.delete('/:projectId', projectController.deleteProjectById);
