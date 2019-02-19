@@ -16,7 +16,7 @@ var TaskSchema = new Schema({
 	dueDate:String,
 	timelog:{type:Date , default:Date.now},
 
-});
+},{timestamps: true});
 
 let TaskCounter=1;
 

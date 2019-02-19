@@ -16,7 +16,7 @@ var IssueSchema = new Schema({
 	startDate:String,
 	dueDate:String
 
-});
+},{timestamps: true});
 
 let IssueCounter=1;
 

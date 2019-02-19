@@ -1,4 +1,5 @@
 var bugModel = require('./../model/bug.model');
+var projectModel = require('../model/project.model');
 let bugController = {};
 
 bugController.addBug = function(req,res){
@@ -6,9 +7,14 @@ bugController.addBug = function(req,res){
 	var bug = new bugModel(req.body);
 
 	bug.save(function(err,Savedbug){
-		console.log("err==========>>>",err);
-		res.status(200).send(Savedbug);
-		console.log("saved console",Savedbug);
+		projectModel.findOne({_id: Savedbug.projectId})
+		.exec((err, resp)=>{
+			if (err) next(err);
+			resp.BugId.push(Savedbug._id);
+			resp.save();
+			res.status(200).send(Savedbug);
+
+		})
 	})
 
 }
@@ -50,7 +56,31 @@ bugController.updateBugById = function(req,res){
 
 	var bugId = req.params.bugId;
 
-	bugModel.findOneAndUpdate({_id:bugId},{$set:req.body},{upsert:true},function(err,UpdatedBug){
+	bugModel.findOneAndUpdate({_id:bugId},{$set:req.body},{upsert:true, new:true},function(err,UpdatedBug){
+		console.log("err==========>>>",err);
+		res.status(200).send(UpdatedBug);
+		console.log("saved console",UpdatedBug);
+	})
+
+}
+
+bugController.updateBugStatusById = function(req,res){
+
+	var bugId = req.params.bugId;
+
+	bugModel.findOneAndUpdate({_id:bugId},{$set:req.body},{upsert:true, new:true},function(err,UpdatedBug){
+		console.log("err==========>>>",err);
+		res.status(200).send(UpdatedBug);
+		console.log("saved console",UpdatedBug);
+	})
+
+}
+
+bugController.updateBugStatusToComplete = function(req,res){
+
+	var bugId = req.params.bugId;
+
+	bugModel.findOneAndUpdate({_id:bugId},{$set:req.body},{upsert:true, new:true},function(err,UpdatedBug){
 		console.log("err==========>>>",err);
 		res.status(200).send(UpdatedBug);
 		console.log("saved console",UpdatedBug);

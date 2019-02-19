@@ -1,28 +1,25 @@
-var userModel = require('./../model/user.model');
+var userModel = require('../model/user.model');
 var userController = {};
 var bcrypt = require('bcryptjs');
-
+var jwt = require('jsonwebtoken');
 
 userController.addUser = function(req,res){
 	userModel.findOne({email: req.body.email})
-	.exec((err,user)=>{
+	.exec((err,founduser)=>{
 		if (err) {
 			res.status(500).send(err);
+		}else if (founduser){
+			res.status(400).send('user already exists! ');
+		}else{
+			var User = new userModel(req.body);
+			User.save((error, newUser)=>{
+				if (err) {
+					res.status(500).send(err);
+				}		
+				res.status(200).send(newUser);
+			});
 		}
-		else if (user){res.status(400).send('user already exists! '); }
-		else{
-		// Insert  new user if they do not exist 
-		var User = new userModel({
-			name: req.body.name,
-			userRoll: req.body.userRoll,
-			email: req.body.email,
-			password: req.body.password
-		});
-		User.save();
-		res.status(200).send(User);
-	}
-})
-	console.log("body=====>>>>",req.body);
+	})
 }
 
 userController.updateUserById = function(req,res){
@@ -38,21 +35,28 @@ userController.updateUserById = function(req,res){
 // 
 
 userController.logIn = function(req,res){
-	console.log("req.method" , req.method);
+	// console.log("req.method" , req.method);
 	if(req.method == 'POST' && req.body.email && req.body.password){
 		userModel.findOne({ email : req.body.email } )
 		// .select('-password')
 		.exec((err, user)=>{
-			console.log(user, err);
+			// console.log(user, err);
 			if (err) {
 				return res.status(500).send( { errMsg : err });
 			}else if(user){
-				bcrypt.compare(req.body.password,user.password, function(error, isMatch) {
-					console.log(isMatch, error);
+				user.comparePassword(req.body.password,(error, isMatch)=>{
 					if (error){
 						return res.status(403).send( { errMsg : 'User not found' });
 					}else if(isMatch){
-						return res.status(200).send( { user : user });
+						var role = user.userRole;
+						(user.userRole==='user')?req.session.user = user:req.session.projectManager = user;
+						req.session.authenticated = true;
+						console.log("SESSION=============>",req.session.user, req.session.projectManager);
+						const payload = {user};
+						var token = jwt.sign(payload,'pmt');
+						console.log("Token = ",token);
+						return res.status(200).send({data:user,
+							token: token});
 					}else{
 						return res.status(403).send( { errMsg : 'Password Incorrect' });	
 					}

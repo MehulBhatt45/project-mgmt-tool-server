@@ -9,7 +9,7 @@ var CommentSchema = new Schema({
 	bugId: { type: Schema.Types.ObjectId, ref: 'Bug'},
 	postedOn: { type: Date, default: Date.now }
 	
-})
+},{timestamps: true})
 
 // CommentSchema.pre('find', function(next) {	
 // 	this.populate('issueId');

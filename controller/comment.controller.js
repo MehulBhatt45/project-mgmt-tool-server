@@ -101,88 +101,6 @@ commentController.deleteCommentByCommentId = function(req,res){
 	})
 }
 
-
-commentController.updateCommentByUserId = function(req,res){
-	console.log("req params ==========>",req.body, req.params);
-	commentModel.findOne({userId: req.body.userId})
-	.exec((err,user)=>{
-
-// commentController.deleteCommentByUserId = function(req,res){
-// 	console.log("req params ==========>",req.body, req.params);
-// 	commentModel.findOne({userId: req.body.userId})
-// 	.exec((err,user)=>{
-// 		if (err) {
-// 			res.status(500).send(err); 
-// 		}
-// 		else if(user)
-// 		{
-// 			commentModel.findByIdAndRemove({_id: req.params.id})
-// 			.exec((error,resp)=>{
-// 				if (resp) {
-// 					res.status(200).json({msg: "comment deleted successfully!!!"})
-// 				}
-
-// 				else{ res.status(500).send(error); }
-// 			})
-// 		}
-// 		else { res.status(401).json({ msg: "Unauthorized Access"}); }
-
-// 	})
-// }
-
-commentController.deleteCommentByCommentId = function(req,res){
-	commentModel.findOneAndRemove({_id: req.params.id}, function(err,comment){
-		if (err) {
-			res.status(500).send(err);
-		}
-		else if(user)
-		{
-			commentModel.findByIdAndUpdate({_id: req.params.id},req.body,{upsert: true,new: true})
-			.exec((error,resp)=>{
-				if (resp) 
-				{
-					res.status(200).json({msg: "comment update successfully!!!!!"})
-				}
-		res.status(200).send(comment);
-	})
-}
-
-
-// commentController.updateCommentByUserId = function(req,res){
-// 	console.log("req params ==========>",req.body, req.params);
-// 	commentModel.findOne({userId: req.body.userId})
-// 	.exec((err,user)=>{
-// 		if (err) {
-// 			res.status(500).send(err); 
-// 		}
-// 		else if(user)
-// 		{
-// 			commentModel.findByIdAndUpdate({_id: req.params.id},req.body,{upsert: true,new: true})
-// 			.exec((error,resp)=>{
-// 				if (resp) 
-// 				{
-// 					res.status(200).json({msg: "comment update successfully!!!!!"})
-// 				}
-				
-// 				else{ res.status(500).send(error); }
-// 			})
-// 		}
-// 		else { res.status(401).json({ msg: "Unauthorized Access"}); }
-
-// 	})
-// }
-
-commentController.updateCommentByCommentId = function(req,res){
-	commentModel.findOneAndUpdate({_id: req.params.id},req.body, {upsert: true, new: true}, 
-		function(err, comment){
-			if (err)
-			 {
-			 	res.status(500).send(err);
-			 }
-			 res.status(200).send(comment);
-	})
-}
-
 commentController.updateCommentByCommentId = function(req,res){
 	commentModel.findOneAndUpdate({_id: req.params.id},req.body, {upsert: true, new: true}, 
 		function(err, comment){
@@ -195,6 +113,3 @@ commentController.updateCommentByCommentId = function(req,res){
 }
 
 module.exports = commentController;
-
-
-

@@ -4,10 +4,8 @@ var router = express.Router();
 var userController = require('./../controller/user.controller');
 
 /* GET users listing. */
-router.post('/signup',userController.addUser) ;
-router.post('/login',userController.logIn ) ;
+router.post('/signup',userController.addUser);
+router.post('/login',userController.logIn);
 router.put('/:id',userController.updateUserById);
-
-
 
 module.exports = router;

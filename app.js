@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
+var session = require('express-session');
+
 const SALT_WORK_FACTOR = 10;
 
 //All Controller Router Variable deifne hear
@@ -19,13 +21,23 @@ var commentRouter = require('./routes/comment');
 
 var app = express();
 
+app.set('superSecret', 'pmt');
+// Define mongoose Component
+mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
+.then(() => console.log("Connected"))
+.catch(err => console.log(err));
+
 // view engine setup`
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-
+app.use(session({
+	secret: 'ssshhhhh',
+	resave: true,
+	saveUninitialized: true
+}));
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -41,6 +53,20 @@ app.use('/user', userRouter);
 
 
 // catch 404 and forward to error handler
+
+app.use(function (req, res, next) {
+	res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
+	res.header('Access-Control-Allow-Origin','*');
+	res.header('Access-Control-Allow-Headers','origin, X-Requested-With, Content-Type, Accept, Authorization, x-access-token');
+	if (req.method === 'OPTIONS') {
+		res.header('Access-Control-Allow-Methods','PUT,POST,PATCH,DELETE,GET');
+		return res.status(200).json({});
+	}
+	else{
+		next();
+
+	}
+});
 app.use(function(req, res, next) {
 	next(createError(404));
 });
@@ -56,11 +82,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-
-// Define mongoose Component
-mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
-.then(() => console.log("Connected"))
-.catch(err => console.log(err));
 
 app.listen(4000);
 
