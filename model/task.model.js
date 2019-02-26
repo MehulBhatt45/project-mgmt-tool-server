@@ -3,34 +3,42 @@ var Schema = mongoose.Schema;
 
 var TaskSchema = new Schema({
 
-	taskid:String,
-	title: String,
-	desc: String,
-	attachment:String,
-	assignTo:{ type: Schema.Types.ObjectId, ref: 'user'},
+	title: { type: String, required: true },
+	desc: { type: String },
+	attachment:{ type: String },
+	assignTo:{ type: Schema.Types.ObjectId, ref: 'User'},
 	projectId:{ type: Schema.Types.ObjectId, ref: 'Project'},	
-	status:String,
-	comment:[],
-	priority:String,
-	startDate:String,
-	dueDate:String,
-	timelog:{type:Date , default:Date.now},
+	status:{ type: String, default: "to do" },
+	comment:[{ type: Schema.Types.ObjectId, ref: 'Comment'}],
+	priority:{ type: String , default: "low"},
+	uniqueId:{ type: String },
+	timelog:[{
+		operation: {type: String},
+		dateTime: {type: Date},
+		operatedBy: {type: Schema.Types.ObjectId, ref: 'User'},
+		_id: false
+	}],
+	createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
+	startDate:{ type: Date },
+	completedAt: { type: Date },
+	dueDate:{ type: Date }
 
 },{timestamps: true});
+var Task = mongoose.model('Task', TaskSchema);
 
 let TaskCounter=1;
 
 TaskSchema.pre('save', function(next) {	
-	TaskCounter++; 
-	this.taskid = 'TSK-'+TaskCounter;
-
+	this.uniqueId = 'TSK-'+TaskCounter;
+	TaskCounter++;
+	Task.find({}).exec((err, task)=>{console.log(task)}) 
 	next();
-
 });
 
 TaskSchema.pre('find', function(next) {
 	this.populate('projectId');
 	this.populate('assignTo');
+	this.populate('createdBy');
 	next();
 
 });

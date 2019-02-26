@@ -1,16 +1,16 @@
 var express = require('express');
 var router = express.Router();
 var taskController = require('./../controller/task.controller');
+var auth = require('./auth');
 
-router.post('/', taskController.addTask);
-router.get('/task-by-duedate', taskController.getAllTaskOrderByDueDate);
-router.get('/task-by-title', taskController.getAllTaskOrderByTitle);
-router.get('/task-by-startdate', taskController.getAllTaskOrderByStartDate);
-router.get('/:taskId', taskController.getTaskById);
-router.get('/', taskController.getAllTask);
-router.delete('/:taskId', taskController.deleteTaskById);
-router.put('/:taskId', taskController.updateTaskById);
-
+router.post('/add-task',auth.isAuthenticatedJWT, taskController.addTask);
+router.get('/get-all',auth.isAuthenticatedJWT, taskController.getAllTask);
+router.delete('/delete/:taskId',auth.isAuthenticatedJWTForManager, taskController.deleteTaskById);
+router.get('/get-by-id/:taskId',auth.isAuthenticatedJWT, taskController.getTaskById);
+router.put('/update/:taskId',auth.isAuthenticatedJWT, taskController.updateTaskById);
+router.put('/update-status/:taskId',auth.isAuthenticatedJWT, taskController.updateTaskStatusById);
+router.put('/complete/:taskId',auth.isAuthenticatedJWTForManager, taskController.updateTaskStatusToComplete);
+router.get('/get-logs-of-user/:taskId',auth.isAuthenticatedJWTForManager, taskController.getUserLogsByTaskId);
 
 
 

@@ -5,7 +5,7 @@ var ProjectSchema = new Schema({
 
 	title: {type:String, required: true},
 	desc: {type:String},
-	pmanagerId:{ type: Schema.Types.ObjectId, ref: 'user', required: true },
+	pmanagerId:{ type: Schema.Types.ObjectId, ref: 'User', required: true },
 	taskId:[{ type: Schema.Types.ObjectId, ref: 'Task'}],
 	IssueId:[{ type: Schema.Types.ObjectId, ref: 'Issue'}],
 	BugId:[{ type: Schema.Types.ObjectId, ref: 'Bug'}],
@@ -15,7 +15,8 @@ var ProjectSchema = new Schema({
 		type:String,
 		require: true,
 		text: true
-	}
+	},
+	createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
 },{timestamps: true});
 
 

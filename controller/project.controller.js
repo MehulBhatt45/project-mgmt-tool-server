@@ -40,7 +40,7 @@ projectController.addProject = function(req,res){
 
 projectController.getAllProject = function(req,res){
 
-	projectModel.find({}).exec(function(err,projects){
+	projectModel.find({}).populate('Teams').exec(function(err,projects){
 		console.log("err==========>>>",err);
 		res.status(200).send(projects);
 		console.log("saved console 2",projects);
@@ -51,10 +51,21 @@ projectController.getAllProject = function(req,res){
 projectController.getProjectById = function(req,res){
 
 	var projectId = req.params.projectId;
-	projectModel.findOne({_id:projectId}).exec(function(err,projects){
-		console.log("err==========>>>",err);
-		res.status(200).send(projects);
-		console.log("saved console 3",projects);
+	projectModel
+	.findOne({_id:projectId})
+	.populate('pmanagerId taskId IssueId BugId Teams')
+	.populate({
+    	path: 'taskId IssueId BugId',
+    	populate: { path: 'assignTo' }
+  	})
+	.exec(function(err,projects){
+		if (err) {
+			res.status(500).send(err);
+		}else if(projects){
+			res.status(200).send(projects);
+		}else{
+			res.status(404).send("NOT FOUND");
+		}
 	})
 
 }

@@ -6,7 +6,7 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var session = require('express-session');
-
+var cors = require('cors');
 const SALT_WORK_FACTOR = 10;
 
 //All Controller Router Variable deifne hear
@@ -35,6 +35,7 @@ app.use(session({
 	resave: true,
 	saveUninitialized: true
 }));
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

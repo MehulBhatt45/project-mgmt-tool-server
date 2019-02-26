@@ -11,12 +11,14 @@ var BugSchema = new Schema({
 	status:{ type: String, default: "to do" },
 	comment:[{ type: Schema.Types.ObjectId, ref: 'Comment'}],
 	priority:{ type: String , default: "low"},
-	bugid:{ type: String },
+	uniqueId:{ type: String },
 	timelog:[{
 		operation: {type: String},
 		dateTime: {type: Date},
-		operatedBy: {type: Schema.Types.ObjectId, ref: 'User'}
+		operatedBy: {type: Schema.Types.ObjectId, ref: 'User'},
+		_id: false
 	}],
+	createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
 	startDate:{ type: Date },
 	dueDate:{ type: Date }
 
@@ -25,28 +27,15 @@ var BugSchema = new Schema({
 let BugCounter=1;
 
 BugSchema.pre('save', function(next) {	
+	this.uniqueId = 'BUG-'+BugCounter;
 	BugCounter++; 
-	this.bugid = 'BUG-'+BugCounter;
-
 	next();
-
 });
-
-// BugSchema.post('save', function(next) {	
-// 	var bug = this;
-// 	projectModel.findOne({_id: bug.projectId})
-// 	.exec((err, resp)=>{
-// 		if (err) next(err);
-// 		resp.BugId.push(this._id);
-// 		resp.save();
-// 		next();
-// 	})
-// });
 
 BugSchema.pre('find', function(next) {	
 	this.populate('projectId');
+	this.populate('createdBy');
 	next();
-
 });
 
 

@@ -1,4 +1,8 @@
 var userModel = require('../model/user.model');
+var taskModel = require('../model/task.model');
+var bugModel = require('../model/bug.model');
+var issueModel = require('../model/issue.model');
+var async = require('async');
 var userController = {};
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
@@ -70,5 +74,52 @@ userController.logIn = function(req,res){
 	}
 }
 
+userController.getUserWorkLogs = function(req,res){
+	userModel.findOne({ _id: req.body.userId })
+	.exec((err, response) => {
+		if (err) {
+			return res.status(500).json({
+				status: false,
+				code: 500,
+				message: 'Internal Server Error'
+			});
+		} else {
+			async.parallel(
+			{
+				task: function (callback) {
+					taskModel.find()
+					.where({ userId: req.body.userId})
+					.exec((err1, userList) => {
+						if (err1) callback([], null);
+						callback(null, userList);
+					})
+				},
+				bug: function (callback) {
+					bugModel.find()
+					.where({ userId: req.body.userId})
+					.exec((err1, userList) => {
+						if (err1) callback([], null);
+						callback(null, userList);
+					})
+				},
+				issue: function (callback) {
+					issueModel.find()
+					.where({ userId: req.body.userId})
+					.exec((err1, userList) => {
+						if (err1) callback([], null);
+						callback(null, userList);
+					})
+				}
+			}, function (err, results) {
+				return res.status(200).json({
+					status: true,
+					code: 200,
+					data: results
+				});
+			});
+		}
+
+	})
+}
 
 module.exports = userController; 

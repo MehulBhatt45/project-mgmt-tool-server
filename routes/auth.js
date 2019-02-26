@@ -24,9 +24,10 @@ var authMiddleWare = {
 					return res.send({ success: false, message: 'Failed to authenticate token.', data: err });    
 				} else {
 					req.decoded = decoded;
-					console.log("Is admin",req.decoded);
 					if(req.decoded.user.userRole==='projectManager')
 						next();
+					else
+						res.status(401).send('UNAUTHORIZED ACCESS');
 				}
 			});
 		} else {

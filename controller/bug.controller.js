@@ -1,91 +1,134 @@
 var bugModel = require('./../model/bug.model');
 var projectModel = require('../model/project.model');
+var _ = require('lodash');
 let bugController = {};
 
 bugController.addBug = function(req,res){
-
 	var bug = new bugModel(req.body);
-
 	bug.save(function(err,Savedbug){
 		projectModel.findOne({_id: Savedbug.projectId})
 		.exec((err, resp)=>{
-			if (err) next(err);
+			if (err) res.status(500).send(err);
 			resp.BugId.push(Savedbug._id);
 			resp.save();
 			res.status(200).send(Savedbug);
 
 		})
 	})
-
 }
 
 bugController.getAllBug = function(req,res){
-
 	bugModel.find({}).exec(function(err,bugs){
-		console.log("err==========>>>",err);
-		res.status(200).send(bugs);
-		console.log("saved console",bugs);
+		if (err) res.status(500).send(err);
+		else if(bugs) res.status(200).send(bugs);
+		else res.status(404).send("Not Found");
 	})
-
 }
 
 bugController.deleteBugById = function(req,res){
-
 	var bugId = req.params.bugId;
-	console.log("Bug ID===========>>>>>",bugId);
 	bugModel.findOneAndDelete({_id:bugId}).exec(function(err,deletedBug){
-		console.log("err==========>>>",err);
-		res.status(200).send(deletedBug);
+		if (err) res.status(500).send(err);
+		else if(deletedBug){
+			projectModel.findOne({_id: deletedBug.projectId})
+			.exec((err, resp)=>{
+				if (err) res.status(500).send(err);
+				else if(resp){
+					resp.BugId.splice(_.findIndex(resp.BugId, deletedBug._id), 1);
+					resp.save();
+					res.status(200).send(deletedBug);
+				}else{
+					res.status(404).send("Not Found");		
+				}
+			})
+		}else{
+			res.status(404).send("Not Found");
+		}
 	})
 
 }
 
 
 bugController.getBugById = function(req,res){
-
 	var bugId = req.params.bugId;
 	console.log("Bug ID===========>>>>>",bugId);
-	bugModel.findOne({_id:bugId}).exec(function(err,deletedBug){
-		console.log("err==========>>>",err);
-		res.status(200).send(deletedBug);
+	bugModel.findOne({_id:bugId}).exec(function(err,singleBug){
+		if (err) res.status(500).send(err);
+		else if(singleBug) res.status(200).send(singleBug);
+		else res.status(404).send("Not Found");
 	})
 
 }
 
 bugController.updateBugById = function(req,res){
-
 	var bugId = req.params.bugId;
-
 	bugModel.findOneAndUpdate({_id:bugId},{$set:req.body},{upsert:true, new:true},function(err,UpdatedBug){
-		console.log("err==========>>>",err);
-		res.status(200).send(UpdatedBug);
-		console.log("saved console",UpdatedBug);
+		if (err) res.status(500).send(err);
+		else if(UpdatedBug) res.status(200).send(UpdatedBug);
+		else res.status(404).send("Not Found");
 	})
-
 }
 
 bugController.updateBugStatusById = function(req,res){
-
 	var bugId = req.params.bugId;
-
-	bugModel.findOneAndUpdate({_id:bugId},{$set:req.body},{upsert:true, new:true},function(err,UpdatedBug){
-		console.log("err==========>>>",err);
-		res.status(200).send(UpdatedBug);
-		console.log("saved console",UpdatedBug);
-	})
-
+	if(req.body.status!=='complete'){
+		bugModel.findOne({_id: bugId}).exec((err, bug)=>{
+			if (err) res.status(500).send(err);
+			else if(bug){
+				var timelog = bug.timelog;
+				timelog.push({
+					operation: "shifted to "+req.body.status+" from "+bug.status,
+					dateTime: Date.now(),
+					operatedBy: req.body.operatorId
+				})
+				bugModel.findOneAndUpdate({_id:bugId},{$set:{status: req.body.status, timelog: timelog, startDate: req.body.status=='in progress'?Date.now():'' }},{upsert:true, new:true},function(err,Updatedbug){
+					if (err) res.status(500).send(err);
+					else if(Updatedbug) res.status(200).send(Updatedbug);
+					else res.status(404).send("Not Found");
+				})
+			}
+			else res.status(404).send("Not Found");
+		})
+	}else{
+		res.status(403).send("Bad Request");
+	}
 }
 
 bugController.updateBugStatusToComplete = function(req,res){
-
 	var bugId = req.params.bugId;
+	if(req.body.status==='complete'){
+		bugModel.findOne({_id: bugId}).exec((err, bug)=>{
+			if (err) res.status(500).send(err);
+			else if(bug){
+				bugModel.findOneAndUpdate({_id:bugId},{$set:{status: req.body.status, completedAt: Date.now()}},{upsert:true, new:true},function(err,Updatedbug){
+					if (err) res.status(500).send(err);
+					else if(Updatedbug) res.status(200).send(Updatedbug);
+					else res.status(404).send("Not Found");
+				})
+			}
+			else res.status(404).send("Not Found");
+		})
+	}else{
+		res.status(403).send("Bad Request");
+	}
+}
 
-	bugModel.findOneAndUpdate({_id:bugId},{$set:req.body},{upsert:true, new:true},function(err,UpdatedBug){
-		console.log("err==========>>>",err);
-		res.status(200).send(UpdatedBug);
-		console.log("saved console",UpdatedBug);
+bugController.getUserLogsByBugId = function(req,res){
+	var bugId = req.params.bugId;
+	bugModel.findOne({_id: bugId}).exec((err, bug)=>{
+		if (err) {
+			console.log(err);
+			res.status(500).send(err);
+		}else if(bug){
+			bugModel.find({ "timelog": {$elemMatch: { operatedBy: req.body.userId }}}).exec((error, bugLog)=>{
+				if(error){
+					console.log(error);
+				}
+				res.status(200).send(bugLog);
+			})
+		}
+		else res.status(404).send("Not Found");
 	})
-
 }
 
 

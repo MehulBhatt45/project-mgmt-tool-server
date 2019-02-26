@@ -10,7 +10,7 @@ router.get('/get-by-id/:bugId',auth.isAuthenticatedJWT, bugController.getBugById
 router.put('/update/:bugId',auth.isAuthenticatedJWT, bugController.updateBugById);
 router.put('/update-status/:bugId',auth.isAuthenticatedJWT, bugController.updateBugStatusById);
 router.put('/complete/:bugId',auth.isAuthenticatedJWTForManager, bugController.updateBugStatusToComplete);
-
+router.get('/get-logs-of-user/:bugId',auth.isAuthenticatedJWTForManager, bugController.getUserLogsByBugId);
 
 
 module.exports = router;

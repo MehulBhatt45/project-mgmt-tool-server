@@ -1,88 +1,133 @@
 var taskModel = require('./../model/task.model');
+var projectModel = require('../model/project.model');
+var _ = require('lodash');
 let taskController = {};
 
 taskController.addTask = function(req,res){
-	console.log("Request body==>>>>",req.body);
 	var task = new taskModel(req.body);
+	task.save(function(err,Savedtask){
+		projectModel.findOne({_id: Savedtask.projectId})
+		.exec((err, resp)=>{
+			if (err) res.status(500).send(err);
+			resp.taskId.push(Savedtask._id);
+			resp.save();
+			res.status(200).send(Savedtask);
 
-
-	task.save(function(err,SavedTask){
-		console.log("err==========>>>",err);
-		res.status(200).send(SavedTask);
-		console.log("saved console",SavedTask);
-	})
-}
-
-taskController.getTaskById = function(req,res){
-
-	var taskId = req.params.taskId;
-	taskModel.findOne({_id:taskId}).exec(function(err,Task){
-		console.log("err==========>>>",err);
-		res.status(200).send(Task);
-		console.log("saved console",Task);
+		})
 	})
 }
 
 taskController.getAllTask = function(req,res){
-
 	taskModel.find({}).exec(function(err,tasks){
-		console.log("err==========>>>",err);
-		res.status(200).send(tasks);
-		console.log("saved console",tasks);
+		if (err) res.status(500).send(err);
+		else if(tasks) res.status(200).send(tasks);
+		else res.status(404).send("Not Found");
+	})
+}
+
+taskController.deleteTaskById = function(req,res){
+	var taskId = req.params.taskId;
+	taskModel.findOneAndDelete({_id:taskId}).exec(function(err,deletedtask){
+		if (err) res.status(500).send(err);
+		else if(deletedtask){
+			projectModel.findOne({_id: deletedtask.projectId})
+			.exec((err, resp)=>{
+				if (err) res.status(500).send(err);
+				else if(resp){
+					resp.taskId.splice(_.findIndex(resp.taskId, deletedtask._id), 1);
+					resp.save();
+					res.status(200).send(deletedtask);
+				}else{
+					res.status(404).send("Not Found");		
+				}
+			})
+		}else{
+			res.status(404).send("Not Found");
+		}
 	})
 
 }
 
-taskController.deleteTaskById = function(req,res){
 
+taskController.getTaskById = function(req,res){
 	var taskId = req.params.taskId;
-	taskModel.findOneAndDelete({_id:projectId}).exec(function(err,projects){
-		console.log("err==========>>>",err);
-		res.status(200).send(projects);
-		console.log("saved console",projects);
+	console.log("task ID===========>>>>>",taskId);
+	taskModel.findOne({_id:taskId}).exec(function(err,singletask){
+		if (err) res.status(500).send(err);
+		else if(singletask) res.status(200).send(singletask);
+		else res.status(404).send("Not Found");
 	})
 
 }
 
 taskController.updateTaskById = function(req,res){
-
 	var taskId = req.params.taskId;
-
-	taskModel.findOneAndUpdate({_id:taskId},{$set:req.body},{upsert:true},function(err,UpdatedTask){
-		console.log("err==========>>>",err);
-		res.status(200).send(UpdatedTask);
-		console.log("saved console",UpdatedTask);
-	})
-
-}
-
-taskController.getAllTaskOrderByDueDate = function(req,res){
-	taskModel.find({})
-	.sort([['duedate', 'ascending']])
-	.exec(function(err,project){
-		console.log("err==========>>>",err);
-		res.send(project);
-		console.log(project);
+	taskModel.findOneAndUpdate({_id:taskId},{$set:req.body},{upsert:true, new:true},function(err,Updatedtask){
+		if (err) res.status(500).send(err);
+		else if(Updatedtask) res.status(200).send(Updatedtask);
+		else res.status(404).send("Not Found");
 	})
 }
 
-taskController.getAllTaskOrderByTitle = function(req,res){
-	taskModel.find({})
-	.sort([['title', 'ascending']])
-	.exec(function(err,project){
-		console.log("err==========>>>",err);
-		res.send(project);
-		console.log(project);
-	})
+taskController.updateTaskStatusById = function(req,res){
+	var taskId = req.params.taskId;
+	if(req.body.status!=='complete'){
+		taskModel.findOne({_id: taskId}).exec((err, task)=>{
+			if (err) res.status(500).send(err);
+			else if(task){
+				var timelog = task.timelog;
+				timelog.push({
+					operation: "shifted to "+req.body.status+" from "+task.status,
+					dateTime: Date.now(),
+					operatedBy: req.body.operatorId
+				})
+				taskModel.findOneAndUpdate({_id:taskId},{$set:{status: req.body.status, timelog: timelog, startDate: req.body.status=='in progress'?Date.now():'' }},{upsert:true, new:true},function(err,Updatedtask){
+					if (err) res.status(500).send(err);
+					else if(Updatedtask) res.status(200).send(Updatedtask);
+					else res.status(404).send("Not Found");
+				})
+			}
+			else res.status(404).send("Not Found");
+		})
+	}else{
+		res.status(403).send("Bad Request");
+	}
 }
 
-taskController.getAllTaskOrderByStartDate = function(req,res){
-	taskModel.find({})
-	.sort([['startDate', 'ascending']])
-	.exec(function(err,project){
-		console.log("err==========>>>",err);
-		res.send(project);
-		console.log(project);
+taskController.updateTaskStatusToComplete = function(req,res){
+	var taskId = req.params.taskId;
+	if(req.body.status==='complete'){
+		taskModel.findOne({_id: taskId}).exec((err, task)=>{
+			if (err) res.status(500).send(err);
+			else if(task){
+				taskModel.findOneAndUpdate({_id:taskId},{$set:{status: req.body.status, completedAt: Date.now()}},{upsert:true, new:true},function(err,Updatedtask){
+					if (err) res.status(500).send(err);
+					else if(Updatedtask) res.status(200).send(Updatedtask);
+					else res.status(404).send("Not Found");
+				})
+			}
+			else res.status(404).send("Not Found");
+		})
+	}else{
+		res.status(403).send("Bad Request");
+	}
+}
+
+taskController.getUserLogsByTaskId = function(req,res){
+	var taskId = req.params.taskId;
+	taskModel.findOne({_id: taskId}).exec((err, task)=>{
+		if (err) {
+			console.log(err);
+			res.status(500).send(err);
+		}else if(task){
+			taskModel.find({ "timelog": {$elemMatch: { operatedBy: req.body.userId }}}).exec((error, taskLog)=>{
+				if(error){
+					console.log(error);
+				}
+				res.status(200).send(taskLog);
+			})
+		}
+		else res.status(404).send("Not Found");
 	})
 }
 
