@@ -1,0 +1,30 @@
+{ 
+    "_id" : ObjectId("5c6bca3ce5908c5b38212bb6"), 
+    "name" : "tirthraj barot", 
+    "userRole" : "projectManager", 
+    "email" : "tirth@gmail.com", 
+    "password" : "$2a$10$ymeoIE6wUtOyJJ5jdPCn6Or7kBEfyBwVDJCYRNitdELsGYNLmz4qG", 
+    "createdAt" : ISODate("2019-02-19T09:19:56.891+0000"), 
+    "updatedAt" : ISODate("2019-02-19T09:19:56.891+0000"), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("5c6c0aa9d96ad972c2e5438e"), 
+    "userRole" : "user", 
+    "name" : "mehul bhatt", 
+    "email" : "mehul@gmail.com", 
+    "password" : "$2a$10$S8Z0Csddog0JOKsbLoqsmeuxR8kWlK3VKdNkxLcfHzjFwsMo/tjhy", 
+    "createdAt" : ISODate("2019-02-19T13:54:49.334+0000"), 
+    "updatedAt" : ISODate("2019-02-19T13:54:49.334+0000"), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("5c752002ff279f07b0fba58e"), 
+    "userRole" : "user", 
+    "name" : "pushpraj chudasama", 
+    "email" : "pushpraj@gmail.com", 
+    "password" : "$2a$10$SV7RhoN5ONLADXLW97v8GOwukUkMahLtlg.Wn1kyVwqEZYTEW8ZRC", 
+    "createdAt" : ISODate("2019-02-26T11:16:18.698+0000"), 
+    "updatedAt" : ISODate("2019-02-26T11:16:18.698+0000"), 
+    "__v" : NumberInt(0)
+}
