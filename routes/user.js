@@ -8,5 +8,6 @@ router.post('/signup',userController.addUser);
 router.post('/login',userController.logIn);
 router.put('/update-details/:id', auth.isAuthenticatedJWT, userController.updateUserById);
 router.get('/get-logs/:userId', auth.isAuthenticatedJWTForManager, userController.getUserWorkLogs);
+router.get('/get-all-developers', auth.isAuthenticatedJWTForManager, userController.getAllUsers);
 
 module.exports = router;

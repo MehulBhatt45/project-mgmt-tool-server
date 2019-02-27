@@ -1,0 +1,25 @@
+{ 
+    "_id" : ObjectId("5c6d2bd1d6a4002d4881c5bf"), 
+    "status" : "to do", 
+    "comment" : [
+
+    ], 
+    "priority" : "low", 
+    "title" : "new bug", 
+    "desc" : "new bug in other project", 
+    "assignTo" : ObjectId("5c6c0aa9d96ad972c2e5438e"), 
+    "projectId" : ObjectId("5c6bdc7c7f77ca64b4658d98"), 
+    "timelog" : [
+        {
+            "operation" : "shifted to in progress from to do", 
+            "dateTime" : ISODate("2019-02-20T10:55:42.850+0000"), 
+            "operatedBy" : ObjectId("5c6c0aa9d96ad972c2e5438e")
+        }
+    ], 
+    "createdAt" : ISODate("2019-02-20T10:28:33.132+0000"), 
+    "updatedAt" : ISODate("2019-02-20T10:55:42.853+0000"), 
+    "uniqueId" : "BUG-1", 
+    "__v" : NumberInt(0), 
+    "startDate" : ISODate("2019-02-20T10:55:42.852+0000"), 
+    "createdBy" : ObjectId("5c6bca3ce5908c5b38212bb6")
+}

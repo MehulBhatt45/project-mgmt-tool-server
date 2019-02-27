@@ -4,6 +4,8 @@ var _ = require('lodash');
 let taskController = {};
 
 taskController.addTask = function(req,res){
+	req.body['createdBy'] = req.user._id;
+	req.body['startDate'] = Date.now()
 	var task = new taskModel(req.body);
 	task.save(function(err,Savedtask){
 		projectModel.findOne({_id: Savedtask.projectId})

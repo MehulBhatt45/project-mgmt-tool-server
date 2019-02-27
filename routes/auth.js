@@ -23,8 +23,8 @@ var authMiddleWare = {
 				if (err) {
 					return res.send({ success: false, message: 'Failed to authenticate token.', data: err });    
 				} else {
-					req.decoded = decoded;
-					if(req.decoded.user.userRole==='projectManager')
+					req.user = decoded.user;
+					if(req.user.userRole==='projectManager')
 						next();
 					else
 						res.status(401).send('UNAUTHORIZED ACCESS');
@@ -45,7 +45,7 @@ var authMiddleWare = {
 				if (err) {
 					return res.send({ success: false, message: 'Failed to authenticate token.', data: err });    
 				} else {
-					req.decoded = decoded;
+					req.user = decoded.user;
 					next();
 				}
 			});

@@ -1,0 +1,36 @@
+{ 
+    "_id" : ObjectId("5c6ce8c643694e15600a9d42"), 
+    "status" : "complete", 
+    "comment" : [
+
+    ], 
+    "uniqueId" : "TASK-1", 
+    "priority" : "low", 
+    "title" : "new task", 
+    "desc" : "new task in other project", 
+    "assignTo" : ObjectId("5c6c0aa9d96ad972c2e5438e"), 
+    "projectId" : ObjectId("5c6bdc7c7f77ca64b4658d98"), 
+    "timelog" : [
+        {
+            "operation" : "shifted to in progress from to do", 
+            "dateTime" : ISODate("2019-02-20T06:27:39.337+0000"), 
+            "operatedBy" : ObjectId("5c6c0aa9d96ad972c2e5438e")
+        }, 
+        {
+            "operation" : "shifted to testing from in progress", 
+            "dateTime" : ISODate("2019-02-20T06:27:50.417+0000"), 
+            "operatedBy" : ObjectId("5c6c0aa9d96ad972c2e5438e")
+        }, 
+        {
+            "operation" : "shifted to in progress from to do", 
+            "dateTime" : ISODate("2019-02-20T07:13:14.969+0000"), 
+            "operatedBy" : ObjectId("5c6c0aa9d96ad972c2e5438e")
+        }
+    ], 
+    "createdAt" : ISODate("2019-02-20T05:42:30.322+0000"), 
+    "updatedAt" : ISODate("2019-02-20T07:13:56.881+0000"), 
+    "__v" : NumberInt(0), 
+    "startDate" : ISODate("2019-02-20T07:13:14.971+0000"), 
+    "completedAt" : ISODate("2019-02-20T07:13:56.881+0000"), 
+    "createdBy" : ObjectId("5c6bca3ce5908c5b38212bb6")
+}

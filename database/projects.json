@@ -1,0 +1,86 @@
+{ 
+    "_id" : ObjectId("5c6bdc7c7f77ca64b4658d98"), 
+    "taskId" : [
+        ObjectId("5c6ce8c643694e15600a9d42")
+    ], 
+    "IssueId" : [
+        ObjectId("5c6d2bddd6a4002d4881c5c0")
+    ], 
+    "BugId" : [
+        ObjectId("5c6d2bd1d6a4002d4881c5bf")
+    ], 
+    "Teams" : [
+        ObjectId("5c6bca3ce5908c5b38212bb6"), 
+        ObjectId("5c6c0aa9d96ad972c2e5438e")
+    ], 
+    "Status" : "new", 
+    "title" : "Other", 
+    "desc" : "this is testing purpose project 2", 
+    "pmanagerId" : ObjectId("5c6bca3ce5908c5b38212bb6"), 
+    "uniqueId" : "PROJECT-1", 
+    "createdAt" : ISODate("2019-02-19T10:37:48.234+0000"), 
+    "updatedAt" : ISODate("2019-02-20T10:28:33.146+0000"), 
+    "__v" : NumberInt(12)
+}
+{ 
+    "_id" : ObjectId("5c6bdcbda86aaf64e9897bf8"), 
+    "taskId" : [
+
+    ], 
+    "IssueId" : [
+
+    ], 
+    "Teams" : [
+
+    ], 
+    "Status" : "new", 
+    "title" : "demo", 
+    "desc" : "this is testing purpose project", 
+    "pmanagerId" : ObjectId("5c6bca3ce5908c5b38212bb6"), 
+    "uniqueId" : "PROJECT-2", 
+    "createdAt" : ISODate("2019-02-19T10:38:53.863+0000"), 
+    "updatedAt" : ISODate("2019-02-19T10:38:53.863+0000"), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("5c6bdcdffd6deb651b407264"), 
+    "taskId" : [
+
+    ], 
+    "IssueId" : [
+
+    ], 
+    "Teams" : [
+
+    ], 
+    "Status" : "new", 
+    "title" : "demo 2", 
+    "desc" : "this is testing purpose project 2", 
+    "pmanagerId" : ObjectId("5c6bca3ce5908c5b38212bb6"), 
+    "uniqueId" : "PROJECT-3", 
+    "createdAt" : ISODate("2019-02-19T10:39:27.126+0000"), 
+    "updatedAt" : ISODate("2019-02-19T10:39:27.126+0000"), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("5c6fc72fc1cca003b30e6aa8"), 
+    "taskId" : [
+
+    ], 
+    "IssueId" : [
+
+    ], 
+    "BugId" : [
+
+    ], 
+    "Teams" : [
+
+    ], 
+    "Status" : "new", 
+    "title" : "Demo Project", 
+    "pmanagerId" : ObjectId("5c6bca3ce5908c5b38212bb6"), 
+    "uniqueId" : "PROJECT-4", 
+    "createdAt" : ISODate("2019-02-22T09:55:59.605+0000"), 
+    "updatedAt" : ISODate("2019-02-22T09:55:59.605+0000"), 
+    "__v" : NumberInt(0)
+}

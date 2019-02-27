@@ -36,7 +36,18 @@ userController.updateUserById = function(req,res){
 	console.log(req.body);
 }
 
-// 
+userController.getAllUsers = function(req, res){
+	userModel.find({userRole: 'user'})
+	.exec((err,users)=>{
+		if (err) {
+			res.status(500).send(err);
+		}else if (users){
+			res.status(200).send(users);
+		}else{
+			res.status(404).send( { msg : 'Users not found' });
+		}
+	})
+}
 
 userController.logIn = function(req,res){
 	// console.log("req.method" , req.method);
