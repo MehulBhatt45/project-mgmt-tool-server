@@ -23,7 +23,7 @@ var app = express();
 
 app.set('superSecret', 'pmt');
 // Define mongoose Component
-mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
+mongoose.connect('mongodb://127.0.0.1:27017/projectMngtTool', {useNewUrlParser: true})
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
 
@@ -35,6 +35,7 @@ app.use(session({
 	resave: true,
 	saveUninitialized: true
 }));
+
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
