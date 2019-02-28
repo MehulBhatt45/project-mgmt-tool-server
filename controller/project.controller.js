@@ -17,18 +17,20 @@ projectController.addProject = function(req,res){
 			var number = parseInt(trimmedString)+1;
 			var text = "PROJECT"
 			var unique = text+"-"+number;
-			var project = new projectModel(req.body);
-			project['uniqueId'] = unique;
-			project.save().then(result => {
+			var newProject = new projectModel(req.body);
+			newProject['uniqueId'] = unique;
+			newProject['Team'] = [];
+			newProject.Team.push(req.user._id);
+			newProject.save().then(result => {
 				res.status(200).json(result);
 			})
 			.catch(err => console.log(err));
 		}else{
-			var project = new projectModel(req.body);
+			var newProject = new projectModel(req.body);
 			var text = "PROJECT"
 			var unique = text+"-"+1;
-			project['uniqueId'] = unique;
-			project.save().then(result => {
+			newProject['uniqueId'] = unique;
+			newProject.save().then(result => {
 				res.status(200).json(result);
 			})
 			.catch(err => console.log(err));
@@ -40,10 +42,21 @@ projectController.addProject = function(req,res){
 
 projectController.getAllProject = function(req,res){
 
-	projectModel.find({}).populate('Teams').exec(function(err,projects){
-		console.log("err==========>>>",err);
-		res.status(200).send(projects);
-		console.log("saved console 2",projects);
+	projectModel
+	.find({})
+	.populate('pmanagerId taskId IssueId BugId Teams')
+	.populate({
+    	path: 'taskId IssueId BugId',
+    	populate: { path: 'assignTo' }
+  	})
+	.exec(function(err,projects){
+		if (err) {
+			res.status(500).send(err);
+		}else if(projects){
+			res.status(200).send(projects);
+		}else{
+			res.status(404).send("NOT FOUND");
+		}
 	})
 
 }

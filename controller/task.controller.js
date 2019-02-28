@@ -4,6 +4,9 @@ var _ = require('lodash');
 let taskController = {};
 
 taskController.addTask = function(req,res){
+	if(!req.body.assignTo && req.user.userRole != 'projectManager'){
+		req.body['assignTo'] = req.user._id;
+	}
 	req.body['createdBy'] = req.user._id;
 	req.body['startDate'] = Date.now()
 	var task = new taskModel(req.body);

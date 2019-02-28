@@ -25,12 +25,10 @@ var IssueSchema = new Schema({
 },{timestamps: true});
 
 let IssueCounter=1;
-var Issue = mongoose.model('Issue', IssueSchema);
 IssueSchema.pre('save', function(next) {	
 	this.uniqueId = 'ISSU-'+IssueCounter;
 	IssueCounter++; 
 	next();
-	Issue.find({}).exec((err, issue)=>{console.log(issue)})
 });
 
 IssueSchema.pre('find', function(next) {	
@@ -38,6 +36,5 @@ IssueSchema.pre('find', function(next) {
 	this.populate('createdBy');
 	next();
 });
-
 
 module.exports = mongoose.model('Issue', IssueSchema);

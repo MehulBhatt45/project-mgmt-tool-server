@@ -24,30 +24,21 @@ var TaskSchema = new Schema({
 	dueDate:{ type: Date }
 
 },{timestamps: true});
-var Task = mongoose.model('Task', TaskSchema);
 
 let TaskCounter=1;
 
 TaskSchema.pre('save', function(next) {	
 	this.uniqueId = 'TSK-'+TaskCounter;
 	TaskCounter++;
-	Task.find({}).exec((err, task)=>{console.log(task)}) 
 	next();
 });
 
-TaskSchema.pre('find', function(next) {
+TaskSchema.pre('find', function(next) {	
 	this.populate('projectId');
-	this.populate('assignTo');
 	this.populate('createdBy');
 	next();
-
 });
-TaskSchema.pre('findOne', function(next) {
-	this.populate('projectId');
-	this.populate('assignTo');
-	next();
 
-});
 
 
 module.exports = mongoose.model('Task', TaskSchema);

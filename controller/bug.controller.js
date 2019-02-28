@@ -4,6 +4,11 @@ var _ = require('lodash');
 let bugController = {};
 
 bugController.addBug = function(req,res){
+	if(!req.body.assignTo && req.user.userRole != 'projectManager'){
+		req.body['assignTo'] = req.user._id;
+	}
+	req.body['createdBy'] = req.user._id;
+	req.body['startDate'] = Date.now()
 	var bug = new bugModel(req.body);
 	bug.save(function(err,Savedbug){
 		projectModel.findOne({_id: Savedbug.projectId})
