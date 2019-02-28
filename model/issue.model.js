@@ -26,7 +26,7 @@ var IssueSchema = new Schema({
 
 let IssueCounter=1;
 IssueSchema.pre('save', function(next) {	
-	this.uniqueId = 'ISSU-'+IssueCounter;
+	this.uniqueId = 'ISSUE-'+IssueCounter;
 	IssueCounter++; 
 	next();
 });
