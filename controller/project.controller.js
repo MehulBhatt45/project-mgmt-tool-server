@@ -1,6 +1,9 @@
 var projectModel = require('../model/project.model');
 let projectController = {};
-
+var dir = require('node-dir');
+var mkdir = require('mkdirp');
+var path = require('path');
+var fs = require('fs');
 projectController.addProject = function(req,res){
 	projectModel
 	.find({})
@@ -48,9 +51,9 @@ projectController.getAllProject = function(req,res){
 	.find({})
 	.populate('pmanagerId taskId IssueId BugId Teams')
 	.populate({
-    	path: 'taskId IssueId BugId',
-    	populate: { path: 'assignTo' }
-  	})
+		path: 'taskId IssueId BugId',
+		populate: { path: 'assignTo' }
+	})
 	.exec(function(err,projects){
 		if (err) {
 			res.status(500).send(err);
@@ -70,9 +73,9 @@ projectController.getProjectById = function(req,res){
 	.findOne({_id:projectId})
 	.populate('pmanagerId taskId IssueId BugId Teams')
 	.populate({
-    	path: 'taskId IssueId BugId',
-    	populate: { path: 'assignTo' }
-  	})
+		path: 'taskId IssueId BugId',
+		populate: { path: 'assignTo' }
+	})
 	.exec(function(err,projects){
 		if (err) {
 			res.status(500).send(err);
@@ -119,5 +122,51 @@ projectController.getAllProjectOrderByTitle = function(req,res){
 
 }
 
+projectController.uploadFilesToFolder = function(req, res){
+	console.log(req.body);
+	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/");
+	console.log(uploadPath);
+	req.file('fileUpload').upload({
+		maxBytes: 50000000,
+		dirname: uploadPath,
+		saveAs: function (__newFileStream, next) {
+			dir.files(uploadPath, function(err, files) {
+				if (err){
+					mkdir(uploadPath, 0775);
+					return next(undefined, __newFileStream.filename);
+				}else {
+					return next(undefined, __newFileStream.filename);
+				}
+			});
+		}
+	}, function(err, files){
+		if (err) {
+			console.log(err);
+			res.status(500).send(err);
+		}else{
+			console.log(files)
+			res.status(200).send("files uploaded successfully");
+		}
+	})
+}
+
+projectController.getAllFiles = function(req, res){
+	console.log(req.body)
+	// fs.readdir(path.join(__dirname, "../uploads/"+req.body.projectId+"/"), (err, files) => {
+	// 	console.log(err, files);
+	// 	files.forEach(file => {
+	// 		console.log(file);
+	// 	});
+	// });
+	dir.files(path.join(__dirname, "../uploads/"+req.body.projectId+"/"), function(err, files) {
+		if (err){
+			console.log(err);
+			res.status(500).send(err);
+		}else {
+			console.log(files);
+			res.status(200).send(files);
+		}
+	});
+}
 
 module.exports = projectController;

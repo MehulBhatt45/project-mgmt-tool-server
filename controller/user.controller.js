@@ -1,11 +1,13 @@
 var userModel = require('../model/user.model');
 var taskModel = require('../model/task.model');
 var bugModel = require('../model/bug.model');
+var projectModel = require('../model/project.model');
 var issueModel = require('../model/issue.model');
 var async = require('async');
 var userController = {};
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
+var _ = require('lodash');
 
 userController.addUser = function(req,res){
 	userModel.findOne({email: req.body.email})
@@ -45,6 +47,33 @@ userController.getAllUsers = function(req, res){
 			res.status(200).send(users);
 		}else{
 			res.status(404).send( { msg : 'Users not found' });
+		}
+	})
+}
+
+userController.getAllUsersByProjectManager = function(req, res){
+	var uniqueArray = [];
+	projectModel
+	.find({pmanagerId: req.body.pmId})
+	.exec((err, project)=>{
+		if(err){
+			res.status(500).send(err);
+		}else{
+			_.forEach(project, (pro)=>{
+				uniqueArray.push(...pro.Teams);
+			})
+			userModel
+			.find({_id: { $in: uniqueArray }, userRole:'user'})
+			.exec((error, users)=>{
+				if (err) {
+					res.status(500).send(err);
+				}else if (users){
+					console.log(users);
+					res.status(200).send(users);
+				}else{
+					res.status(404).send( { msg : 'Users not found' });
+				}
+			})
 		}
 	})
 }

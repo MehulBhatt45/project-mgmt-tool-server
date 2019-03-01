@@ -15,6 +15,8 @@ issueController.addIssue = function(req,res){
 		.exec((err, resp)=>{
 			if (err) res.status(500).send(err);
 			resp.IssueId.push(Savedissue._id);
+			if(!_.includes(resp.Teams, Savedissue.assignTo))
+				resp.Teams.push(Savedissue.assignTo);
 			resp.save();
 			res.status(200).send(Savedissue);
 
@@ -69,7 +71,17 @@ issueController.updateIssueById = function(req,res){
 	var issueId = req.params.issueId;
 	issueModel.findOneAndUpdate({_id:issueId},{$set:req.body},{upsert:true, new:true},function(err,Updatedissue){
 		if (err) res.status(500).send(err);
-		else if(Updatedissue) res.status(200).send(Updatedissue);
+		else if(Updatedissue) {
+			projectModel.findOne({_id: Updatedissue.projectId})
+			.exec((err, resp)=>{
+				if (err) res.status(500).send(err);
+				if(!_.includes(resp.Teams, Updatedissue.assignTo))
+					resp.Teams.push(Updatedissue.assignTo);
+				resp.save();
+				res.status(200).send(Updatedissue);
+
+			})
+		}
 		else res.status(404).send("Not Found");
 	})
 }

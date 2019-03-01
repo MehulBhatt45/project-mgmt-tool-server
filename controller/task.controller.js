@@ -15,6 +15,8 @@ taskController.addTask = function(req,res){
 		.exec((err, resp)=>{
 			if (err) res.status(500).send(err);
 			resp.taskId.push(Savedtask._id);
+			if(!_.includes(resp.Teams, Savedtask.assignTo))
+				resp.Teams.push(Savedtask.assignTo);
 			resp.save();
 			res.status(200).send(Savedtask);
 
@@ -69,7 +71,17 @@ taskController.updateTaskById = function(req,res){
 	var taskId = req.params.taskId;
 	taskModel.findOneAndUpdate({_id:taskId},{$set:req.body},{upsert:true, new:true},function(err,Updatedtask){
 		if (err) res.status(500).send(err);
-		else if(Updatedtask) res.status(200).send(Updatedtask);
+		else if(Updatedtask) {
+			projectModel.findOne({_id: Updatedtask.projectId})
+			.exec((err, resp)=>{
+				if (err) res.status(500).send(err);
+				if(!_.includes(resp.Teams, Updatedtask.assignTo))
+					resp.Teams.push(Updatedtask.assignTo);
+				resp.save();
+				res.status(200).send(Updatedtask);
+
+			})
+		}
 		else res.status(404).send("Not Found");
 	})
 }

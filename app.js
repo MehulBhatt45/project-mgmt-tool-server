@@ -42,7 +42,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(require('skipper')());
 
 //All Controller Router deifne hear
 app.use('/project',projectRouter);

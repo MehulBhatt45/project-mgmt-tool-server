@@ -15,10 +15,13 @@
     "express-session": "^1.15.6",
     "http-errors": "~1.6.2",
     "jsonwebtoken": "^8.4.0",
+    "mkdirp": "^0.5.1",
     "mongoose": "^5.4.12",
     "mongoose-bcrypt": "^1.6.0",
     "morgan": "~1.9.0",
+    "node-dir": "^0.1.17",
     "pug": "2.0.0-beta11",
-    "random-token": "0.0.8"
+    "random-token": "0.0.8",
+    "skipper": "^0.8.7"
   }
 }
