@@ -152,12 +152,6 @@ projectController.uploadFilesToFolder = function(req, res){
 
 projectController.getAllFiles = function(req, res){
 	console.log(req.body)
-	// fs.readdir(path.join(__dirname, "../uploads/"+req.body.projectId+"/"), (err, files) => {
-	// 	console.log(err, files);
-	// 	files.forEach(file => {
-	// 		console.log(file);
-	// 	});
-	// });
 	dir.files(path.join(__dirname, "../uploads/"+req.body.projectId+"/"), function(err, files) {
 		if (err){
 			console.log(err);
@@ -167,6 +161,18 @@ projectController.getAllFiles = function(req, res){
 			res.status(200).send(files);
 		}
 	});
+}
+
+projectController.deleteFile = function(req, res){
+	var file = req.body.file;
+	var fileLocation = path.join(__dirname,"../uploads/"+req.body.projectId, file);
+	console.log(fileLocation);
+	fs.unlink(fileLocation, (err)=>{
+		if (err) {
+			res.status(500).send("file not deleted");
+		}
+		res.status(200).send("file deleted");
+	}); 
 }
 
 module.exports = projectController;

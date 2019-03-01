@@ -115,7 +115,8 @@ userController.logIn = function(req,res){
 }
 
 userController.getUserWorkLogs = function(req,res){
-	userModel.findOne({ _id: req.body.userId })
+	var uniqueArray = [];
+	userModel.findOne({ _id: req.params.userId })
 	.exec((err, response) => {
 		if (err) {
 			return res.status(500).json({
@@ -124,39 +125,53 @@ userController.getUserWorkLogs = function(req,res){
 				message: 'Internal Server Error'
 			});
 		} else {
-			async.parallel(
-			{
-				task: function (callback) {
-					taskModel.find()
-					.where({ userId: req.body.userId})
-					.exec((err1, userList) => {
-						if (err1) callback([], null);
-						callback(null, userList);
-					})
-				},
-				bug: function (callback) {
-					bugModel.find()
-					.where({ userId: req.body.userId})
-					.exec((err1, userList) => {
-						if (err1) callback([], null);
-						callback(null, userList);
-					})
-				},
-				issue: function (callback) {
-					issueModel.find()
-					.where({ userId: req.body.userId})
-					.exec((err1, userList) => {
-						if (err1) callback([], null);
-						callback(null, userList);
-					})
+			projectModel
+			.find({pmanagerId: req.user._id})
+			.exec((err, project)=>{
+				if (err) {
+					res.status(500).send(err);
 				}
-			}, function (err, results) {
-				return res.status(200).json({
-					status: true,
-					code: 200,
-					data: results
+				_.forEach(project, (pro)=>{
+					uniqueArray.push(pro._id);
+				})
+				console.log(uniqueArray);
+				async.parallel(
+				{
+					task: function (callback) {
+						taskModel.find()
+						.where({ userId: req.body.userId})
+						.where({ projectId: { $in: uniqueArray }})
+						.exec((err1, userList) => {
+							if (err1) callback([], null);
+							callback(null, userList);
+						})
+					},
+					bug: function (callback) {
+						bugModel.find()
+						.where({ userId: req.body.userId})
+						.where({ projectId: { $in: uniqueArray }})
+						.exec((err1, userList) => {
+							if (err1) callback([], null);
+							callback(null, userList);
+						})
+					},
+					issue: function (callback) {
+						issueModel.find()
+						.where({ userId: req.body.userId})
+						.where({ projectId: { $in: uniqueArray }})
+						.exec((err1, userList) => {
+							if (err1) callback([], null);
+							callback(null, userList);
+						})
+					}
+				}, function (err, results) {
+					return res.status(200).json({
+						status: true,
+						code: 200,
+						data: results
+					});
 				});
-			});
+			})
 		}
 
 	})
