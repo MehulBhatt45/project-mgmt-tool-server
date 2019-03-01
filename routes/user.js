@@ -9,5 +9,6 @@ router.post('/login',userController.logIn);
 router.put('/update-details/:id', auth.isAuthenticatedJWT, userController.updateUserById);
 router.get('/get-logs/:userId', auth.isAuthenticatedJWTForManager, userController.getUserWorkLogs);
 router.get('/get-all-developers', auth.isAuthenticatedJWTForManager, userController.getAllUsers);
+router.post('/get-all-developers-by-project-manager', userController.getAllUsersByProjectManager);
 
 module.exports = router;

@@ -15,6 +15,8 @@ bugController.addBug = function(req,res){
 		.exec((err, resp)=>{
 			if (err) res.status(500).send(err);
 			resp.BugId.push(Savedbug._id);
+			if(_.includes(resp.Teams, Savedbug.assignTo))
+				resp.Teams.push(Savedbug.assignTo);
 			resp.save();
 			res.status(200).send(Savedbug);
 
@@ -68,9 +70,19 @@ bugController.getBugById = function(req,res){
 bugController.updateBugById = function(req,res){
 	var bugId = req.params.bugId;
 	bugModel.findOneAndUpdate({_id:bugId},{$set:req.body},{upsert:true, new:true},function(err,UpdatedBug){
-		if (err) res.status(500).send(err);
-		else if(UpdatedBug) res.status(200).send(UpdatedBug);
-		else res.status(404).send("Not Found");
+		if (err) {res.status(500).send(err);}
+		else if(UpdatedBug) {
+			projectModel.findOne({_id: UpdatedBug.projectId})
+			.exec((err, resp)=>{
+				if (err) res.status(500).send(err);
+				if(!_.includes(resp.Teams, UpdatedBug.assignTo))
+					resp.Teams.push(UpdatedBug.assignTo);
+				resp.save();
+				res.status(200).send(UpdatedBug);
+
+			})
+		}
+		else {res.status(404).send("Not Found");}
 	})
 }
 
