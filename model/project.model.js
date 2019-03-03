@@ -11,6 +11,7 @@ var ProjectSchema = new Schema({
 	BugId:[{ type: Schema.Types.ObjectId, ref: 'Bug'}],
 	Teams:[{ type: Schema.Types.ObjectId, ref: 'User'}],
 	Status:{type:String, default: 'new'},
+	avatar:String,
 	uniqueId: {
 		type:String,
 		require: true,
@@ -20,4 +21,4 @@ var ProjectSchema = new Schema({
 },{timestamps: true});
 
 
-module.exports = mongoose.model('Project', ProjectSchema);
+module.exports = mongoose.model('Project', ProjectSchema);	
