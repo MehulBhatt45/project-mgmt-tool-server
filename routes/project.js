@@ -8,8 +8,8 @@ router.post('/add-project', auth.isAuthenticatedJWTForManager, projectController
 router.post('/add-project/simple', auth.isAuthenticatedJWTForManager, projectController.addProject2);
 router.get('/all', projectController.getAllProject);
 router.get('/get-project-by-id/:projectId', projectController.getProjectById);
-router.delete('/delete/:projectId',auth.isAuthenticatedJWTForManager, projectController.deleteProjectById);
-router.put('/update/:projectId',auth.isAuthenticatedJWTForManager, projectController.updateProjectById);
+router.delete('/delete/:projectId', projectController.deleteProjectById);
+router.put('/update/:projectId', projectController.updateProjectById);
 router.get('/get-by-title', projectController.getAllProjectOrderByTitle);
 router.post('/upload-file', projectController.uploadFilesToFolder);
 router.post('/get-all-files', projectController.getAllFiles);
