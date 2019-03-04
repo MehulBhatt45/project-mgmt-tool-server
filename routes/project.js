@@ -4,7 +4,7 @@ var projectController = require('../controller/project.controller');
 var auth = require('./auth');
 
 /* GET home page. */
-router.post('/add-project',, projectController.addProject);
+router.post('/add-project', projectController.addProject);
 router.get('/all', projectController.getAllProject);
 router.get('/get-project-by-id/:projectId', projectController.getProjectById);
 router.delete('/delete/:projectId', projectController.deleteProjectById);
