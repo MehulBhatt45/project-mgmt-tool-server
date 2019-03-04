@@ -5,10 +5,10 @@ var nodemailer = require('nodemailer');
 let taskController = {};
 
 taskController.addTask = function(req,res){
-	if(!req.body.assignTo && req.user.userRole != 'projectManager'){
-		req.body['assignTo'] = req.user._id;
-	}
-	req.body['createdBy'] = req.user._id;
+	// if(!req.body.assignTo && req.user.userRole != 'projectManager'){
+	// 	req.body['assignTo'] = req.user._id;
+	// }
+	req.body['createdBy'] = req.body.createdBy;
 	req.body['startDate'] = Date.now()
 	var task = new taskModel(req.body);
 	task.save(function(err,Savedtask){
