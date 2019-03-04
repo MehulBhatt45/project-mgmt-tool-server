@@ -23,6 +23,7 @@ var authMiddleWare = {
 				if (err) {
 					return res.send({ success: false, message: 'Failed to authenticate token.', data: err });    
 				} else {
+					console.log(decoded);
 					req.user = decoded.user;
 					if(req.user.userRole==='projectManager')
 						next();
