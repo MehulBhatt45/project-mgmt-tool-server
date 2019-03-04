@@ -11,7 +11,7 @@ var ProjectSchema = new Schema({
 	BugId:[{ type: Schema.Types.ObjectId, ref: 'Bug'}],
 	Teams:[{ type: Schema.Types.ObjectId, ref: 'User'}],
 	Status:{type:String, default: 'new'},
-	avatar:String,
+	avatar:{type:String},
 	uniqueId: {
 		type:String,
 		require: true,

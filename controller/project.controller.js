@@ -6,7 +6,7 @@ var path = require('path');
 var fs = require('fs');
 
 projectController.addProject = function(req,res){
-	console.log("req files =============>" , req.files.uploadfile);
+	console.log("req files =============>" , req.files);
 	console.log("req body",req.body);
 	var samplefile = req.files.uploadfile;
 	samplefile.mv('./uploads/avatar/'+samplefile.name,function(err,result){
