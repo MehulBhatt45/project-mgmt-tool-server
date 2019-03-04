@@ -28,6 +28,16 @@ userController.addUser = function(req,res){
 	})
 }
 
+userController.getSingleUser = function(req, res){
+	userModel.findOne({_id:req.params.userId}, function(err,getuser){
+		if(err){
+			res.status(500).send(err);
+		}
+		console.log(getuser)
+		res.status(200).send(getuser);
+	})
+}
+
 userController.updateUserById = function(req,res){
 	userModel.findOneAndUpdate({_id:req.params.id},{$set:req.body},function(err,getuser){
 		if(err){
