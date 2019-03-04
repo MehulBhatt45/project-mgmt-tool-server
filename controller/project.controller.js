@@ -36,7 +36,7 @@ projectController.addProject = function(req,res){
 					var newProject = new projectModel(req.body);
 					newProject['uniqueId'] = unique;
 					newProject['Team'] = [];
-					newProject.Team.push(req.user._id);
+					newProject.Team.push(req.body.createdBy);
 					newProject.save().then(result => {
 						res.status(200).json(result);
 					})
@@ -47,7 +47,7 @@ projectController.addProject = function(req,res){
 					var unique = text+"-"+1;
 					newProject['uniqueId'] = unique;
 					newProject['Team'] = [];
-					newProject.Team.push(req.user._id);
+					newProject.Team.push(req.body.createdBy);
 					newProject.save().then(result => {
 						res.status(200).json(result);
 					})

@@ -3,14 +3,14 @@ var router = express.Router();
 var issueController = require('./../controller/issue.controller');
 var auth = require('./auth');
 
-router.post('/add-issue',auth.isAuthenticatedJWT, issueController.addIssue);
-router.get('/get-all',auth.isAuthenticatedJWT, issueController.getAllIssue);
-router.delete('/delete/:issueId',auth.isAuthenticatedJWT, issueController.deleteIssueById);
-router.get('/get-by-id/:issueId',auth.isAuthenticatedJWT, issueController.getIssueById);
-router.put('/update/:issueId',auth.isAuthenticatedJWT, issueController.updateIssueById);
-router.put('/update-status/:issueId',auth.isAuthenticatedJWT, issueController.updateIssueStatusById);
-router.put('/complete/:issueId',auth.isAuthenticatedJWT, issueController.updateIssueStatusToComplete);
-router.get('/get-logs-of-user/:issueId',auth.isAuthenticatedJWT, issueController.getUserLogsByIssueId);
+router.post('/add-issue', issueController.addIssue);
+router.get('/get-all', issueController.getAllIssue);
+router.delete('/delete/:issueId', issueController.deleteIssueById);
+router.get('/get-by-id/:issueId', issueController.getIssueById);
+router.put('/update/:issueId', issueController.updateIssueById);
+router.put('/update-status/:issueId', issueController.updateIssueStatusById);
+router.put('/complete/:issueId', issueController.updateIssueStatusToComplete);
+router.get('/get-logs-of-user/:issueId', issueController.getUserLogsByIssueId);
 
 
 module.exports = router;
