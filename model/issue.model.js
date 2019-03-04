@@ -20,8 +20,8 @@ var IssueSchema = new Schema({
 	}],
 	createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
 	startDate:{ type: Date },
-	dueDate:{ type: Date }
-
+	dueDate:{ type: Date },
+	createdAt: { type: Date, required: true, default: Date.now } // Added by Tirthraj Barot for sorting issues on date of creation.
 },{timestamps: true});
 
 let IssueCounter=1;

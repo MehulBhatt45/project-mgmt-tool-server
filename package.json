@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
@@ -12,6 +12,7 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "~4.16.0",
+    "express-fileupload": "^1.1.1-alpha.3",
     "express-session": "^1.15.6",
     "http-errors": "~1.6.2",
     "jsonwebtoken": "^8.4.0",
