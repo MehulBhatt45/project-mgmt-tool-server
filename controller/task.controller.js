@@ -1,6 +1,7 @@
 var taskModel = require('./../model/task.model');
 var projectModel = require('../model/project.model');
 var _ = require('lodash');
+var nodemailer = require('nodemailer');
 let taskController = {};
 
 taskController.addTask = function(req,res){
@@ -19,6 +20,28 @@ taskController.addTask = function(req,res){
 				resp.Teams.push(Savedtask.assignTo);
 			resp.save();
 			res.status(200).send(Savedtask);
+			var transporter = nodemailer.createTransport({
+				service: 'gmail',
+				auth: {
+					user: 'foramtrada232@gmail.com',
+					// pass: 'yourpassword'
+				}
+			});
+
+			var mailOptions = {
+				from: 'foramtrada232@gmail.com',
+				to: 'komalsakhiya21@gmail.com',
+				subject: 'Sending Email using Node.js',
+				text: 'That was easy!'
+			};
+
+			transporter.sendMail(mailOptions, function(error, info){
+				if (error) {
+					console.log(error);
+				} else {
+					console.log('Email sent: ' + info.response);
+				}
+			});
 
 		})
 	})
