@@ -1,10 +1,13 @@
-                        var projectModel = require('../model/project.model');
+var projectModel = require('../model/project.model');
+var taskModel = require('../model/task.model');
+var bugModel = require('../model/bug.model');
+var issueModel = require('../model/issue.model');
 let projectController = {};
 var dir = require('node-dir');
 var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
-
+var _ = require('lodash');
 projectController.addProject = function(req,res){
 	console.log("req files =============>" , req.files);
 	console.log("req body",req.body);
@@ -79,7 +82,7 @@ projectController.addProject2 = function(req,res){
 			var newProject = new projectModel(req.body);
 			newProject['uniqueId'] = unique;
 			newProject['Team'] = [];
-			newProject.Team.push(req.user._id);
+			newProject.Team.push(req.body.pmanagerId);
 			newProject.save().then(result => {
 				res.status(200).json(result);
 			})
@@ -90,7 +93,7 @@ projectController.addProject2 = function(req,res){
 			var unique = text+"-"+1;
 			newProject['uniqueId'] = unique;
 			newProject['Team'] = [];
-			newProject.Team.push(req.user._id);
+			newProject.Team.push(req.body.pmanagerId);
 			newProject.save().then(result => {
 				res.status(200).json(result);
 			})
@@ -229,5 +232,25 @@ projectController.deleteFile = function(req, res){
 		res.status(200).send("file deleted");
 	}); 
 }
+
+// projectController.migretDb = function(req, res){
+// 	projectModel
+// 	.findOne({_id : req.params.id })
+// 	.exec((err, resp)=>{
+// 		issueModel
+// 		.find({projectId:resp._id})
+// 		.select('_id -projectId -createdBy')
+// 		.exec((e,t)=>{
+// 			resp.IssueId=[];
+// 			console.log(t, t.length);
+// 			_.forEach(t, (item)=>{
+// 				resp.IssueId.push(item._id);
+// 			})
+// 			console.log(resp);
+// 			resp.save();
+// 			res.status(200).send(resp);
+// 		})
+// 	})
+// }
 
 module.exports = projectController;

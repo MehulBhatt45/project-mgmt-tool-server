@@ -3,11 +3,40 @@ var projectModel = require('../model/project.model');
 var _ = require('lodash');
 var nodemailer = require('nodemailer');
 let taskController = {};
+const smtpTransport = require('nodemailer-smtp-transport');
+// const transporter = nodemailer.createTransport(smtpTransport({
+// 	service: 'Gmail',
+// 	auth: {
+// 		user: process.env.EMAIL,
+// 		pass: process.env.PASSWORD
+// 	}
+// }));
+
+var transporter = nodemailer.createTransport({
+	// host: 'smtp.gmail.com',
+	// port: 4200,
+	// secure: true,
+	service: 'gmail',
+	auth: {
+		user: 'tradaforam@gmail.com',
+		password: 'For@m123'
+	}
+});
+
+
+var mailOptions = {
+	from: 'tradaforam@gmail.com',
+	to: 'komalsakhiya21@gmail.com',
+	subject: 'Email Send',
+	text: 'Hello'
+};
+
 
 taskController.addTask = function(req,res){
 	// if(!req.body.assignTo && req.user.userRole != 'projectManager'){
 	// 	req.body['assignTo'] = req.user._id;
 	// }
+	console.log("function callled ");
 	req.body['createdBy'] = req.body.createdBy;
 	req.body['startDate'] = Date.now()
 	var task = new taskModel(req.body);
@@ -20,22 +49,6 @@ taskController.addTask = function(req,res){
 			resp.taskId.push(Savedtask._id);
 			if(!_.includes(resp.Teams, Savedtask.assignTo))
 				resp.Teams.push(Savedtask.assignTo);
-			resp.save();
-			res.status(200).send(Savedtask);
-			console.log("sucess");
-			var transporter = nodemailer.createTransport({
-				service: 'gmail',
-				auth: {
-					user: 'foramtrada232@gmail.com'
-				}
-			});
-
-			var mailOptions = {
-				from: 'foramtrada232@gmail.com',
-				to: 'komalsakhiya21@gmail.com',
-				subject: 'Email Send',
-				text: 'Hello'
-			};
 
 			transporter.sendMail(mailOptions, function(error, info){
 				if (error) {
@@ -43,10 +56,12 @@ taskController.addTask = function(req,res){
 				} else {
 					console.log('Email sent: ' + info.response);
 				}
-				    transport.close();
-
-			});
-
+				});
+			
+			resp.save();
+			console.log("add task");
+			res.status(200).send(Savedtask);
+			console.log("sucess");
 		})
 	})
 }
