@@ -12,27 +12,29 @@ taskController.addTask = function(req,res){
 	req.body['startDate'] = Date.now()
 	var task = new taskModel(req.body);
 	task.save(function(err,Savedtask){
+		console.log("saved tassk", Savedtask);
 		projectModel.findOne({_id: Savedtask.projectId})
 		.exec((err, resp)=>{
 			if (err) res.status(500).send(err);
+			console.log(resp);
 			resp.taskId.push(Savedtask._id);
 			if(!_.includes(resp.Teams, Savedtask.assignTo))
 				resp.Teams.push(Savedtask.assignTo);
 			resp.save();
 			res.status(200).send(Savedtask);
+			console.log("sucess");
 			var transporter = nodemailer.createTransport({
 				service: 'gmail',
 				auth: {
-					user: 'foramtrada232@gmail.com',
-					// pass: 'yourpassword'
+					user: 'foramtrada232@gmail.com'
 				}
 			});
 
 			var mailOptions = {
 				from: 'foramtrada232@gmail.com',
 				to: 'komalsakhiya21@gmail.com',
-				subject: 'Sending Email using Node.js',
-				text: 'That was easy!'
+				subject: 'Email Send',
+				text: 'Hello'
 			};
 
 			transporter.sendMail(mailOptions, function(error, info){
@@ -41,6 +43,8 @@ taskController.addTask = function(req,res){
 				} else {
 					console.log('Email sent: ' + info.response);
 				}
+				    transport.close();
+
 			});
 
 		})
