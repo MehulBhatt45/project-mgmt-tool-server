@@ -156,7 +156,7 @@ userController.getUserWorkLogs = function(req,res){
 			});
 		} else {
 			projectModel
-			.find({pmanagerId: req.user._id})
+			.find({pmanagerId: req.body.pmId})
 			.exec((err, project)=>{
 				if (err) {
 					res.status(500).send(err);
