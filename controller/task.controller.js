@@ -1,35 +1,31 @@
 var taskModel = require('./../model/task.model');
 var projectModel = require('../model/project.model');
 var _ = require('lodash');
-var nodemailer = require('nodemailer');
 let taskController = {};
+var nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
-// const transporter = nodemailer.createTransport(smtpTransport({
-// 	service: 'Gmail',
-// 	auth: {
-// 		user: process.env.EMAIL,
-// 		pass: process.env.PASSWORD
-// 	}
-// }));
+
 
 var transporter = nodemailer.createTransport({
-	// host: 'smtp.gmail.com',
-	// port: 4200,
-	// secure: true,
+	host: "smtp.gmail.com",
+	port: 465,
+	secure: true,
 	service: 'gmail',
 	auth: {
-		user: 'tradaforam@gmail.com',
-		password: 'For@m123'
+		user: 'tirthrajrao2394@gmail.com',
+		pass: 'raoinfotech@09'
 	}
 });
 
 
 var mailOptions = {
-	from: 'tradaforam@gmail.com',
-	to: 'komalsakhiya21@gmail.com',
+	from: 'tirthrajrao2394@gmail.com',
+	to: 'mehul.2287884@gmail.com',
 	subject: 'Email Send',
 	text: 'Hello'
 };
+
+// const sendmail = require('sendmail')();
 
 
 taskController.addTask = function(req,res){
@@ -52,11 +48,20 @@ taskController.addTask = function(req,res){
 
 			transporter.sendMail(mailOptions, function(error, info){
 				if (error) {
-					console.log(error);
+					console.log("Error",error);
 				} else {
 					console.log('Email sent: ' + info.response);
 				}
-				});
+			});
+			// sendmail({
+			// 	from: 'mehul.2287884@gmail.com',
+			// 	to: 'vivekkbharda@gmail.com ',
+			// 	subject: 'test sendmail',
+			// 	html: 'Mail of test sendmail ',
+			// }, function(err, reply) {
+			// 	console.log(err && err.stack);
+			// 	console.dir(reply);
+			// });
 			
 			resp.save();
 			console.log("add task");
