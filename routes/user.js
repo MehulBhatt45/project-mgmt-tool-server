@@ -10,5 +10,6 @@ router.put('/update-details/:id', auth.isAuthenticatedJWT, userController.update
 router.get('/get-logs/:userId', auth.isAuthenticatedJWTForManager, userController.getUserWorkLogs);
 router.get('/get-all-developers', auth.isAuthenticatedJWTForManager, userController.getAllUsers);
 router.post('/get-all-developers-by-project-manager', userController.getAllUsersByProjectManager);
+router.post('/reset-password',userController.resetPassword);
 
 module.exports = router;
