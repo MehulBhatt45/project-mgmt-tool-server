@@ -1,11 +1,17 @@
 var projectModel = require('../model/project.model');
+var taskModel = require('../model/task.model');
+var bugModel = require('../model/bug.model');
+var issueModel = require('../model/issue.model');
 let projectController = {};
 var dir = require('node-dir');
 var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 var _ = require('lodash');
+<<<<<<< HEAD
 
+=======
+>>>>>>> development
 projectController.addProject = function(req,res){
 	console.log("req files =============>" , req.files);
 	console.log("req body",req.body);
@@ -59,6 +65,47 @@ projectController.addProject = function(req,res){
 
 	})
 }
+
+projectController.addProject2 = function(req,res){
+	console.log("req body",req.body);
+	projectModel
+	.find({})
+	.sort({"_id" : -1})
+	.limit(1)
+	.exec((err, project)=>{
+		if (err) {
+			console.log(err);
+			res.status(500).send(err);
+		}else if(project && project.length==1){
+			var maxUniqeId = project[0].uniqueId;
+			var length = maxUniqeId.length;
+			var trimmedString = maxUniqeId.substring(8, length);
+			var number = parseInt(trimmedString)+1;
+			var text = "PROJECT"
+			var unique = text+"-"+number;
+			var newProject = new projectModel(req.body);
+			newProject['uniqueId'] = unique;
+			newProject['Team'] = [];
+			newProject.Team.push(req.body.pmanagerId);
+			newProject.save().then(result => {
+				res.status(200).json(result);
+			})
+			.catch(err => console.log(err));
+		}else{
+			var newProject = new projectModel(req.body);
+			var text = "PROJECT"
+			var unique = text+"-"+1;
+			newProject['uniqueId'] = unique;
+			newProject['Team'] = [];
+			newProject.Team.push(req.body.pmanagerId);
+			newProject.save().then(result => {
+				res.status(200).json(result);
+			})
+			.catch(err => console.log(err));
+		}
+	})
+}
+
 
 projectController.getAllProject = function(req,res){
 
@@ -202,5 +249,25 @@ projectController.deleteFile = function(req, res){
 		res.status(200).send("file deleted");
 	}); 
 }
+
+// projectController.migretDb = function(req, res){
+// 	projectModel
+// 	.findOne({_id : req.params.id })
+// 	.exec((err, resp)=>{
+// 		issueModel
+// 		.find({projectId:resp._id})
+// 		.select('_id -projectId -createdBy')
+// 		.exec((e,t)=>{
+// 			resp.IssueId=[];
+// 			console.log(t, t.length);
+// 			_.forEach(t, (item)=>{
+// 				resp.IssueId.push(item._id);
+// 			})
+// 			console.log(resp);
+// 			resp.save();
+// 			res.status(200).send(resp);
+// 		})
+// 	})
+// }
 
 module.exports = projectController;

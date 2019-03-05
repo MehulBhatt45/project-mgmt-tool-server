@@ -7,6 +7,8 @@ bugController.addBug = function(req,res){
 	// if(req.body.assignTo){
 	// 	req.body['assignTo'] = req.user._id;
 	// }
+	console.log("function ccallled ");
+
 	req.body['createdBy'] = req.body.createdBy;
 	req.body['startDate'] = Date.now()
 	var bug = new bugModel(req.body);
