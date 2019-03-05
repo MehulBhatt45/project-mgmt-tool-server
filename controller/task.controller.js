@@ -69,9 +69,11 @@ taskController.getTaskById = function(req,res){
 
 taskController.updateTaskById = function(req,res){
 	var taskId = req.params.taskId;
+	console.log(req.body);
 	taskModel.findOneAndUpdate({_id:taskId},{$set:req.body},{upsert:true, new:true},function(err,Updatedtask){
 		if (err) res.status(500).send(err);
 		else if(Updatedtask) {
+			console.log("===========================>after update", Updatedtask);
 			projectModel.findOne({_id: Updatedtask.projectId})
 			.exec((err, resp)=>{
 				if (err) res.status(500).send(err);
