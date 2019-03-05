@@ -24,7 +24,7 @@ var app = express();
 app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
-mongoose.connect('mongodb://127.0.0.1:27017/projectMngtTool', {useNewUrlParser: true})
+mongoose.connect('mongodb://206.189.231.135:27017/projectMngtTool', {useNewUrlParser: true})
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
 
@@ -86,6 +86,6 @@ app.use(function(err, req, res, next) {
 });
 
 
-// app.listen(4000);
+ //app.listen(4000);
 
 module.exports = app;

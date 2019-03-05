@@ -1,25 +1,67 @@
 var taskModel = require('./../model/task.model');
 var projectModel = require('../model/project.model');
 var _ = require('lodash');
+var nodemailer = require('nodemailer');
 let taskController = {};
+const smtpTransport = require('nodemailer-smtp-transport');
+// const transporter = nodemailer.createTransport(smtpTransport({
+// 	service: 'Gmail',
+// 	auth: {
+// 		user: process.env.EMAIL,
+// 		pass: process.env.PASSWORD
+// 	}
+// }));
+
+var transporter = nodemailer.createTransport({
+	// host: 'smtp.gmail.com',
+	// port: 4200,
+	// secure: true,
+	service: 'gmail',
+	auth: {
+		user: 'tradaforam@gmail.com',
+		password: 'For@m123'
+	}
+});
+
+
+var mailOptions = {
+	from: 'tradaforam@gmail.com',
+	to: 'komalsakhiya21@gmail.com',
+	subject: 'Email Send',
+	text: 'Hello'
+};
+
 
 taskController.addTask = function(req,res){
 	// if(!req.body.assignTo && req.user.userRole != 'projectManager'){
 	// 	req.body['assignTo'] = req.user._id;
 	// }
+	console.log("function callled ");
 	req.body['createdBy'] = req.body.createdBy;
 	req.body['startDate'] = Date.now()
 	var task = new taskModel(req.body);
 	task.save(function(err,Savedtask){
+		console.log("saved tassk", Savedtask);
 		projectModel.findOne({_id: Savedtask.projectId})
 		.exec((err, resp)=>{
 			if (err) res.status(500).send(err);
+			console.log(resp);
 			resp.taskId.push(Savedtask._id);
 			if(!_.includes(resp.Teams, Savedtask.assignTo))
 				resp.Teams.push(Savedtask.assignTo);
-			resp.save();
-			res.status(200).send(Savedtask);
 
+			transporter.sendMail(mailOptions, function(error, info){
+				if (error) {
+					console.log(error);
+				} else {
+					console.log('Email sent: ' + info.response);
+				}
+				});
+			
+			resp.save();
+			console.log("add task");
+			res.status(200).send(Savedtask);
+			console.log("sucess");
 		})
 	})
 }
