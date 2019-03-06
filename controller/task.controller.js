@@ -3,7 +3,7 @@ var projectModel = require('../model/project.model');
 var _ = require('lodash');
 var nodemailer = require('nodemailer');
 let taskController = {};
-const smtpTransport = require('nodemailer-smtp-transport');
+// const smtpTransport = require('nodemailer-smtp-transport');
 // const transporter = nodemailer.createTransport(smtpTransport({
 // 	service: 'Gmail',
 // 	auth: {
