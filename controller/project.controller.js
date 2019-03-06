@@ -8,10 +8,7 @@ var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 var _ = require('lodash');
-<<<<<<< HEAD
 
-=======
->>>>>>> development
 projectController.addProject = function(req,res){
 	console.log("req files =============>" , req.files);
 	console.log("req body",req.body);
@@ -116,6 +113,7 @@ projectController.getAllProject = function(req,res){
 		path: 'taskId IssueId BugId',
 		populate: { path: 'assignTo' }
 	})
+	.populate("timelog timelog.$.operatedBy")
 	.exec(function(err,projects){
 		if (err) {
 			res.status(500).send(err);
@@ -146,6 +144,7 @@ projectController.getProjectById = function(req,res){
 		path: 'taskId IssueId BugId',
 		populate: { path: 'assignTo' }
 	})
+	.populate("timelog timelog.$.operatedBy")
 	.exec(function(err,projects){
 		if (err) {
 			res.status(500).send(err);
