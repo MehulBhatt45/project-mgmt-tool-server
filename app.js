@@ -8,6 +8,9 @@ var bcrypt = require('bcryptjs');
 var session = require('express-session');
 var fileUpload = require('express-fileupload');
 var cors = require('cors');
+var async = require('async');
+var crypto = require('crypto');
+
 const SALT_WORK_FACTOR = 10;
 
 //All Controller Router Variable deifne hear
@@ -44,6 +47,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('skipper')());
+
 
 //All Controller Router deifne hear
 app.use('/project',projectRouter);

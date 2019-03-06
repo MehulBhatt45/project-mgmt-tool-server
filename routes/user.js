@@ -11,5 +11,6 @@ router.get('/get-logs/:userId', userController.getUserWorkLogs);
 router.get('/get-all-developers', userController.getAllUsers);
 router.post('/get-all-developers-by-project-manager', userController.getAllUsersByProjectManager);
 router.get('/get-single-user/:userId', userController.getSingleUser);
+router.post('/reset-password',userController.resetPassword);
 
 module.exports = router;

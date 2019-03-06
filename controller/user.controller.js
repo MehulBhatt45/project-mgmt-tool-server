@@ -38,7 +38,35 @@ userController.getSingleUser = function(req, res){
 	})
 }
 
+userController.resetPassword = function(req,res){
+	console.log(req.body);
+	userModel.findOne({ email:req.body.email}).exec((err,user)=>{
+		if (err) {
+			res.status(500).send(err);
+		}else if (user) {
+			console.log("====================> USer", user);
+			user.comparePassword(req.body.currentPassword, user.password, (error, isMatch)=>{
+				if (error){
+					return res.status(500).send(error);
+				}else if(isMatch){
+					user.password = req.body.newPassword;
+					user.save();
+					console.log(user);
+					res.status(200).send(user);
+				}
+				else{
+					return res.status(403).send( { errMsg : 'password incorrect' });	
+				}
+			});
+		}else{
+			return res.status(400).send( { errMsg : 'Bad request' });
+		}
+	})
+	
+}
+
 userController.updateUserById = function(req,res){
+
 	userModel.findOneAndUpdate({_id:req.params.id},{$set:req.body},function(err,getuser){
 		if(err){
 			res.status(500).send(err);
@@ -98,7 +126,7 @@ userController.logIn = function(req,res){
 			if (err) {
 				return res.status(500).send( { errMsg : err });
 			}else if(user){
-				user.comparePassword(req.body.password,(error, isMatch)=>{
+				user.comparePassword(req.body.password, user.password,(error, isMatch)=>{
 					if (error){
 						return res.status(403).send( { errMsg : 'User not found' });
 					}else if(isMatch){
