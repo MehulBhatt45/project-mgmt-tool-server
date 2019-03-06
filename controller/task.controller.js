@@ -12,17 +12,17 @@ var transporter = nodemailer.createTransport({
 	secure: true,
 	service: 'gmail',
 	auth: {
-		user: 'tirthrajrao2394@gmail.com',
-		pass: 'raoinfotech@09'
+		user: 'tnrtesting2394@gmail.com',
+		pass: 'raoinfotech09'
 	}
 });
 
 
 var mailOptions = {
-	from: 'tirthrajrao2394@gmail.com',
-	to: 'mehul.2287884@gmail.com',
-	subject: 'Email Send',
-	text: 'Hello'
+	from: 'tnrtesting2394@gmail.com',
+	to: 'tirthrajbarot2394@gmail.com',
+	subject: 'Testing Email',
+	text: 'Hi, this is a testing email from node server'
 };
 
 // const sendmail = require('sendmail')();
