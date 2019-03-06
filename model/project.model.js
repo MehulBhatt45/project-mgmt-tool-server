@@ -18,6 +18,10 @@ var ProjectSchema = new Schema({
 		text: true
 	},
 	createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
+	clientEmail:{type:String},
+	clientFullName:{type:String},
+	clientContactNo:{type:String},
+	clientDesignation:{type:String},
 },{timestamps: true});
 
 

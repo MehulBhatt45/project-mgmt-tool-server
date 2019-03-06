@@ -21,7 +21,8 @@ var TaskSchema = new Schema({
 	createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
 	startDate:{ type: Date },
 	completedAt: { type: Date },
-	dueDate:{ type: Date }
+	dueDate:{ type: Date },
+	fileName: [{type: String}]
 
 },{timestamps: true});
 

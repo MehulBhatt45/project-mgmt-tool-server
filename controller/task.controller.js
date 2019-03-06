@@ -24,6 +24,52 @@ taskController.addTask = function(req,res){
 	})
 }
 
+taskController.addTask2 = function(req,res){
+	console.log("uploadfile=======>",req.body);
+	console.log("requested files",req.files);
+	var files = [];
+	req.body['createdBy'] = req.body.createdBy;
+	req.body['startDate'] = Date.now()
+	var task = new taskModel(req.body);
+
+	task.save(function(err,Savedtask){
+		projectModel.findOne({_id: Savedtask.projectId})
+		.exec((err, resp)=>{
+			if (err) res.status(500).send(err);
+
+			else{
+
+				for(var i = 0; i < req.files.uploadFile.length; i++){
+					console.log("sampleFile", req.files.uploadFile[i]);				
+					var sampleFile = req.files.uploadFile[i];
+					sampleFile.mv('./uploads/task/'+sampleFile.name, function(err) {
+						if (err){
+							return res.status(500).send(err);
+						}else{
+						}
+					});
+					var fileName = sampleFile.name;
+					var fileNameArr = fileName.split("\\");
+					fileName  = fileNameArr[2];
+					files.push("/uploads/task/"+sampleFile.name);
+					console.log(files);
+					resp.fileName = files;
+				}
+
+				resp.taskId.push(Savedtask._id);
+				if(!_.includes(resp.Teams, Savedtask.assignTo))
+					resp.Teams.push(Savedtask.assignTo);
+				resp.save();
+				res.status(200).send(Savedtask);
+
+			}
+
+			
+
+		})
+	})
+}
+
 taskController.getAllTask = function(req,res){
 	taskModel.find({}).exec(function(err,tasks){
 		if (err) res.status(500).send(err);

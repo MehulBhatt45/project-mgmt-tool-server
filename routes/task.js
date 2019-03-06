@@ -4,6 +4,7 @@ var taskController = require('./../controller/task.controller');
 var auth = require('./auth');
 
 router.post('/add-task', taskController.addTask);
+router.post('/add-task/fileupload', taskController.addTask2);
 router.get('/get-all', taskController.getAllTask);
 router.delete('/delete/:taskId', taskController.deleteTaskById);
 router.get('/get-by-id/:taskId', taskController.getTaskById);

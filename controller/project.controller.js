@@ -5,7 +5,7 @@ var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 
-projectController.addProject = function(req,res){
+projectController.addProjectWithImage = function(req,res){
 	console.log("req files =============>" , req.files);
 	console.log("req body",req.body);
 	var samplefile = req.files.uploadfile;
@@ -59,7 +59,7 @@ projectController.addProject = function(req,res){
 	})
 }
 
-projectController.addProject2 = function(req,res){
+projectController.addProjectWithoutImage = function(req,res){
 	console.log("req body",req.body);
 	projectModel
 	.find({})
