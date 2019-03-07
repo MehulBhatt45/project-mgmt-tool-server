@@ -31,6 +31,8 @@ mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: 
 // view engine setup`
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+app.set('view engine', 'html');
+
 app.use(session({
 	secret: 'ssshhhhh',
 	resave: true,

@@ -11,6 +11,8 @@
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
+    "ejs": "^2.6.1",
+    "email-templates": "^5.0.4",
     "express": "~4.16.0",
     "express-fileupload": "^1.1.1-alpha.3",
     "express-session": "^1.15.6",
@@ -22,8 +24,10 @@
     "morgan": "~1.9.0",
     "node-dir": "^0.1.17",
     "nodemailer": "^5.1.1",
+    "nodemailer-smtp-transport": "^2.7.4",
     "pug": "2.0.0-beta11",
     "random-token": "0.0.8",
+    "sendmail": "^1.4.1",
     "skipper": "^0.8.7"
   }
 }

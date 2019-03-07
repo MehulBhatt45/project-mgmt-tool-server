@@ -8,6 +8,7 @@ var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 var _ = require('lodash');
+
 projectController.addProject = function(req,res){
 	console.log("req files =============>" , req.files);
 	console.log("req body",req.body);
@@ -112,10 +113,19 @@ projectController.getAllProject = function(req,res){
 		path: 'taskId IssueId BugId',
 		populate: { path: 'assignTo' }
 	})
+	.populate("timelog timelog.$.operatedBy")
 	.exec(function(err,projects){
 		if (err) {
 			res.status(500).send(err);
 		}else if(projects){
+			console.log(projects);
+			_.forEach(projects, function(project){
+				_.map([...project.taskId, ...project.IssueId, ...project.BugId], function(ele){
+					if(ele.assignTo == null){
+						ele.assignTo = "";
+					}
+				})
+			})
 			res.status(200).send(projects);
 		}else{
 			res.status(404).send("NOT FOUND");
@@ -134,10 +144,16 @@ projectController.getProjectById = function(req,res){
 		path: 'taskId IssueId BugId',
 		populate: { path: 'assignTo' }
 	})
+	.populate("timelog timelog.$.operatedBy")
 	.exec(function(err,projects){
 		if (err) {
 			res.status(500).send(err);
 		}else if(projects){
+				_.map([...projects.taskId, ...projects.IssueId, ...projects.BugId], function(ele){
+					if(ele.assignTo == null){
+						ele.assignTo = "";
+					}
+				})
 			res.status(200).send(projects);
 		}else{
 			res.status(404).send("NOT FOUND");
