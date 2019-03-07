@@ -8,6 +8,9 @@ var bcrypt = require('bcryptjs');
 var session = require('express-session');
 var fileUpload = require('express-fileupload');
 var cors = require('cors');
+var async = require('async');
+var crypto = require('crypto');
+
 const SALT_WORK_FACTOR = 10;
 var cron = require('node-cron');
 var request = require('request');
@@ -27,7 +30,7 @@ var app = express();
 app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
-mongoose.connect('mongodb://127.0.0.1:27017/projectMngtTool', {useNewUrlParser: true})
+mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
 
@@ -47,6 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('skipper')());
+
 
 //All Controller Router deifne hear
 app.use('/project',projectRouter);

@@ -22,7 +22,6 @@ var TaskSchema = new Schema({
 	startDate:{ type: Date },
 	completedAt: { type: Date },
 	dueDate:{ type: Date },
-	fileName: [{type: String}]
 
 },{timestamps: true});
 
