@@ -6,7 +6,8 @@ var UserSchema = new Schema({
 	name:  String,
 	userRole: {type:String, default: 'user'},
 	email: {type:String},
-    password: String
+    password: String,
+    tasks: [{type: Schema.Types.ObjectId , ref: 'Tasks'}]
 },{timestamps: true});
 
 

@@ -113,6 +113,7 @@ taskController.updateTaskStatusById = function(req,res){
 
 taskController.updateTaskStatusToComplete = function(req,res){
 	var taskId = req.params.taskId;
+	console.log("req . body of complete ======>" , req.body);
 	if(req.body.status==='complete'){
 		taskModel.findOne({_id: taskId}).exec((err, task)=>{
 			if (err) res.status(500).send(err);

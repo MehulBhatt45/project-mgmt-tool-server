@@ -5,7 +5,29 @@ var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 projectController.addProject = function(req,res){
-	projectModel
+	console.log("req.body =====>" , req.body);
+	var flag = 5;
+	projectModel.find({}).exec((err , allProjects)=>{
+		for(var i = 0; i < allProjects.length; i++){
+			if(allProjects[i].uniqueId == req.body.uniqueId){
+				//res.send(err);
+				console.log("hey");
+				flag = 4;
+			}
+		}
+		if(flag != 5){
+			res.send(err);
+		}
+		else{
+
+			var newProject = new projectModel(req.body);
+			newProject.save(function(err , savedProject){
+				if(err) res.send(err);
+				else res.status(200).send(savedProject);
+			})
+		}
+	})
+	/*projectModel
 	.find({})
 	.sort({"_id" : -1})
 	.limit(1)
@@ -23,7 +45,7 @@ projectController.addProject = function(req,res){
 			var newProject = new projectModel(req.body);
 			newProject['uniqueId'] = unique;
 			newProject['Team'] = [];
-			newProject.Team.push(req.user._id);
+			//newProject.Team.push(req.user._id);
 			newProject.save().then(result => {
 				res.status(200).json(result);
 			})
@@ -40,18 +62,17 @@ projectController.addProject = function(req,res){
 			})
 			.catch(err => console.log(err));
 		}
-	})
+	})*/
 
 
 }
 
 projectController.getAllProject = function(req,res){
-
 	projectModel
 	.find({})
-	.populate('pmanagerId taskId IssueId BugId Teams')
+	.populate('pmanagerId taskId IssueId BugId Teams ')
 	.populate({
-		path: 'taskId IssueId BugId',
+		path:' taskId IssueId BugId',
 		populate: { path: 'assignTo' }
 	})
 	.exec(function(err,projects){
@@ -67,11 +88,11 @@ projectController.getAllProject = function(req,res){
 }
 
 projectController.getProjectById = function(req,res){
-
+	var userId = req.params.userId;
 	var projectId = req.params.projectId;
 	projectModel
 	.findOne({_id:projectId})
-	.populate('pmanagerId taskId IssueId BugId Teams')
+	.populate('tasks pmanagerId taskId IssueId BugId Teams')
 	.populate({
 		path: 'taskId IssueId BugId',
 		populate: { path: 'assignTo' }
@@ -80,6 +101,7 @@ projectController.getProjectById = function(req,res){
 		if (err) {
 			res.status(500).send(err);
 		}else if(projects){
+			
 			res.status(200).send(projects);
 		}else{
 			res.status(404).send("NOT FOUND");
