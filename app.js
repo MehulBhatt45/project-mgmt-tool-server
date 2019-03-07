@@ -6,6 +6,7 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var session = require('express-session');
+var fileUpload = require('express-fileupload');
 var cors = require('cors');
 const SALT_WORK_FACTOR = 10;
 
@@ -20,7 +21,7 @@ var requeRouter = require('./routes/requirement');
 var commentRouter = require('./routes/comment');
 var tasksRouter = require('./routes/tasks');
 var app = express();
-
+app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
 mongoose.connect('mongodb://127.0.0.1:27017/newDB', {useNewUrlParser: true})
