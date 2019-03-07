@@ -8,9 +8,6 @@ var bcrypt = require('bcryptjs');
 var session = require('express-session');
 var fileUpload = require('express-fileupload');
 var cors = require('cors');
-var async = require('async');
-var crypto = require('crypto');
-
 const SALT_WORK_FACTOR = 10;
 
 //All Controller Router Variable deifne hear
@@ -22,12 +19,12 @@ var bugRouter = require('./routes/bug');
 var issueRouter = require('./routes/issue');
 var requeRouter = require('./routes/requirement');
 var commentRouter = require('./routes/comment');
-
+var tasksRouter = require('./routes/tasks');
 var app = express();
 app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
-mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
+mongoose.connect('mongodb://206.189.231.135:27017/projectMngtTool', {useNewUrlParser: true})
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
 
@@ -48,7 +45,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('skipper')());
 
-
 //All Controller Router deifne hear
 app.use('/project',projectRouter);
 app.use('/task',taskRouter);
@@ -57,7 +53,7 @@ app.use('/issue',issueRouter);
 app.use('/reque',requeRouter);
 app.use('/comment',commentRouter);
 app.use('/user', userRouter);
-
+app.use('/tasks' , tasksRouter);
 
 // catch 404 and forward to error handler
 
@@ -90,6 +86,6 @@ app.use(function(err, req, res, next) {
 });
 
 
- //app.listen(4000);
+// app.listen(4000);
 
 module.exports = app;
