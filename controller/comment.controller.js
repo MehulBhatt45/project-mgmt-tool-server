@@ -4,26 +4,52 @@ var userModel = require('./../model/user.model');
 var commentController = {};
 
 commentController.addComment = function(req,res){
-	console.log(req.body); 
-	var comment = commentModel(req.body);
-	comment.save(function(err, comment){
-		console.log(comment);
-		if (err) {
-			res.status(500).send(err);
-		}
-		taskModel
-		.findOne({ _id : comment.taskId})
-		.exec((error, task)=>{
-			task.comment.push(comment._id);
-			task.save();
-			res.status(200).send(comment);
+	console.log(req.body, req.files);
+	if(!req.files){
+		var comment = commentModel(req.body);
+		comment.save(function(err, comment){
+			console.log(comment);
+			if (err) {
+				res.status(500).send(err);
+			}
+			taskModel
+			.findOne({ _id : comment.taskId})
+			.exec((error, task)=>{
+				task.comment.push(comment._id);
+				task.save();
+				res.status(200).send(comment);
+			})
 		})
-	})
+	}else{
+		var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/task/comment/"+req.body.taskId+'/');
+		req.file('fileUpload').upload({
+			maxBytes: 50000000,
+			dirname: uploadPath,
+			saveAs: function (__newFileStream, next) {
+				dir.files(uploadPath, function(err, files) {
+					if (err){
+						mkdir(uploadPath, 0775);
+						return next(undefined, __newFileStream.filename);
+					}else {
+						return next(undefined, __newFileStream.filename);
+					}
+				});
+			}
+		}, function(err, files){
+			if (err) {
+				console.log(err);
+				res.status(500).send(err);
+			}else{
+				console.log(files)
+				// res.status(200).send("files uploaded successfully");
+			}
+		})
+	}
 }
 
 commentController.getAllComment = function(req,res){
 	commentModel
-	.find({})
+	.find({taskId: req.params.taskId})
 	.populate('userId')
 	.exec((err,comment)=>{
 		if (err){
