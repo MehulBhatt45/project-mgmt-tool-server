@@ -10,6 +10,8 @@ var fileUpload = require('express-fileupload');
 var cors = require('cors');
 var async = require('async');
 var crypto = require('crypto');
+var fileUpload = require('express-fileupload');
+// var mv = require('move-file');
 
 const SALT_WORK_FACTOR = 10;
 
@@ -22,6 +24,7 @@ var bugRouter = require('./routes/bug');
 var issueRouter = require('./routes/issue');
 var requeRouter = require('./routes/requirement');
 var commentRouter = require('./routes/comment');
+var employeeRouter = require('./routes/employee');
 
 var app = express();
 app.use(fileUpload());
@@ -43,7 +46,7 @@ app.use(session({
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('skipper')());
@@ -56,7 +59,8 @@ app.use('/bug',bugRouter);
 app.use('/issue',issueRouter);
 app.use('/reque',requeRouter);
 app.use('/comment',commentRouter);
-app.use('/user', userRouter);
+app.use('/user', userRouter); 
+app.use('/employee',employeeRouter);
 
 
 // catch 404 and forward to error handler

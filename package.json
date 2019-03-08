@@ -20,6 +20,7 @@
     "mongoose": "^5.4.12",
     "mongoose-bcrypt": "^1.6.0",
     "morgan": "~1.9.0",
+    "move-file": "^1.1.0",
     "node-dir": "^0.1.17",
     "nodemailer": "^5.1.1",
     "nodemailer-smtp-transport": "^2.7.4",
