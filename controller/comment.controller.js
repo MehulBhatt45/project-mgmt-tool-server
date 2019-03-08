@@ -22,9 +22,11 @@ commentController.addComment = function(req,res){
 }
 
 commentController.getAllComment = function(req,res){
-	commentModel.find({},function(err,comment){
-		if (err)
-		{
+	commentModel
+	.find({})
+	.populate('userId')
+	.exec((err,comment)=>{
+		if (err){
 			res.status(500).send(err);
 		}
 		res.status(200).send(comment);
