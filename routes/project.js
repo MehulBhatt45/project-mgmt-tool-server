@@ -4,8 +4,8 @@ var projectController = require('../controller/project.controller');
 var auth = require('./auth');
 
 /* GET home page. */
-router.post('/add-project', projectController.addProject);
-router.post('/add-project-without-file', projectController.addProject2);
+router.post('/add-project',projectController.addProjectWithoutImage);
+router.post('/add-project/file',projectController.addProjectWithImage);
 router.get('/all', projectController.getAllProject);
 router.get('/get-project-by-id/:projectId', projectController.getProjectById);
 router.delete('/delete/:projectId', projectController.deleteProjectById);
@@ -14,6 +14,5 @@ router.get('/get-by-title', projectController.getAllProjectOrderByTitle);
 router.post('/upload-file', projectController.uploadFilesToFolder);
 router.post('/get-all-files', projectController.getAllFiles);
 router.post('/delete-file', projectController.deleteFile);
-// router.get('/migretDB/:id', projectController.migretDb);
-
+//router.get('/get-project-by-id-and-by-userid/:projectId/:userId' , projectController.getProjectByIdAndUserId);
 module.exports = router;

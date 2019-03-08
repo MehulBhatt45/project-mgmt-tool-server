@@ -8,6 +8,7 @@
   "dependencies": {
     "async": "^2.6.2",
     "bcryptjs": "^2.4.3",
+    "compare-dates": "^1.2.0",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
@@ -19,14 +20,15 @@
     "http-errors": "~1.6.2",
     "jsonwebtoken": "^8.4.0",
     "mkdirp": "^0.5.1",
+    "moment": "^2.24.0",
     "mongoose": "^5.4.12",
     "mongoose-bcrypt": "^1.6.0",
     "morgan": "~1.9.0",
+    "node-cron": "^2.0.3",
     "node-dir": "^0.1.17",
-    "nodemailer": "^5.1.1",
-    "nodemailer-smtp-transport": "^2.7.4",
     "pug": "2.0.0-beta11",
     "random-token": "0.0.8",
+    "request": "^2.88.0",
     "sendmail": "^1.4.1",
     "skipper": "^0.8.7"
   }

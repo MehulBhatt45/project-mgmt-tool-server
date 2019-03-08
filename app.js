@@ -9,6 +9,8 @@ var session = require('express-session');
 var fileUpload = require('express-fileupload');
 var cors = require('cors');
 const SALT_WORK_FACTOR = 10;
+var cron = require('node-cron');
+var request = require('request');
 
 //All Controller Router Variable deifne hear
 
@@ -19,12 +21,14 @@ var bugRouter = require('./routes/bug');
 var issueRouter = require('./routes/issue');
 var requeRouter = require('./routes/requirement');
 var commentRouter = require('./routes/comment');
-
+var noticeRouter = require('./routes/notice');
+var tasksRouter = require('./routes/tasks');
 var app = express();
 app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
-mongoose.connect('mongodb://localhost:/projectMngtTool', {useNewUrlParser: true})
+
+mongoose.connect('mongodb://127.0.0.1:27017/projectMngtTool', {useNewUrlParser: true})
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
 
@@ -54,7 +58,9 @@ app.use('/bug',bugRouter);
 app.use('/issue',issueRouter);
 app.use('/reque',requeRouter);
 app.use('/comment',commentRouter);
+app.use('/notice',noticeRouter);
 app.use('/user', userRouter);
+app.use('/tasks' , tasksRouter);
 
 
 // catch 404 and forward to error handler
@@ -82,12 +88,24 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
+// render the error page
   res.status(err.status || 500);
   res.render('error');
 });
 
 
- //app.listen(4000);
+cron.schedule('0 0 * * *', () => {
+	console.log('running a task every minute');
+	request('http://localhost:4000/notice/updatenotice',function (error, response, body) {
+  console.log('error:', error); // Print the error if one occurred
+  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+  console.log('body:', body); // Print the HTML for the Google homepage.
+});
+
+});
+
+
+//app.listen(4000);
+
 
 module.exports = app;
