@@ -24,14 +24,14 @@ var app = express();
 app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
-mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
+mongoose.connect('mongodb://localhost:/projectMngtTool', {useNewUrlParser: true})
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
 
 // view engine setup`
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.set('view engine', 'html');
+// app.set('view engine', 'html');
 
 app.use(session({
 	secret: 'ssshhhhh',
