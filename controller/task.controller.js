@@ -27,6 +27,7 @@ taskController.addTask = function(req,res){
 		projectModel.findOne({_id: Savedtask.projectId})
 		.exec((err, resp)=>{
 			if (err) res.status(500).send(err);
+			console.log(err);
 			console.log(resp);
 			resp.taskId.push(Savedtask._id);
 			if(!_.includes(resp.Teams, Savedtask.assignTo)){
