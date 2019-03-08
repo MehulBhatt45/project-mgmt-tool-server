@@ -27,7 +27,6 @@ taskController.addTask = function(req,res){
 		projectModel.findOne({_id: Savedtask.projectId})
 		.exec((err, resp)=>{
 			if (err) res.status(500).send(err);
-			console.log(resp);
 			resp.taskId.push(Savedtask._id);
 			if(!_.includes(resp.Teams, Savedtask.assignTo)){
 				resp.Teams.push(Savedtask.assignTo);
@@ -181,7 +180,6 @@ taskController.addTask = function(req,res){
 			
 			
 			resp.save();
-			console.log("add task");
 			res.status(200).send(Savedtask);
 			console.log("sucess");
 		}
@@ -237,11 +235,9 @@ taskController.getTaskById = function(req,res){
 
 taskController.updateTaskById = function(req,res){
 	var taskId = req.params.taskId;
-	console.log(req.body);
 	taskModel.findOneAndUpdate({_id:taskId},{$set:req.body},{upsert:true, new:true},function(err,Updatedtask){
 		if (err) res.status(500).send(err);
 		else if(Updatedtask) {
-			console.log("===========================>after update", Updatedtask);
 			projectModel.findOne({_id: Updatedtask.projectId})
 			.exec((err, resp)=>{
 				if (err) res.status(500).send(err);
@@ -283,6 +279,7 @@ taskController.updateTaskStatusById = function(req,res){
 
 taskController.updateTaskStatusToComplete = function(req,res){
 	var taskId = req.params.taskId;
+	console.log("req . body of complete ======>" , req.body);
 	if(req.body.status==='complete'){
 		taskModel.findOne({_id: taskId}).exec((err, task)=>{
 			if (err) res.status(500).send(err);

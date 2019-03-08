@@ -1,13 +1,10 @@
 var projectModel = require('../model/project.model');
-var taskModel = require('../model/task.model');
-var bugModel = require('../model/bug.model');
-var issueModel = require('../model/issue.model');
 let projectController = {};
 var dir = require('node-dir');
 var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
-var _ = require('lodash');
+
 
 projectController.addProjectWithImage = function(req,res){
 	console.log("req files =============>" , req.files);
@@ -83,7 +80,7 @@ projectController.addProjectWithoutImage = function(req,res){
 			var newProject = new projectModel(req.body);
 			newProject['uniqueId'] = unique;
 			newProject['Team'] = [];
-			newProject.Team.push(req.body.pmanagerId);
+			newProject.Team.push(req.user._id);
 			newProject.save().then(result => {
 				res.status(200).json(result);
 			})
@@ -94,7 +91,7 @@ projectController.addProjectWithoutImage = function(req,res){
 			var unique = text+"-"+1;
 			newProject['uniqueId'] = unique;
 			newProject['Team'] = [];
-			newProject.Team.push(req.body.pmanagerId);
+			newProject.Team.push(req.user._id);
 			newProject.save().then(result => {
 				res.status(200).json(result);
 			})
@@ -104,28 +101,19 @@ projectController.addProjectWithoutImage = function(req,res){
 }
 
 
-projectController.getAllProject = function(req,res){
 
+projectController.getAllProject = function(req,res){
 	projectModel
 	.find({})
-	.populate('pmanagerId taskId IssueId BugId Teams')
+	.populate('pmanagerId taskId IssueId BugId Teams tasks')
 	.populate({
-		path: 'taskId IssueId BugId',
+		path:' taskId IssueId BugId tasks',
 		populate: { path: 'assignTo' }
 	})
-	.populate("timelog timelog.$.operatedBy")
 	.exec(function(err,projects){
 		if (err) {
 			res.status(500).send(err);
 		}else if(projects){
-			console.log(projects);
-			_.forEach(projects, function(project){
-				_.map([...project.taskId, ...project.IssueId, ...project.BugId], function(ele){
-					if(ele.assignTo == null){
-						ele.assignTo = "";
-					}
-				})
-			})
 			res.status(200).send(projects);
 		}else{
 			res.status(404).send("NOT FOUND");
@@ -135,25 +123,20 @@ projectController.getAllProject = function(req,res){
 }
 
 projectController.getProjectById = function(req,res){
-
+	var userId = req.params.userId;
 	var projectId = req.params.projectId;
 	projectModel
 	.findOne({_id:projectId})
-	.populate('pmanagerId taskId IssueId BugId Teams')
+	.populate('tasks pmanagerId taskId IssueId BugId Teams')
 	.populate({
 		path: 'taskId IssueId BugId',
 		populate: { path: 'assignTo' }
 	})
-	.populate("timelog timelog.$.operatedBy")
 	.exec(function(err,projects){
 		if (err) {
 			res.status(500).send(err);
 		}else if(projects){
-				_.map([...projects.taskId, ...projects.IssueId, ...projects.BugId], function(ele){
-					if(ele.assignTo == null){
-						ele.assignTo = "";
-					}
-				})
+			
 			res.status(200).send(projects);
 		}else{
 			res.status(404).send("NOT FOUND");
@@ -248,25 +231,5 @@ projectController.deleteFile = function(req, res){
 		res.status(200).send("file deleted");
 	}); 
 }
-
-// projectController.migretDb = function(req, res){
-// 	projectModel
-// 	.findOne({_id : req.params.id })
-// 	.exec((err, resp)=>{
-// 		issueModel
-// 		.find({projectId:resp._id})
-// 		.select('_id -projectId -createdBy')
-// 		.exec((e,t)=>{
-// 			resp.IssueId=[];
-// 			console.log(t, t.length);
-// 			_.forEach(t, (item)=>{
-// 				resp.IssueId.push(item._id);
-// 			})
-// 			console.log(resp);
-// 			resp.save();
-// 			res.status(200).send(resp);
-// 		})
-// 	})
-// }
 
 module.exports = projectController;

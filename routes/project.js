@@ -14,6 +14,5 @@ router.get('/get-by-title', projectController.getAllProjectOrderByTitle);
 router.post('/upload-file', projectController.uploadFilesToFolder);
 router.post('/get-all-files', projectController.getAllFiles);
 router.post('/delete-file', projectController.deleteFile);
-// router.get('/migretDB/:id', projectController.migretDb);
-
+//router.get('/get-project-by-id-and-by-userid/:projectId/:userId' , projectController.getProjectByIdAndUserId);
 module.exports = router;

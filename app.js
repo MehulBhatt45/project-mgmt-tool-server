@@ -22,12 +22,12 @@ var issueRouter = require('./routes/issue');
 var requeRouter = require('./routes/requirement');
 var commentRouter = require('./routes/comment');
 var noticeRouter = require('./routes/notice');
-
+var tasksRouter = require('./routes/tasks');
 var app = express();
 app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
-mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
+mongoose.connect('mongodb://127.0.0.1:27017/projectMngtTool', {useNewUrlParser: true})
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
 
@@ -59,7 +59,7 @@ app.use('/reque',requeRouter);
 app.use('/comment',commentRouter);
 app.use('/notice',noticeRouter);
 app.use('/user', userRouter);
-
+app.use('/tasks' , tasksRouter);
 
 
 // catch 404 and forward to error handler
@@ -105,7 +105,6 @@ cron.schedule('0 0 * * *', () => {
 
 
 //app.listen(4000);
-
 
 
 module.exports = app;

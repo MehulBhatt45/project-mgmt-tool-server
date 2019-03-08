@@ -6,8 +6,8 @@ var UserSchema = new Schema({
 	name:  String,
 	userRole: {type:String, default: 'user'},
 	email: {type:String},
-    password: String
-
+    password: String,
+    tasks: [{type: Schema.Types.ObjectId , ref: 'Tasks'}]
 },{timestamps: true});
 
 
@@ -27,15 +27,11 @@ UserSchema.pre('save', function(next) {
     });
 });
 
-UserSchema.methods.comparePassword = function(userPassword, currentPassword, cb) {
-    bcrypt.compare(userPassword, currentPassword, function(err, isMatch) {
-        console.log(userPassword, currentPassword);
+UserSchema.methods.comparePassword = function(userPassword, cb) {
+    bcrypt.compare(userPassword, this.password, function(err, isMatch) {
         if (err) return cb(err);
         cb(null, isMatch);
     });
 };
-
-
-
 
 module.exports = mongoose.model('User',UserSchema);
