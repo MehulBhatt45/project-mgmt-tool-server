@@ -17,11 +17,11 @@ var ProjectSchema = new Schema({
 		require: true,
 		text: true
 	},
-	clientEmail: {type: String , /*required: true*/},
-	clientFullName:  {type: String, /*required: true*/},
-	clientContactNo: {type: String, /*required: true*/},
-	clientDesignation: {type: String},	
 	createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
+	clientEmail:{type:String},
+	clientFullName:{type:String},
+	clientContactNo:{type:String},
+	clientDesignation:{type:String},
 },{timestamps: true});
 
 

@@ -187,6 +187,9 @@ taskController.addTask = function(req,res){
 })
 }
 
+
+
+
 taskController.getAllTask = function(req,res){
 	taskModel.find({}).exec(function(err,tasks){
 		if (err) res.status(500).send(err);

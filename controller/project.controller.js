@@ -4,30 +4,65 @@ var dir = require('node-dir');
 var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
-projectController.addProject = function(req,res){
-	console.log("req.body =====>" , req.body);
-	var flag = 5;
-	projectModel.find({}).exec((err , allProjects)=>{
-		for(var i = 0; i < allProjects.length; i++){
-			if(allProjects[i].uniqueId == req.body.uniqueId){
-				//res.send(err);
-				console.log("hey");
-				flag = 4;
-			}
-		}
-		if(flag != 5){
-			res.send(err);
+
+
+projectController.addProjectWithImage = function(req,res){
+	console.log("req files =============>" , req.files);
+	console.log("req body",req.body);
+	var samplefile = req.files.uploadfile;
+	samplefile.mv('./uploads/avatar/'+samplefile.name,function(err,result){
+		if(err){
+			console.log(err);
+			res.status(500).send(err);
 		}
 		else{
+			var avatar='/uploads/avatar/'+samplefile.name;
+			req.body.avatar=avatar;
 
-			var newProject = new projectModel(req.body);
-			newProject.save(function(err , savedProject){
-				if(err) res.send(err);
-				else res.status(200).send(savedProject);
+			projectModel
+			.find({})
+			.sort({"_id" : -1})
+			.limit(1)
+			.exec((err, project)=>{
+				if (err) {
+					console.log(err);
+					res.status(500).send(err);
+				}else if(project && project.length==1){
+					var maxUniqeId = project[0].uniqueId;
+					var length = maxUniqeId.length;
+					var trimmedString = maxUniqeId.substring(8, length);
+					var number = parseInt(trimmedString)+1;
+					var text = "PROJECT"
+					var unique = text+"-"+number;
+					var newProject = new projectModel(req.body);
+					newProject['uniqueId'] = unique;
+					newProject['Team'] = [];
+					newProject.Team.push(req.body.createdBy);
+					newProject.save().then(result => {
+						res.status(200).json(result);
+					})
+					.catch(err => console.log(err));
+				}else{
+					var newProject = new projectModel(req.body);
+					var text = "PROJECT"
+					var unique = text+"-"+1;
+					newProject['uniqueId'] = unique;
+					newProject['Team'] = [];
+					newProject.Team.push(req.body.createdBy);
+					newProject.save().then(result => {
+						res.status(200).json(result);
+					})
+					.catch(err => console.log(err));
+				}
 			})
 		}
+
 	})
-	/*projectModel
+}
+
+projectController.addProjectWithoutImage = function(req,res){
+	console.log("req body",req.body);
+	projectModel
 	.find({})
 	.sort({"_id" : -1})
 	.limit(1)
@@ -45,7 +80,7 @@ projectController.addProject = function(req,res){
 			var newProject = new projectModel(req.body);
 			newProject['uniqueId'] = unique;
 			newProject['Team'] = [];
-			//newProject.Team.push(req.user._id);
+			newProject.Team.push(req.user._id);
 			newProject.save().then(result => {
 				res.status(200).json(result);
 			})
@@ -62,10 +97,10 @@ projectController.addProject = function(req,res){
 			})
 			.catch(err => console.log(err));
 		}
-	})*/
-
-
+	})
 }
+
+
 
 projectController.getAllProject = function(req,res){
 	projectModel
