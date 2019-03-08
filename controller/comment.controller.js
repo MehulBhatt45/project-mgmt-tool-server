@@ -1,17 +1,24 @@
 var commentModel = require('./../model/comment.model');
+var taskModel = require('../model/tasks.model')
 var userModel = require('./../model/user.model');
 var commentController = {};
 
 commentController.addComment = function(req,res){
+	console.log(req.body); 
 	var comment = commentModel(req.body);
 	comment.save(function(err, comment){
 		console.log(comment);
 		if (err) {
 			res.status(500).send(err);
 		}
-		res.status(200).send(comment);
+		taskModel
+		.findOne({ _id : comment.taskId})
+		.exec((error, task)=>{
+			task.comment.push(comment._id);
+			task.save();
+			res.status(200).send(comment);
+		})
 	})
-	console.log(req.body); 
 }
 
 commentController.getAllComment = function(req,res){
@@ -105,11 +112,11 @@ commentController.updateCommentByCommentId = function(req,res){
 	commentModel.findOneAndUpdate({_id: req.params.id},req.body, {upsert: true, new: true}, 
 		function(err, comment){
 			if (err)
-			 {
-			 	res.status(500).send(err);
-			 }
-			 res.status(200).send(comment);
-	})
+			{
+				res.status(500).send(err);
+			}
+			res.status(200).send(comment);
+		})
 }
 
 module.exports = commentController;

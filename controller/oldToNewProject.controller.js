@@ -40,13 +40,13 @@ oldToNewProject.convertProjects = function(req , res){
 			for(var j = 0; j<foundProjects[i].Teams.length; j++){
 				newProject['Teams'].push(foundProjects[i].Teams[j]);	
 			}
+			console.log("new out=========>" , newProject_id);
 			console.log("foundProjects[i]._id" , " i======>",i , foundProjects[i]._id);
 				//oldProject_id.push(foundProjects[i]._id);
 				projectModel.findOneAndUpdate({_id: foundProjects[i]._id} , newProject , {upsert: true , new: true} , function(err , savedProject){
-					console.log("savedProject" , savedProject);
+					res.status(200).send(savedProject);
 				})
 			}
-			console.log("new out=========>" , newProject_id);
 		})
 }
 
