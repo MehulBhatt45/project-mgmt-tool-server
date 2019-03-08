@@ -69,37 +69,37 @@ commentController.deleteCommentByUserId = function(req,res){
 	})
 }
 
-commentController.getCommentByUserId = function(req,res){
-	commentModel.find({userId: req.body.userId})
-	.exec((err, comments)=>{
-		if (err) {
-			res.status(500).send(err);
-		}else if(comments && comments.length){
-			res.status(200).send(comments)
-		}else{
-			res.status(404).send("No comments for this user");
-		}
-	})
-}
+// commentController.getCommentByUserId = function(req,res){
+// 	commentModel.find({userId: req.body.userId})
+// 	.exec((err, comments)=>{
+// 		if (err) {
+// 			res.status(500).send(err);
+// 		}else if(comments && comments.length){
+// 			res.status(200).send(comments)
+// 		}else{
+// 			res.status(404).send("No comments for this user");
+// 		}
+// 	})
+// }
 
 
-commentController.getCommentByCommentId = function(req,res){
-	commentModel.findOne({_id: req.params.id},function(err,comment){
-		if (err) {
-			res.status(500).send(err);
-		}
-		res.status(200).send(comment);
-	})
-}
+// commentController.getCommentByCommentId = function(req,res){
+// 	commentModel.findOne({_id: req.params.id},function(err,comment){
+// 		if (err) {
+// 			res.status(500).send(err);
+// 		}
+// 		res.status(200).send(comment);
+// 	})
+// }
 
-commentController.deleteCommentByCommentId = function(req,res){
-	commentModel.findOneAndRemove({_id: req.params.id}, function(err,comment){
-		if (err) {
-			res.status(500).send(err);
-		}
-		res.status(200).send(comment);
-	})
-}
+// commentController.deleteCommentByCommentId = function(req,res){
+// 	commentModel.findOneAndRemove({_id: req.params.id}, function(err,comment){
+// 		if (err) {
+// 			res.status(500).send(err);
+// 		}
+// 		res.status(200).send(comment);
+// 	})
+// }
 
 commentController.updateCommentByCommentId = function(req,res){
 	commentModel.findOneAndUpdate({_id: req.params.id},req.body, {upsert: true, new: true}, 

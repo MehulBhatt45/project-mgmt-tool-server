@@ -8,9 +8,6 @@ var bcrypt = require('bcryptjs');
 var session = require('express-session');
 var fileUpload = require('express-fileupload');
 var cors = require('cors');
-var async = require('async');
-var crypto = require('crypto');
-
 const SALT_WORK_FACTOR = 10;
 var cron = require('node-cron');
 var request = require('request');
@@ -37,6 +34,8 @@ mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: 
 // view engine setup`
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+app.set('view engine', 'html');
+
 app.use(session({
 	secret: 'ssshhhhh',
 	resave: true,
@@ -50,7 +49,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('skipper')());
-
 
 //All Controller Router deifne hear
 app.use('/project',projectRouter);
