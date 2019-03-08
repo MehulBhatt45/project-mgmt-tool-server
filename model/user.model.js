@@ -3,6 +3,7 @@ var bcrypt = require('bcryptjs');
 SALT_WORK_FACTOR = 10;
 var Schema = mongoose.Schema;
 var UserSchema = new Schema({
+
     fname:  String,
     lname: String,
     name:  String,
@@ -13,8 +14,10 @@ var UserSchema = new Schema({
     phone: Number,
     experience:String,
     profilePhoto: String,
-    CV: String
+    CV: String,
 
+
+    tasks: [{type: Schema.Types.ObjectId , ref: 'Tasks'}]
 },{timestamps: true});
 
 
@@ -34,15 +37,11 @@ UserSchema.pre('save', function(next) {
     });
 });
 
-UserSchema.methods.comparePassword = function(userPassword, currentPassword, cb) {
-    bcrypt.compare(userPassword, currentPassword, function(err, isMatch) {
-        console.log(userPassword, currentPassword);
+UserSchema.methods.comparePassword = function(userPassword, cb) {
+    bcrypt.compare(userPassword, this.password, function(err, isMatch) {
         if (err) return cb(err);
         cb(null, isMatch);
     });
 };
-
-
-
 
 module.exports = mongoose.model('User',UserSchema);

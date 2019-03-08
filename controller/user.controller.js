@@ -54,6 +54,7 @@ userController.addUser = function(req,res){
 
 
 
+
 		}
 	});
 }
@@ -128,6 +129,7 @@ userController.addUser = function(req,res){
 				}
 			})
 
+
 		}
 
 		userController.updateUserById = function(req,res){
@@ -191,7 +193,7 @@ userController.addUser = function(req,res){
 			if (err) {
 				return res.status(500).send( { errMsg : err });
 			}else if(user){
-				user.comparePassword(req.body.password, user.password,(error, isMatch)=>{
+				user.comparePassword(req.body.password,(error, isMatch)=>{
 					if (error){
 						return res.status(403).send( { errMsg : 'User not found' });
 					}else if(isMatch){
@@ -229,7 +231,7 @@ userController.getUserWorkLogs = function(req,res){
 			});
 		} else {
 			projectModel
-			.find({pmanagerId: req.body.pmId})
+			.find({pmanagerId: req.user._id})
 			.exec((err, project)=>{
 				if (err) {
 					res.status(500).send(err);
