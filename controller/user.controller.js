@@ -11,53 +11,75 @@ var _ = require('lodash');
 var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
+var dir = require('node-dir');
 // var mv = require('mv');
 // var fileUpload = require('express-fileupload');
 
-userController.addUser = function(req,res){
-	console.log("req files =============>" , req.files);
-	console.log("req body",req.body);
-	var samplefile = req.files.profilePhoto;
-	var samplefile1= req.files.CV;
-	console.log("samplefile==>",samplefile);
-	samplefile.mv('./uploads/profilePhoto/'+samplefile.name,function(err,result){
-		if(err){
-			console.log(err);
-			res.status(500).send(err);
-		}
-		else{
-			var profilePhoto='/uploads/profilePhoto/'+samplefile.name;
-			req.body.profilePhoto=profilePhoto;
+// userController.addUser = function(req,res){
+// 	console.log("req files =============>" , req.files);
+// 	console.log("req body",req.body);
+// 	var samplefile = req.files.profilePhoto;
+// 	var samplefile1= req.files.CV;
+// 	console.log("samplefile==>",samplefile);
+// 	samplefile.mv('./uploads/profilePhoto/'+samplefile.name,function(err,result){
+// 		samplefile1.mv('./uploads/CV/'+samplefile1.name,function(err,result){
+// 			if(err){
+// 				console.log(err);
+// 				res.status(500).send(err);
+// 			}
+// 			else{
+// 				var profilePhoto='/uploads/profilePhoto/'+samplefile.name;
+// 				req.body.profilePhoto=profilePhoto;
 
-			var CV='/uploads/profilePhoto/'+samplefile1.name;
-			req.body.CV=CV;
-
-
-
-			userModel.findOne({email: req.body.email})
-			.exec((err,founduser)=>{
-				if (err) {
-					res.status(500).send(err);
-				}else if (founduser){
-					res.status(400).send('user already exists! ');
-				}else{
-					var User = new userModel(req.body);
-					User.save((error, newUser)=>{
-						if (err) {
-							res.status(500).send(err);
-						}		
-						res.status(200).send(newUser);
-					});
-				}
-				// console.log("founduser",founduser);
-			});
+// 				var CV='/uploads/profilePhoto/'+samplefile1.name;
+// 				req.body.CV=CV;
+// 			// console.log(CV);
 
 
 
+// 			userModel.findOne({email: req.body.email})
+// 			.exec((err,founduser)=>{
+// 				if (err) {
+// 					res.status(500).send(err);
+// 				}else if (founduser){
+// 					res.status(400).send('user already exists! ');
+// 				}else{
+// 					var User = new userModel(req.body);
+// 					User.save().then(result=>{
+// 						res.status(200).send(result);
 
-		}
-	});
-}
+// 					})
+// 					.catch(err => console.log(err));	
+
+// 				}
+
+// 				// console.log("founduser",founduser);
+// 			});
+// 		}
+// 	});
+// 	});
+// }
+// userController.addUser_without_file = function(req,res){
+// 	console.log("req body",req.body);
+// 	userModel.findOne({email: req.body.email})
+// 	.exec((err,founduser)=>{
+// 		if (err) {
+// 			res.status(500).send(err);
+// 		}else if (founduser){
+// 			res.status(400).send('user already exists! ');
+// 		}else{
+// 			var User = new userModel(req.body);
+// 			User.save((error, newUser)=>{
+// 				if (err) {
+// 					res.status(500).send(err);
+// 				}		
+// 				res.status(200).send(newUser);
+// 				console.log(res);
+// 			});
+// 		}
+// 				// console.log("founduser",founduser);
+// 			});
+// }
 
 
 
@@ -90,100 +112,169 @@ userController.addUser = function(req,res){
 // 	})
 // }
 
-
-
-	
-
-		userController.getSingleUser = function(req, res){
-			userModel.findOne({_id:req.params.userId}, function(err,getuser){
-				if(err){
-					res.status(500).send(err);
-				}
-				console.log(getuser)
-				res.status(200).send(getuser);
-			})
-		}
-
-		userController.resetPassword = function(req,res){
-			console.log(req.body);
-			userModel.findOne({ email:req.body.email}).exec((err,user)=>{
+userController.addUser = function(req,res){
+	userModel.findOne({email: req.body.email})
+	.exec((err,founduser)=>{
+		if (err) {
+			res.status(500).send(err);
+		}else if (founduser){
+			res.status(400).send('user already exists! ');
+		}else{
+			var User = new userModel(req.body);
+			User.save((err, newUser)=>{
 				if (err) {
 					res.status(500).send(err);
-				}else if (user) {
-					console.log("====================> USer", user);
-					user.comparePassword(req.body.currentPassword, user.password, (error, isMatch)=>{
-						if (error){
-							return res.status(500).send(error);
-						}else if(isMatch){
-							user.password = req.body.newPassword;
-							user.save();
-							console.log(user);
-							res.status(200).send(user);
-						}
-						else{
-							return res.status(403).send( { errMsg : 'password incorrect' });	
-						}
-					});
-				}else{
-					return res.status(400).send( { errMsg : 'Bad request' });
-				}
-			})
+				}		
+				// res.status(200).send(newUser);
+				var uploadPath = path.join(__dirname, "../uploads/"/+req.body.user+"/");
+				console.log("uploadprofile path===>",uploadPath);
+				req.file('profilePhoto').upload({
+					maxBytes: 50000000,
+					dirname: uploadPath,
+					saveAs: function (__newFileStream, next) {
+						dir.files(uploadPath, function(err, files) {
+							if (err){
+								mkdir(uploadPath, 0775);
+								return next(undefined, __newFileStream.filename);
+							}else {
+								return next(undefined, __newFileStream.filename);
+							}
+						});
+					}
+				}, function(err, files){
+					if (err) {
+						console.log(err);
+						res.status(500).send(err);
+					}else{
+						console.log(files)
+						// res.status(200).send("files uploaded successfully");
+						var uploadPath1 = path.join(__dirname, "../uploads/"+req.body.userId+"/");
+						console.log(uploadPath1);
+						req.file('CV').upload({
+							maxBytes: 50000000,
+							dirname: uploadPath1,
+							saveAs: function (__newFileStream, next) {
+								dir.files(uploadPath1, function(err, files) {
+									if (err){
+										mkdir(uploadPath1, 0775);
+										return next(undefined, __newFileStream.filename);
+									}else {
+										return next(undefined, __newFileStream.filename);
+									}
+								});
+							}
+						}, function(err, files){
+							if (err) {
+								console.log(err);
+								res.status(500).send(err);
+							}else{
+								console.log(files)
+								res.status(200).send("files uploaded successfully");
+							}
+						})
+					}
+
+				})
+			});	
+		}			
+	})
+}
 
 
+
+
+
+
+userController.getSingleUser = function(req, res){
+	userModel.findOne({_id:req.params.userId}, function(err,getuser){
+		if(err){
+			res.status(500).send(err);
 		}
+		console.log(getuser)
+		res.status(200).send(getuser);
+	})
+}
 
-		userController.updateUserById = function(req,res){
-
-			userModel.findOneAndUpdate({_id:req.params.id},{$set:req.body},function(err,getuser){
-				if(err){
-					res.status(500).send(err);
+userController.resetPassword = function(req,res){
+	console.log(req.body);
+	userModel.findOne({ email:req.body.email}).exec((err,user)=>{
+		if (err) {
+			res.status(500).send(err);
+		}else if (user) {
+			console.log("====================> USer", user);
+			user.comparePassword(req.body.currentPassword, user.password, (error, isMatch)=>{
+				if (error){
+					return res.status(500).send(error);
+				}else if(isMatch){
+					user.password = req.body.newPassword;
+					user.save();
+					console.log(user);
+					res.status(200).send(user);
 				}
-				res.status(200).send(getuser);
-			})
-			console.log(req.body);
+				else{
+					return res.status(403).send( { errMsg : 'password incorrect' });	
+				}
+			});
+		}else{
+			return res.status(400).send( { errMsg : 'Bad request' });
 		}
+	})
 
-		userController.getAllUsers = function(req, res){
-			userModel.find({userRole: 'user'})
-			.exec((err,users)=>{
+
+}
+
+userController.updateUserById = function(req,res){
+
+	userModel.findOneAndUpdate({_id:req.params.id},{$set:req.body},function(err,getuser){
+		if(err){
+			res.status(500).send(err);
+		}
+		res.status(200).send(getuser);
+	})
+	console.log(req.body);
+}
+
+userController.getAllUsers = function(req, res){
+	userModel.find({userRole: 'user'})
+	.exec((err,users)=>{
+		if (err) {
+			res.status(500).send(err);
+		}else if (users){
+			res.status(200).send(users);
+		}else{
+			res.status(404).send( { msg : 'Users not found' });
+		}
+	})
+}
+
+userController.getAllUsersByProjectManager = function(req, res){
+	var uniqueArray = [];
+	projectModel
+	.find({pmanagerId: req.body.pmId})
+	.exec((err, project)=>{
+		if(err){
+			res.status(500).send(err);
+		}else{
+			_.forEach(project, (pro)=>{
+				uniqueArray.push(...pro.Teams);
+			})
+			userModel
+			.find({_id: { $in: uniqueArray }, userRole:'user'})
+			.exec((error, users)=>{
 				if (err) {
 					res.status(500).send(err);
 				}else if (users){
+					console.log(users);
 					res.status(200).send(users);
 				}else{
 					res.status(404).send( { msg : 'Users not found' });
 				}
 			})
 		}
+	})
+}
 
-		userController.getAllUsersByProjectManager = function(req, res){
-			var uniqueArray = [];
-			projectModel
-			.find({pmanagerId: req.body.pmId})
-			.exec((err, project)=>{
-				if(err){
-					res.status(500).send(err);
-				}else{
-					_.forEach(project, (pro)=>{
-						uniqueArray.push(...pro.Teams);
-					})
-					userModel
-					.find({_id: { $in: uniqueArray }, userRole:'user'})
-					.exec((error, users)=>{
-						if (err) {
-							res.status(500).send(err);
-						}else if (users){
-							console.log(users);
-							res.status(200).send(users);
-						}else{
-							res.status(404).send( { msg : 'Users not found' });
-						}
-					})
-				}
-			})
-		}
-
-		userController.logIn = function(req,res){
+userController.logIn = function(req,res){
 	// console.log("req.method" , req.method);
 	if(req.method == 'POST' && req.body.email && req.body.password){
 		userModel.findOne({ email : req.body.email } )

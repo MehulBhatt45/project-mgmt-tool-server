@@ -1,0 +1,470 @@
+body{
+	padding: 0;
+	margin: 0;
+}
+ .header_top{
+	background-color: #364890;
+	
+}
+.mdc-list-item{
+	display: inline-block;
+	color: white
+}
+.contact li{
+	border-right: 1px solid white;
+	color: white;
+}
+.contact li:last-child{
+	border-right: none;
+}
+.mdc-top-app-bar__section--align-end{
+float: right;
+margin-top: 20px;
+}
+.header_middle{
+  background-color: white;
+}
+.txt_clr{
+  color: black;
+   font-family: 'work_sansregular';
+}
+.mdc-button--raised{
+/*margin:0;
+padding: 0;*/
+border: none;
+outline: none;
+border-radius: 5px;
+margin-top: 0px;
+}
+.mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+    background-color: #fff;
+}
+.mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+    
+    color: #000;
+}
+.mdc-button--dense{
+	border-radius: 5px;
+	border:none;
+	outline: none;
+	padding: 10px;
+  color:white;
+  font-family: 'work_sansblack';
+}
+.material-icons{
+	margin:5px;
+}
+
+.btn_signin{
+	/*background-color: #eda33a;*/
+  margin-right: 0px;
+  background-image: linear-gradient(#f5e67b,#e6a02a);
+}
+.btn_reg{
+	/*background-color: #d7363b;*/
+	margin-left: 5px;
+  background-image: linear-gradient(#ee8551,#e6573f);
+}
+.header_middle img{
+	height: 55px;
+	width: 60px;
+	margin-left: 200px;
+}
+
+.menu{
+	margin-left: 150px;
+	margin-top: 10px;
+	float: right;
+  margin-bottom: -20px;
+}
+
+.header_buttom{
+	background-color: #408fc8;
+
+}
+/*.search input[type=text]{
+  width: 50%;
+  height:200px;
+  padding: 10px;
+  margin: 20px;
+
+}*/
+.mdc-text-field{
+	box-sizing: border-box;
+	height:40px;
+	margin: 10px;
+	width: 35%;
+	margin-left: 440px;
+}
+.btn_letsgo{
+	background-color: #f3c458;
+	width:60%;
+	height: 100%;
+	border-radius: 0;
+  background-image: linear-gradient(#f5e67b,#e6a02a);
+}
+.bg_image{
+	background-image: url("../images/2.png");
+	height: 400px;
+	width: 100%;
+	position: relative;
+	background-size: 100% 100%;
+
+}
+.img_content{
+ margin-top: 135px;
+    color: white;
+}
+.summer{
+   font-family: 'work_sansbold';
+}
+.mdc-layout-grid{
+	margin:0;
+	padding: 0;
+}
+.head1{
+
+   
+    text-align: center;
+    border: 1px solid orange;
+    color: white;
+    text-shadow: 1px 1px;
+    background-image: linear-gradient(#f5e67b,#e6a02a);
+  }
+  .content1{
+
+    border: 1px solid orange;
+    padding: 12px;
+  }
+  .foot1{
+
+    color: orange;
+  }
+  .head2{
+
+    background-color: #c12b50;
+    text-align: center;
+    border: 1px solid maroon;
+    color: white;
+    text-shadow: 1px 1px;
+  }
+  .content2{
+
+    border: 1px solid maroon;
+    padding: 12px;
+  }
+  .foot2{
+
+    color: maroon;
+  }
+  .head3{
+
+    background-color: #338ac4;
+    text-align: center;
+    border: 1px solid lightblue;
+    color: white;
+    text-shadow: 1px 1px;
+  }
+  .content3{
+
+    border: 1px solid lightblue;
+    padding: 12px;
+  }
+  .foot3{
+
+    color: lightblue;
+  }
+  .head4{
+
+    background-color: #533887;
+    text-align: center;
+    border: 1px solid #7D3C98;
+    color: white;
+    text-shadow: 1px 1px;
+  }
+  .content4{
+
+    border: 1px solid #7D3C98;
+    padding: 12px;
+  }
+  .foot4{
+
+    color: #7D3C98;
+  }
+  .head5{
+
+    background-color: #0f3681;
+    text-align: center;
+    border: 1px solid #000080;
+    color: white;
+    text-shadow: 1px 1px;
+  }
+  .content5{
+
+    border: 1px solid #000080;
+    padding: 12px;
+  }
+  .foot5{
+
+    color: #000080;
+  }
+  .abot_us{
+  	background-color: #f3f3f3;
+  	margin-top: 20px;
+  }
+.about_img img{
+	width: 350px;
+	height: 350px;
+	border-radius: 50%;
+  margin: 20px;
+  border:5px solid #e6573f;
+}
+.about_content{
+  margin: 20px;
+}
+.btn_readmore{
+	background-color: #d52c31;
+  margin: 20px;
+	color: white;
+  background-image: linear-gradient(#ee8551,#e6573f);
+}
+.card{
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: 20px;
+}
+ .card_box{
+background-color: red; 
+/*border: 1px solid gray;*/
+}
+.mdc-image-list__image{
+ height: 150px;
+ width: 100%;
+}
+.card-title{
+  font-size: 20px;
+}
+.card_content{
+  /*padding:15px;*/
+  padding-left: 20px;
+  /*padding-top: 0px*/
+}
+.lbl1{
+   color: linear-gradient(#ee8551,#e6573f);
+   color: red;
+}
+.lbl2{
+  color:#e4a734;
+}
+.lbl3{
+  color: #2583c1;
+}
+.lbl4{
+ color: #583d8e;
+}
+.lbl5{
+   color: #a01944;
+}
+.lbl6{
+   color: #0d3781;
+}
+.btn1{
+  background-color:#d8343b;
+  margin-bottom: 20px;
+  background-image: linear-gradient(#ee8551,#e6573f);
+}
+.btn2{
+  background-color:#e4a734;
+  background-image: linear-gradient(#f5e67b,#e6a02a);
+  margin-bottom: 20px;
+}
+.btn3{
+  background-color:#2583c1;
+  margin-bottom: 20px;
+}
+.btn4{
+  background-color:#583d8e;
+  margin-bottom: 20px;
+}
+.btn5{
+  background-color:#a01944;
+  margin-bottom: 20px;
+}
+.btn6{
+  background-color:#0d3781;
+  margin-bottom: 20px;
+}
+.holyday {
+  /*background-color:lightgray;*/
+  border:1px solid lightgray;
+}
+ .holyday label{
+  margin-left: 235px;
+  margin-top: 10px;
+ }
+
+ 
+.mdc-typography--caption ,h3 , label{
+  text-align: center;
+}
+.holyday_txt1{
+  color:#6c4c95;
+ }
+.holyday_btn1{
+  margin-bottom:15px;
+  background-color: #6c4c95;
+}
+.holyday_txt2{
+  color:#d7383c;
+ }
+.holyday_btn2{
+  margin-bottom:15px;
+  background-color: #d7383c;
+  background-image: linear-gradient(#ee8551,#e6573f);
+}
+.holyday_txt3{
+  color:#153b86;
+ }
+.holyday_btn3{
+  margin-bottom:15px;
+  background-color: #153b86;
+}
+.holyday_txt4{
+  color:#a31a46;
+ }
+.holyday_btn4{
+  margin-bottom:15px;
+  background-color: #a31a46;
+
+}
+.holyday_txt5{
+  color:#ebaf41;
+ }
+.holyday_btn5{
+  margin-bottom:15px;
+  background-color: #ebaf41;
+  background-image: linear-gradient(#f5e67b,#e6a02a);
+}
+.holyday_txt6{
+  color:#2d87c3;
+ }
+.holyday_btn6{
+  margin-bottom:15px;
+  background-color: #2d87c3;
+}
+.tab_section{
+  padding-right: 20px;
+   margin-top: 20px;
+}
+.footer{
+  background-color: #3f3f41;
+}
+.footer_about{
+  color:#fee06c;
+  font-family: 'work_sansbold';
+}
+.f_about_p{
+  color: white;
+}
+.f_img{
+  margin-top: 13px;
+}
+.footer_destination{
+  color: #ed8f4f;
+  font-family: 'work_sansbold';
+}
+.f_margin{
+  margin-top: -25px;
+}
+.f_title1{
+  color:#ffdb77;
+  font-family: 'work_sansbold';
+}
+.f_title3{
+  color: #d33e58;
+  font-family: 'work_sansbold';
+}
+.f_title4{
+  color: #6d568b;
+  font-family: 'work_sansbold';
+}
+.f_title5{
+  color: #7679db;
+  font-family: 'work_sansbold';
+}
+.f_title6{
+  color: #6fa5ce;
+  font-family: 'work_sansbold';
+}
+.footer_bottom{
+  background-color: #38383a;
+}
+.title_part2{
+ font-family: 'work_sansbold';
+}
+.title_part1{
+  font-family: 'work_sansregular';
+}
+@font-face {
+    font-family: 'work_sansblack';
+    src: url('../font/webfontkit/worksans-black-webfont.eot');
+    src: url('../font/webfontkit/worksans-black-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../font/webfontkit/worksans-black-webfont.woff2') format('woff2'),
+         url('../font/webfontkit/worksans-black-webfont.woff') format('woff'),
+         url('../font/webfontkit/worksans-black-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
+
+@font-face {
+    font-family: 'work_sansbold';
+    src: url('../font/webfontkit/worksans-bold-webfont.eot');
+    src: url('../font/webfontkit/worksans-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../font/webfontkit/worksans-bold-webfont.woff2') format('woff2'),
+         url('../font/webfontkit/worksans-bold-webfont.woff') format('woff'),
+         url('../font/webfontkit/worksans-bold-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
+
+@font-face {
+    font-family: 'work_sansregular';
+    src: url('../font/webfontkit/worksans-regular-webfont.eot');
+    src: url('../font/webfontkit/worksans-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../font/webfontkit/worksans-regular-webfont.woff2') format('woff2'),
+         url('../font/webfontkit/worksans-regular-webfont.woff') format('woff'),
+         url('../font/webfontkit/worksans-regular-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  margin-left: 45px;
+}
