@@ -22,6 +22,10 @@ var ProjectSchema = new Schema({
 	clientContactNo: {type: String, /*required: true*/},
 	clientDesignation: {type: String},	
 	createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
+	clientEmail:{type:String},
+	clientFullName:{type:String},
+	clientContactNo:{type:String},
+	clientDesignation:{type:String},
 },{timestamps: true});
 
 

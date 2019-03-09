@@ -5,74 +5,76 @@ var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 projectController.addProject = function(req,res){
-	console.log("req.body =====>" , req.body);
+	// console.log("req files =============>" , req.files);
 	var flag = 5;
 	projectModel.find({}).exec((err , allProjects)=>{
 		for(var i = 0; i < allProjects.length; i++){
 			if(allProjects[i].uniqueId == req.body.uniqueId){
-				//res.send(err);
-				console.log("hey");
 				flag = 4;
 			}
 		}
 		if(flag != 5){
-			res.send(err);
+			res.status(500).send({errMgsg: "project alias is duplicate"});
 		}
 		else{
-
 			var newProject = new projectModel(req.body);
 			newProject.save(function(err , savedProject){
-				if(err) res.send(err);
-				else res.status(200).send(savedProject);
+				if(err) res.status(500).send(err);
+				else {
+					var uploadPath = path.join(__dirname, "../uploads/"+savedProject._id+"/avatar/");
+					console.log(uploadPath);
+					req.file('uploadfile').upload({
+						maxBytes: 50000000000000,
+						dirname: uploadPath,
+						saveAs: function (__newFileStream, next) {
+							dir.files(uploadPath, function(err, files) {
+								if (err){
+									mkdir(uploadPath, 0775);
+									return next(undefined, __newFileStream.filename);
+								}else {
+									return next(undefined, __newFileStream.filename);
+								}
+							});
+						}
+					}, function(err, files){
+						if (err) {
+							console.log(err);
+							res.status(500).send(err);
+						}else{
+							console.log(files)
+							var fileNames = savedProject.avatar;
+							if(files.length>0){
+								_.forEach(files, (gotFile)=>{
+									fileNames = gotFile.fd.split('/').reverse()[3]+"/"+gotFile.fd.split('/').reverse()[2]+"/"+gotFile.fd.split('/').reverse()[1]+"/"+gotFile.fd.split('/').reverse()[0];
+								})
+							}
+							projectModel
+							.findOneAndUpdate({_id: savedProject._id}, {$set: {avatar: fileNames}}, { upsert: true, new: true })
+							.exec((err , project)=>{
+								if (err) {
+									console.log(err);
+									res.status(500).send(err);
+								}else{
+									res.status(200).send(project);
+								}	
+							})
+						}
+					})
+				}
 			})
 		}
 	})
-	/*projectModel
-	.find({})
-	.sort({"_id" : -1})
-	.limit(1)
-	.exec((err, project)=>{
-		if (err) {
-			console.log(err);
-			res.status(500).send(err);
-		}else if(project && project.length==1){
-			var maxUniqeId = project[0].uniqueId;
-			var length = maxUniqeId.length;
-			var trimmedString = maxUniqeId.substring(8, length);
-			var number = parseInt(trimmedString)+1;
-			var text = "PROJECT"
-			var unique = text+"-"+number;
-			var newProject = new projectModel(req.body);
-			newProject['uniqueId'] = unique;
-			newProject['Team'] = [];
-			//newProject.Team.push(req.user._id);
-			newProject.save().then(result => {
-				res.status(200).json(result);
-			})
-			.catch(err => console.log(err));
-		}else{
-			var newProject = new projectModel(req.body);
-			var text = "PROJECT"
-			var unique = text+"-"+1;
-			newProject['uniqueId'] = unique;
-			newProject['Team'] = [];
-			newProject.Team.push(req.user._id);
-			newProject.save().then(result => {
-				res.status(200).json(result);
-			})
-			.catch(err => console.log(err));
-		}
-	})*/
-
-
+	console.log("req body",req.body);
 }
+
+
 
 projectController.getAllProject = function(req,res){
 	projectModel
 	.find({})
-	.populate('pmanagerId taskId IssueId BugId Teams ')
+	.populate('pmanagerId taskId IssueId BugId Teams tasks')
 	.populate({
-		path:' taskId IssueId BugId',
+		path:' taskId IssueId BugId tasks',
 		populate: { path: 'assignTo' }
 	})
 	.exec(function(err,projects){
@@ -146,13 +148,14 @@ projectController.getAllProjectOrderByTitle = function(req,res){
 
 projectController.uploadFilesToFolder = function(req, res){
 	console.log(req.body);
-	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/");
+	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/sharedFile");
 	console.log(uploadPath);
 	req.file('fileUpload').upload({
 		maxBytes: 50000000,
 		dirname: uploadPath,
 		saveAs: function (__newFileStream, next) {
 			dir.files(uploadPath, function(err, files) {
+				console.log(err, files)
 				if (err){
 					mkdir(uploadPath, 0775);
 					return next(undefined, __newFileStream.filename);
@@ -174,7 +177,7 @@ projectController.uploadFilesToFolder = function(req, res){
 
 projectController.getAllFiles = function(req, res){
 	console.log(req.body)
-	dir.files(path.join(__dirname, "../uploads/"+req.body.projectId+"/"), function(err, files) {
+	dir.files(path.join(__dirname, "../uploads/"+req.body.projectId+"/sharedFile"), function(err, files) {
 		if (err){
 			console.log(err);
 			res.status(500).send(err);

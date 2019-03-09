@@ -4,7 +4,7 @@ var bugModel = require('../model/bug.model');
 var projectModel = require('../model/project.model');
 var issueModel = require('../model/issue.model');
 var tasksModel = require('../model/tasks.model');
-
+var _ = require('lodash');
 var allTask = []
 
 let oldToNewProject = {};
@@ -37,19 +37,16 @@ oldToNewProject.convertProjects = function(req , res){
 			for(var j = 0; j<foundProjects[i].BugId.length; j++){
 				newProject['tasks'].push(foundProjects[i].BugId[j]);
 			}
-			for(var j = 0; j<foundProjects[i].BugId.length; j++){
-				newProject['tasks'].push(foundProjects[i].BugId[j]);
-			}
 			for(var j = 0; j<foundProjects[i].Teams.length; j++){
 				newProject['Teams'].push(foundProjects[i].Teams[j]);	
 			}
+			console.log("new out=========>" , newProject_id);
 			console.log("foundProjects[i]._id" , " i======>",i , foundProjects[i]._id);
 				//oldProject_id.push(foundProjects[i]._id);
 				projectModel.findOneAndUpdate({_id: foundProjects[i]._id} , newProject , {upsert: true , new: true} , function(err , savedProject){
-					console.log("savedProject" , savedProject);
+					res.status(200).send(savedProject);
 				})
 			}
-			console.log("new out=========>" , newProject_id);
 		})
 }
 
@@ -120,23 +117,26 @@ oldToNewProject.updateAllUser = function(req , res){
 	userModel.find({})
 	.lean()
 	.exec((err , foundUsers)=>{
-		
-		
-			for(var i = 0; i< foundUsers.length; i++){
-				newUser = foundUsers[i];
-				newUser['tasks'] = [];
-				tasksModel.find({_id : newUser._id})
-				.exec((err , resp)=>{
-					console.log(resp);	
+		//if(err) res.send("err");
+			_.forEach(foundUsers, (user)=>{
+				tasksModel
+				.find({assignTo: user._id})
+				.select('_id')
+				.exec((err, resp)=>{
+					if (err) { resp.status(500).send(err) }
+					console.log("=========================>", [...resp]);
+					user.tasks = [];
+					for(var j=0; j<[...resp].length;j++){
+						user.tasks.push([...resp][j]._id);
+					}
+					userModel.findOneAndUpdate({_id:user._id}, user, {new:true, upsert:true}, function(err, update){
+						if (err) {
+							res.send(err);
+						}
+						console.log("done");
+					})
 				})
-				/*userModel.findOneAndUpdate({_id: newUser._id} , newUser , {upsert: true , new: true} , function(err , foundUser){
-					//if(err) res.send("err in updating");
-					//else {
-						console.log("updated user ====>" , foundUser);
-					//}
-				})*/
-			}
-
+			})
 
 		//}
 	})
