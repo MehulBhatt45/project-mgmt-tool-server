@@ -188,6 +188,7 @@ projectController.uploadFilesToFolder = function(req, res){
 		dirname: uploadPath,
 		saveAs: function (__newFileStream, next) {
 			dir.files(uploadPath, function(err, files) {
+				console.log(err, files)
 				if (err){
 					mkdir(uploadPath, 0775);
 					return next(undefined, __newFileStream.filename);

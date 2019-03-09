@@ -3,109 +3,146 @@ var projectModel = require('../model/project.model');
 var userModel = require('../model/user.model');
 var _ = require('lodash');
 let tasksController = {};
+var dir = require('node-dir');
+var mkdir = require('mkdirp');
+var path = require('path');
+var fs = require('fs');
 
 tasksController.addTasks = function(req , res){
 	console.log("cottrectt ;");
-	tasksModel
-	.find({projectId : req.body.projectId})
-	.sort({"_id" : -1})
-	.limit(1)
-	.exec((err , foundTask)=>{
-		if(err){
+
+	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/");
+	console.log(uploadPath);
+	req.file('fileUpload').upload({
+		maxBytes: 50000000000000,
+		dirname: uploadPath,
+		saveAs: function (__newFileStream, next) {
+			dir.files(uploadPath, function(err, files) {
+				if (err){
+					mkdir(uploadPath, 0775);
+					return next(undefined, __newFileStream.filename);
+				}else {
+					return next(undefined, __newFileStream.filename);
+				}
+			});
+		}
+	}, function(err, files){
+		if (err) {
 			console.log(err);
 			res.status(500).send(err);
-		}
-		else if(foundTask && foundTask.length == 1){
-			console.log("found Task ====>" , foundTask);
-			console.log("errTask ====>" , err);
-			foundTask = foundTask[0].uniqueId.split("-");
-		// foundTask = foundTask[1];
-		var count = +foundTask[1]+ +1;
-		console.log("found Task ====>" , +foundTask[1]+ +1);
-		req.body['uniqueId'] = foundTask[0]+"-" + count;
-		req.body['startDate'] = Date.now();
-		console.log("req.body ====>" , req.body);
-		var saveTask = new tasksModel(req.body);
-		saveTask.save((err , savedTask)=>{
-			projectModel.findOne({_id: savedTask.projectId})
-			.exec((err , resp)=>{
-				resp.tasks.push(savedTask._id);
-				var flag = 5;
-				var final = 1
-				var q = JSON.stringify(savedTask.assignTo);
-				console.log("type of ==>", typeof q);
-				for(var i = 0;i< resp.Teams.length ; i++){
-					var p = JSON.stringify(resp.Teams[i]);
-					flag = p.localeCompare(q);
-					console.log("flag ===>" , flag);
-					if(flag == 0){
-						final = 0;
-					}
-				}
-				console.log("final ===>" , final);
-				if(final == 1){
-					resp.Teams.push(savedTask.assignTo);
-				}
-				resp.save();	
-				console.log("found user ======>" , savedTask.assignTo);
-				if(savedTask.assignTo){
+		}else{
+			console.log(files)
+			var fileNames=[];
+			if(files.length>0){
+				_.forEach(files, (gotFile)=>{
+					fileNames.push(gotFile.fd.split('/').reverse()[2]+"/"+gotFile.fd.split('/').reverse()[1]+"/"+gotFile.fd.split('/').reverse()[0])
+				})
+			}
+			tasksModel
+			.find({projectId : req.body.projectId})
+			.sort({"_id" : -1})
+			.limit(1)
+			.exec((err , foundTask)=>{
+				if(err){
+					console.log(err);
+					res.status(500).send(err);
+				}else if(foundTask && foundTask.length == 1){
+					console.log("found Task ====>" , foundTask);
+					console.log("errTask ====>" , err);
+					foundTask = foundTask[0].uniqueId.split("-");
+					var count = +foundTask[1]+ +1;
+					console.log("found Task ====>" , +foundTask[1]+ +1);
+					req.body['uniqueId'] = foundTask[0]+"-" + count;
+					req.body['startDate'] = Date.now();
+					if(req.body.dueDate=='undefined')
+						delete req.body['dueDate'];
+					console.log("req.body ====>" , req.body);
+					var saveTask = new tasksModel(req.body);
+					saveTask['images']=fileNames;
+					saveTask.save((err , savedTask)=>{
+						console.log(err, savedTask);
+						if(err) res.status(500).send(err);
+						projectModel.findOne({_id: savedTask.projectId})
+						.exec((err , resp)=>{
+							resp.tasks.push(savedTask._id);
+							var flag = 5;
+							var final = 1
+							var q = JSON.stringify(savedTask.assignTo);
+							console.log("type of ==>", typeof q);
+							for(var i = 0;i< resp.Teams.length ; i++){
+								var p = JSON.stringify(resp.Teams[i]);
+								flag = p.localeCompare(q);
+								console.log("flag ===>" , flag);
+								if(flag == 0){
+									final = 0;
+								}
+							}
+							console.log("final ===>" , final);
+							if(final == 1){
+								resp.Teams.push(savedTask.assignTo);
+							}
+							resp.save();	
+							console.log("found user ======>" , savedTask.assignTo);
+							if(savedTask.assignTo){
 
-					userModel.findOne({_id: savedTask.assignTo._id})
-					.exec((err , foundedUser)=>{
-						foundedUser.tasks.push(savedTask._id);
-						foundedUser.save();
-						res.status(200).send(savedTask);
+								userModel.findOne({_id: savedTask.assignTo._id})
+								.exec((err , foundedUser)=>{
+									foundedUser.tasks.push(savedTask._id);
+									foundedUser.save();
+									res.status(200).send(savedTask);
+								})
+							}
+							else{
+								console.log("final task======>" , savedTask);
+								res.status(200).send(savedTask);	
+							}
+						})
+					})
+				}else{
+					projectModel.find({_id: req.body.projectId})
+					.exec((err , foundProject)=>{
+						foundProject = foundProject[0].uniqueId.split("-");
+						var txt = foundProject[0];
+						req.body['uniqueId'] = txt +"-" + 1;
+						req.body['startDate'] = Date.now();
+						console.log("first task of the project =====>" , req.body);
+						var saveTask = new tasksModel(req.body);
+						saveTask['images']=fileNames;
+						console.log(saveTask);
+						saveTask.save().then((savedTask)=>{
+							console.log("savd Tsk ===> " , savedTask);
+							projectModel.findOne({_id: savedTask.projectId})
+							.exec((err , resp)=>{
+								resp.tasks.push(savedTask._id);
+								var flag = 5;
+								var final = 1
+								var q = JSON.stringify(savedTask.assignTo);
+								console.log("type of ==>", typeof q);
+								for(var i = 0;i< resp.Teams.length ; i++){
+									var p = JSON.stringify(resp.Teams[i]);
+									flag = p.localeCompare(q);
+									console.log("flag ===>" , flag);
+									if(flag == 0){
+										final = 0;
+									}
+								}
+								console.log("final ===>" , final);
+								if(final == 1){
+									resp.Teams.push(savedTask.assignTo);
+								}
+								resp.save();	
+
+								console.log("final task======>" , savedTask);
+								res.status(200).send(savedTask);	
+							})	
+						}).catch((err)=>{
+							console.log(err);
+						})
 					})
 				}
-				else{
-					console.log("final task======>" , savedTask);
-					res.status(200).send(savedTask);	
-				}
 			})
-		})
-	}
-	else{
-		projectModel.find({_id: req.body.projectId})
-		.exec((err , foundProject)=>{
-			foundProject = foundProject[0].uniqueId.split("-");
-			var txt = foundProject[0];
-			req.body['uniqueId'] = txt +"-" + 1;
-			req.body['startDate'] = Date.now();
-			console.log("first task of the project =====>" , req.body);
-			var saveTask = new tasksModel(req.body);
-			console.log(saveTask);
-			saveTask.save().then((savedTask)=>{
-				console.log("savd Tsk ===> " , savedTask);
-				projectModel.findOne({_id: savedTask.projectId})
-				.exec((err , resp)=>{
-					resp.tasks.push(savedTask._id);
-					var flag = 5;
-					var final = 1
-					var q = JSON.stringify(savedTask.assignTo);
-					console.log("type of ==>", typeof q);
-					for(var i = 0;i< resp.Teams.length ; i++){
-						var p = JSON.stringify(resp.Teams[i]);
-						flag = p.localeCompare(q);
-						console.log("flag ===>" , flag);
-						if(flag == 0){
-							final = 0;
-						}
-					}
-					console.log("final ===>" , final);
-					if(final == 1){
-						resp.Teams.push(savedTask.assignTo);
-					}
-					resp.save();	
-					
-					console.log("final task======>" , savedTask);
-					res.status(200).send(savedTask);	
-				})	
-			}).catch((err)=>{
-				console.log(err);
-			})
-		})
-	}
-})
+		}
+	})
 }
 
 tasksController.getTaskByProjectId = function(req , res){
@@ -174,7 +211,7 @@ tasksController.getAllTask = function(req , res){
 	})
 }
 tasksController.updateTaskStatusById = function(req , res){
-	var taskId = req.body;
+	var taskId = req.body._id;
 	console.log("taskID ========>" , taskId);
 	if(req.body.status!=='complete'){
 		tasksModel.findOne({_id: taskId}).exec((err, task)=>{
