@@ -20,13 +20,13 @@ tasksController.addTasks = function(req , res){
 			console.log("errTask ====>" , err);
 			foundTask = foundTask[0].uniqueId.split("-");
 		// foundTask = foundTask[1];
-		var count = +foundTask[1]+ +1;
-		console.log("found Task ====>" , +foundTask[1]+ +1);
-		req.body['uniqueId'] = foundTask[0]+"-" + count;
-		req.body['startDate'] = Date.now();
-		console.log("req.body ====>" , req.body);
-		var saveTask = new tasksModel(req.body);
-		saveTask.save((err , savedTask)=>{
+			var count = +foundTask[1]+ +1;
+			console.log("found Task ====>" , +foundTask[1]+ +1);
+			req.body['uniqueId'] = foundTask[0]+"-" + count;
+			req.body['startDate'] = Date.now();
+			console.log("req.body ====>" , req.body);
+			var saveTask = new tasksModel(req.body);
+			saveTask.save((err , savedTask)=>{
 			projectModel.findOne({_id: savedTask.projectId})
 			.exec((err , resp)=>{
 				resp.tasks.push(savedTask._id);
@@ -237,6 +237,14 @@ tasksController.updateTaskStatusCompleted = function(req , res){
 	}else{
 		res.status(403).send("Bad Request");
 	}
+}
+tasksController.deleteTaskById = function(req  , res){
+	taskId = req.params.taskId;
+	console.log("taskID =====> ", taskId);
+	tasksModel.deleteOne({_id : taskId} , function(err , removed){
+		if(err) res.send(err);
+		else res.status(200).send(removed);
+	});
 }
 module.exports = tasksController;
 

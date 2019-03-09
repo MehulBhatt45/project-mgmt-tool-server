@@ -120,20 +120,21 @@ oldToNewProject.updateAllUser = function(req , res){
 	userModel.find({})
 	.lean()
 	.exec((err , foundUsers)=>{
-		//if(err) res.send("err");
+		
 		
 			for(var i = 0; i< foundUsers.length; i++){
 				newUser = foundUsers[i];
 				newUser['tasks'] = [];
-				//userArr.push(newUser);
-				//console.log("new user ====>" , newUser);
-				//console.log("foundUsers[i]._id ====>" , foundUsers[i]._id);
-				userModel.findOneAndUpdate({_id: newUser._id} , newUser , {upsert: true , new: true} , function(err , foundUser){
+				tasksModel.find({_id : newUser._id})
+				.exec((err , resp)=>{
+					console.log(resp);	
+				})
+				/*userModel.findOneAndUpdate({_id: newUser._id} , newUser , {upsert: true , new: true} , function(err , foundUser){
 					//if(err) res.send("err in updating");
 					//else {
 						console.log("updated user ====>" , foundUser);
 					//}
-				})
+				})*/
 			}
 
 

@@ -196,5 +196,14 @@ projectController.deleteFile = function(req, res){
 		res.status(200).send("file deleted");
 	}); 
 }
-
+projectController.getDeveloperOfProject = function(req , res){
+	console.log("projectId ========>" , req.params.projectId);
+	var projectId = req.params.projectId;
+	projectModel.findOne({_id: projectId})
+	.select('Teams')
+	.exec((err , foundTeam)=>{
+		if(err) res.send(err)
+		else res.status(200).send(foundTeam);
+	})
+}
 module.exports = projectController;
