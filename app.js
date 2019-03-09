@@ -6,12 +6,12 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var session = require('express-session');
-var fileUpload = require('express-fileupload');
+// var fileUpload = require('express-fileupload');
 var cors = require('cors');
 const SALT_WORK_FACTOR = 10;
 var cron = require('node-cron');
 var request = require('request');
-
+var skipper = require('skipper')
 //All Controller Router Variable deifne hear
 
 var userRouter = require('./routes/user');
@@ -24,7 +24,7 @@ var commentRouter = require('./routes/comment');
 var noticeRouter = require('./routes/notice');
 var tasksRouter = require('./routes/tasks');
 var app = express();
-app.use(fileUpload());
+// app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
 
@@ -49,7 +49,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(require('skipper')());
+app.use(skipper());
 
 //All Controller Router deifne hear
 app.use('/project',projectRouter);
