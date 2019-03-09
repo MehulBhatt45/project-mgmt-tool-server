@@ -19,7 +19,7 @@ var cron = require('node-cron');
 var request = require('request');
 var skipper = require('skipper')
 //All Controller Router Variable deifne hear
-
+var emailController = require('./controller/email.controller.js');
 var userRouter = require('./routes/user');
 var projectRouter = require('./routes/project');
 var taskRouter = require('./routes/task');
@@ -71,6 +71,7 @@ app.use('/employee',employeeRouter);
 app.use('/notice',noticeRouter);
 
 app.use('/tasks' , tasksRouter);
+app.post('/email/send-email', emailController.sendEmail);
 
 // catch 404 and forward to error handler
 
