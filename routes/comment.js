@@ -3,7 +3,7 @@ var router = express.Router();
 var commentController = require('./../controller/comment.controller');
 
 router.post('/add-comment',commentController.addComment);
-router.get('/allComment',commentController.getAllComment);
+router.get('/all/:taskId',commentController.getAllComment);
 router.get('/userId',commentController.getCommentByUserId);
 router.get('/:id',commentController.getCommentByCommentId);
 // router.delete('/userId/:id',commentController.deleteCommentByUserId);

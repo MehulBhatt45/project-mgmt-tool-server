@@ -6,7 +6,7 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var session = require('express-session');
-var fileUpload = require('express-fileupload');
+// var fileUpload = require('express-fileupload');
 var cors = require('cors');
 
 var async = require('async');
@@ -17,7 +17,7 @@ var fileUpload = require('express-fileupload');
 const SALT_WORK_FACTOR = 10;
 var cron = require('node-cron');
 var request = require('request');
-
+var skipper = require('skipper')
 //All Controller Router Variable deifne hear
 
 var userRouter = require('./routes/user');
@@ -32,7 +32,7 @@ var employeeRouter = require('./routes/employee');
 var noticeRouter = require('./routes/notice');
 var tasksRouter = require('./routes/tasks');
 var app = express();
-app.use(fileUpload());
+// app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
 mongoose.connect('mongodb://127.0.0.1:27017/projectMngtTool', {useNewUrlParser: true})
@@ -56,7 +56,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(require('skipper')());
+app.use(skipper());
 
 //All Controller Router deifne hear
 app.use('/project',projectRouter);
