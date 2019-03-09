@@ -11,12 +11,11 @@ var UserSchema = new Schema({
     email: {type:String},
     password: String,
     joiningDate: Date,
-    phone: Number,
+    phone: String,
     experience:String,
     profilePhoto: String,
     CV: String,
-
-
+    projects:[{type:Schema.Types.ObjectId, ref: 'Project'}],
     tasks: [{type: Schema.Types.ObjectId , ref: 'Tasks'}]
 },{timestamps: true});
 

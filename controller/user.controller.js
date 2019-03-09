@@ -12,6 +12,7 @@ var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 var dir = require('node-dir');
+var _ = require('lodash');
 // var mv = require('mv');
 // var fileUpload = require('express-fileupload');
 
@@ -82,37 +83,8 @@ var dir = require('node-dir');
 // }
 
 
-
-
-// userController.uploadFilesToFolder = function(req, res){
-// 	console.log(req.body);
-// 	var uploadPath = path.join(__dirname, "../uploads/"+req.body.userId+"/");
-// 	console.log(uploadPath);
-// 	req.file('fileUpload').upload({
-// 		maxBytes: 50000000,
-// 		dirname: uploadPath,
-// 		saveAs: function (__newFileStream, next) {
-// 			dir.files(uploadPath, function(err, files) {
-// 				if (err){
-// 					mkdir(uploadPath, 0775);
-// 					return next(undefined, __newFileStream.filename);
-// 				}else {
-// 					return next(undefined, __newFileStream.filename);
-// 				}
-// 			});
-// 		}
-// 	}, function(err, files){
-// 		if (err) {
-// 			console.log(err);
-// 			res.status(500).send(err);
-// 		}else{
-// 			console.log(files)
-// 			res.status(200).send("files uploaded successfully");
-// 		}
-// 	})
-// }
-
 userController.addUser = function(req,res){
+	console.log("req body ===>" , req.body);
 	userModel.findOne({email: req.body.email})
 	.exec((err,founduser)=>{
 		if (err) {
@@ -124,9 +96,13 @@ userController.addUser = function(req,res){
 			User.save((err, newUser)=>{
 				if (err) {
 					res.status(500).send(err);
-				}		
+				}
+				else{
+
 				// res.status(200).send(newUser);
-				var uploadPath = path.join(__dirname, "../uploads/"/+req.body.user+"/");
+				console.log("newuser",newUser);
+				var uploadPath = path.join(__dirname, "../uploads/"+newUser._id+"/");
+				console.log("userid===>",newUser._id);
 				console.log("uploadprofile path===>",uploadPath);
 				req.file('profilePhoto').upload({
 					maxBytes: 50000000,
@@ -146,36 +122,26 @@ userController.addUser = function(req,res){
 						console.log(err);
 						res.status(500).send(err);
 					}else{
-						console.log(files)
+						console.log("files==========>",files)
 						// res.status(200).send("files uploaded successfully");
-						var uploadPath1 = path.join(__dirname, "../uploads/"+req.body.userId+"/");
-						console.log(uploadPath1);
-						req.file('CV').upload({
-							maxBytes: 50000000,
-							dirname: uploadPath1,
-							saveAs: function (__newFileStream, next) {
-								dir.files(uploadPath1, function(err, files) {
-									if (err){
-										mkdir(uploadPath1, 0775);
-										return next(undefined, __newFileStream.filename);
-									}else {
-										return next(undefined, __newFileStream.filename);
-									}
-								});
-							}
-						}, function(err, files){
-							if (err) {
-								console.log(err);
-								res.status(500).send(err);
+						for(var i=0;i<files.length;i++){
+							if(_.includes(files[i].filename, '.pdf')){
+								var cv = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7];
 							}else{
-								console.log(files)
-								res.status(200).send("files uploaded successfully");
+								var profile = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7];
 							}
+						}
+						newUser['CV'] = cv;
+						newUser['profilePhoto'] = profile;
+						userModel.findOneAndUpdate({_id: newUser._id}, {$set: {CV:cv, profilePhoto:profile }}, {upsert:true, new:true}).exec((error,user)=>{
+							if (error) res.status(500).send(error);
+							res.status(200).send(user);
 						})
 					}
 
 				})
-			});	
+			}		
+		});	
 		}			
 	})
 }
