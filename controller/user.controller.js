@@ -339,6 +339,7 @@ userController.getUserWorkLogs = function(req,res){
 	})
 }
 
+
 // userController.uploadFile = function(req,res){
 // 	console.log("uploadfile=======>",req.body);
 // 	var files = [];
@@ -374,5 +375,6 @@ userController.getUserWorkLogs = function(req,res){
 // 	});
 // 	console.log(req.body);
 // }	
+
 
 module.exports = userController; 

@@ -9,7 +9,7 @@ var tasksSchema = new Schema({
 	projectId: {type: Schema.Types.ObjectId , ref: 'Project'},
 	status: {type: String , default: 'to do'},
 	comment:[{ type: Schema.Types.ObjectId, ref: 'Comment'}],
-	priority:{ type: String , default: "medium"},
+	priority:{ type: Number },
 	uniqueId:{ type: String },
 	timelog:[{
 		operation: {type: String},
