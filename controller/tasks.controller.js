@@ -160,7 +160,6 @@ tasksController.updateTaskById = function(req , res){
 	var userId;
 	var taskId = req.params.taskId;
 	var lastTask = false;
-	
 	console.log("taskId ======+>" , taskId);
 	
 	console.log("req. body =====+>" , req.body);
@@ -254,5 +253,13 @@ tasksController.updateTaskStatusCompleted = function(req , res){
 	}else{
 		res.status(403).send("Bad Request");
 	}
+}
+tasksController.deleteTaskById = function(req  , res){
+	taskId = req.params.taskId;
+	console.log("taskID =====> ", taskId);
+	tasksModel.deleteOne({_id : taskId} , function(err , removed){
+		if(err) res.send(err);
+		else res.status(200).send(removed);
+	});
 }
 module.exports = tasksController;

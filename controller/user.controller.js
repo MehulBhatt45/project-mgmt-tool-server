@@ -176,5 +176,4 @@ userController.getUserWorkLogs = function(req,res){
 
 	})
 }
-
 module.exports = userController; 
