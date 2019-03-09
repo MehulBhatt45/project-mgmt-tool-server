@@ -1,3 +1,4 @@
+
 var taskModel = require('./../model/task.model');
 var projectModel = require('../model/project.model');
 var _ = require('lodash');
@@ -27,7 +28,6 @@ taskController.addTask = function(req,res){
 		projectModel.findOne({_id: Savedtask.projectId})
 		.exec((err, resp)=>{
 			if (err) res.status(500).send(err);
-
 			resp.taskId.push(Savedtask._id);
 			if(!_.includes(resp.Teams, Savedtask.assignTo)){
 				resp.Teams.push(Savedtask.assignTo);
