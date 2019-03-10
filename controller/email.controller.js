@@ -22,7 +22,7 @@ emailController.sendEmail = function(req, res) {
                                 from: 'tnrtesting2394@gmail.com',
                                 to: req.body.to,
                                 subject: req.body.sub,
-                                text: req.body.content
+                                html: req.body.content
                         };
 
                         transporter.sendMail(mailOptions, function(error, info){
