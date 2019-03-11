@@ -4,8 +4,11 @@ var dir = require('node-dir');
 var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
+var _ = require('lodash');
 projectController.addProject = function(req,res){
 	// console.log("req files =============>" , req.files);
+	req.body.Teams = req.body.Teams.split(',');
+	console.log("req body",req.body);
 	var flag = 5;
 	projectModel.find({}).exec((err , allProjects)=>{
 		for(var i = 0; i < allProjects.length; i++){
@@ -64,7 +67,6 @@ projectController.addProject = function(req,res){
 			})
 		}
 	})
-	console.log("req body",req.body);
 }
 
 
