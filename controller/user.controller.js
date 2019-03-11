@@ -13,75 +13,6 @@ var path = require('path');
 var fs = require('fs');
 var dir = require('node-dir');
 var _ = require('lodash');
-// var mv = require('mv');
-// var fileUpload = require('express-fileupload');
-
-// userController.addUser = function(req,res){
-// 	console.log("req files =============>" , req.files);
-// 	console.log("req body",req.body);
-// 	var samplefile = req.files.profilePhoto;
-// 	var samplefile1= req.files.CV;
-// 	console.log("samplefile==>",samplefile);
-// 	samplefile.mv('./uploads/profilePhoto/'+samplefile.name,function(err,result){
-// 		samplefile1.mv('./uploads/CV/'+samplefile1.name,function(err,result){
-// 			if(err){
-// 				console.log(err);
-// 				res.status(500).send(err);
-// 			}
-// 			else{
-// 				var profilePhoto='/uploads/profilePhoto/'+samplefile.name;
-// 				req.body.profilePhoto=profilePhoto;
-
-// 				var CV='/uploads/profilePhoto/'+samplefile1.name;
-// 				req.body.CV=CV;
-// 			// console.log(CV);
-
-
-
-// 			userModel.findOne({email: req.body.email})
-// 			.exec((err,founduser)=>{
-// 				if (err) {
-// 					res.status(500).send(err);
-// 				}else if (founduser){
-// 					res.status(400).send('user already exists! ');
-// 				}else{
-// 					var User = new userModel(req.body);
-// 					User.save().then(result=>{
-// 						res.status(200).send(result);
-
-// 					})
-// 					.catch(err => console.log(err));	
-
-// 				}
-
-// 				// console.log("founduser",founduser);
-// 			});
-// 		}
-// 	});
-// 	});
-// }
-// userController.addUser_without_file = function(req,res){
-// 	console.log("req body",req.body);
-// 	userModel.findOne({email: req.body.email})
-// 	.exec((err,founduser)=>{
-// 		if (err) {
-// 			res.status(500).send(err);
-// 		}else if (founduser){
-// 			res.status(400).send('user already exists! ');
-// 		}else{
-// 			var User = new userModel(req.body);
-// 			User.save((error, newUser)=>{
-// 				if (err) {
-// 					res.status(500).send(err);
-// 				}		
-// 				res.status(200).send(newUser);
-// 				console.log(res);
-// 			});
-// 		}
-// 				// console.log("founduser",founduser);
-// 			});
-// }
-
 
 userController.addUser = function(req,res){
 	console.log("req body ===>" , req.body);
@@ -338,43 +269,6 @@ userController.getUserWorkLogs = function(req,res){
 
 	})
 }
-
-
-// userController.uploadFile = function(req,res){
-// 	console.log("uploadfile=======>",req.body);
-// 	var files = [];
-// 	var upload_file = {
-// 		fileName : files	
-// 	};
-
-// 	var postFile = new userModel(upload_file);
-// 	console.log("postFile",postFile);
-// 	postFile.save(function(error,file){
-// 		if (error) {
-// 			return res.status(500).send(error);
-// 		}else{
-// 			for(var i = 0; i < req.files.uploadFile.length; i++){
-// 				console.log("sampleFile", req.files.uploadFile[i]);				
-// 				var sampleFile = req.files.uploadFile[i];
-// 				sampleFile.mv('./uploads/'+sampleFile.name, function(err) {
-// 					if (err){
-// 						return res.status(500).send(err);
-// 					}else{
-// 					}
-// 				});
-// 				var fileName = sampleFile.name;
-// 				var fileNameArr = fileName.split("\\");
-// 				fileName  = fileNameArr[2];
-// 				files.push("/uploads/"+sampleFile.name);
-// 				console.log(files);
-// 				file.fileName = files;
-// 				file.save();
-// 			}
-// 			res.status(200).send(file);
-// 		}
-// 	});
-// 	console.log(req.body);
-// }	
 
 
 module.exports = userController; 

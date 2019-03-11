@@ -6,7 +6,7 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var session = require('express-session');
-// var fileUpload = require('express-fileupload');
+var fileUpload = require('express-fileupload');
 var cors = require('cors');
 
 var async = require('async');
@@ -19,7 +19,7 @@ var cron = require('node-cron');
 var request = require('request');
 var skipper = require('skipper')
 //All Controller Router Variable deifne hear
-
+var emailController = require('./controller/email.controller.js');
 var userRouter = require('./routes/user');
 var projectRouter = require('./routes/project');
 var taskRouter = require('./routes/task');
@@ -32,7 +32,7 @@ var employeeRouter = require('./routes/employee');
 var noticeRouter = require('./routes/notice');
 var tasksRouter = require('./routes/tasks');
 var app = express();
-// app.use(fileUpload());
+app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
 mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
@@ -71,6 +71,7 @@ app.use('/employee',employeeRouter);
 app.use('/notice',noticeRouter);
 
 app.use('/tasks' , tasksRouter);
+app.post('/email/send-email', emailController.sendEmail);
 
 // catch 404 and forward to error handler
 
