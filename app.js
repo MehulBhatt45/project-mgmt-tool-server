@@ -8,12 +8,18 @@ var bcrypt = require('bcryptjs');
 var session = require('express-session');
 var fileUpload = require('express-fileupload');
 var cors = require('cors');
+
+var async = require('async');
+var crypto = require('crypto');
+var fileUpload = require('express-fileupload');
+// var mv = require('move-file');
+
 const SALT_WORK_FACTOR = 10;
 var cron = require('node-cron');
 var request = require('request');
 var skipper = require('skipper')
 //All Controller Router Variable deifne hear
-
+var emailController = require('./controller/email.controller.js');
 var userRouter = require('./routes/user');
 var projectRouter = require('./routes/project');
 var taskRouter = require('./routes/task');
@@ -21,13 +27,15 @@ var bugRouter = require('./routes/bug');
 var issueRouter = require('./routes/issue');
 var requeRouter = require('./routes/requirement');
 var commentRouter = require('./routes/comment');
+var employeeRouter = require('./routes/employee');
+
 var noticeRouter = require('./routes/notice');
 var tasksRouter = require('./routes/tasks');
 var app = express();
 app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
-mongoose.connect('mongodb://127.0.0.1:27017/projectMngtTool', {useNewUrlParser: true})
+mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
 
@@ -45,7 +53,7 @@ app.use(session({
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(skipper());
@@ -57,10 +65,13 @@ app.use('/bug',bugRouter);
 app.use('/issue',issueRouter);
 app.use('/reque',requeRouter);
 app.use('/comment',commentRouter);
-app.use('/notice',noticeRouter);
-app.use('/user', userRouter);
-app.use('/tasks' , tasksRouter);
+app.use('/user', userRouter); 
+app.use('/employee',employeeRouter);
 
+app.use('/notice',noticeRouter);
+
+app.use('/tasks' , tasksRouter);
+app.post('/email/send-email', emailController.sendEmail);
 
 // catch 404 and forward to error handler
 

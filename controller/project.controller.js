@@ -4,10 +4,11 @@ var dir = require('node-dir');
 var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
-
-
+var _ = require('lodash');
 projectController.addProject = function(req,res){
 	// console.log("req files =============>" , req.files);
+	req.body.Teams = req.body.Teams.split(',');
+	console.log("req body",req.body);
 	var flag = 5;
 	projectModel.find({}).exec((err , allProjects)=>{
 		for(var i = 0; i < allProjects.length; i++){
@@ -66,7 +67,6 @@ projectController.addProject = function(req,res){
 			})
 		}
 	})
-	console.log("req body",req.body);
 }
 
 
@@ -105,7 +105,13 @@ projectController.getProjectById = function(req,res){
 		if (err) {
 			res.status(500).send(err);
 		}else if(projects){
-			
+
+			_.map([...projects.taskId, ...projects.IssueId, ...projects.BugId], function(ele){
+				if(ele.assignTo == null){
+					ele.assignTo = "";
+				}
+			})
+
 			res.status(200).send(projects);
 		}else{
 			res.status(404).send("NOT FOUND");
@@ -201,5 +207,14 @@ projectController.deleteFile = function(req, res){
 		res.status(200).send("file deleted");
 	}); 
 }
-
+projectController.getDeveloperOfProject = function(req , res){
+	console.log("projectId ========>" , req.params.projectId);
+	var projectId = req.params.projectId;
+	projectModel.findOne({_id: projectId})
+	.select('Teams')
+	.exec((err , foundTeam)=>{
+		if(err) res.send(err)
+		else res.status(200).send(foundTeam);
+	})
+}
 module.exports = projectController;
