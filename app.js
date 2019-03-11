@@ -6,7 +6,7 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var session = require('express-session');
-// var fileUpload = require('express-fileupload');
+var fileUpload = require('express-fileupload');
 var cors = require('cors');
 const SALT_WORK_FACTOR = 10;
 var cron = require('node-cron');
@@ -24,7 +24,7 @@ var commentRouter = require('./routes/comment');
 var noticeRouter = require('./routes/notice');
 var tasksRouter = require('./routes/tasks');
 var app = express();
-// app.use(fileUpload());
+app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
 mongoose.connect('mongodb://127.0.0.1:27017/projectMngtTool', {useNewUrlParser: true})
