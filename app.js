@@ -6,12 +6,10 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var session = require('express-session');
-var fileUpload = require('express-fileupload');
 var cors = require('cors');
 
 var async = require('async');
 var crypto = require('crypto');
-var fileUpload = require('express-fileupload');
 // var mv = require('move-file');
 
 const SALT_WORK_FACTOR = 10;
@@ -28,11 +26,11 @@ var issueRouter = require('./routes/issue');
 var requeRouter = require('./routes/requirement');
 var commentRouter = require('./routes/comment');
 var employeeRouter = require('./routes/employee');
+var leaveRouter = require('./routes/leave');
 
 var noticeRouter = require('./routes/notice');
 var tasksRouter = require('./routes/tasks');
 var app = express();
-app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
 mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
@@ -71,6 +69,7 @@ app.use('/employee',employeeRouter);
 app.use('/notice',noticeRouter);
 
 app.use('/tasks' , tasksRouter);
+app.use('/leave',leaveRouter);
 app.post('/email/send-email', emailController.sendEmail);
 
 // catch 404 and forward to error handler
