@@ -6,12 +6,10 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var session = require('express-session');
-var fileUpload = require('express-fileupload');
 var cors = require('cors');
 
 var async = require('async');
 var crypto = require('crypto');
-var fileUpload = require('express-fileupload');
 // var mv = require('move-file');
 
 const SALT_WORK_FACTOR = 10;
@@ -32,7 +30,6 @@ var employeeRouter = require('./routes/employee');
 var noticeRouter = require('./routes/notice');
 var tasksRouter = require('./routes/tasks');
 var app = express();
-app.use(fileUpload());
 app.set('superSecret', 'pmt');
 // Define mongoose Component
 mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
