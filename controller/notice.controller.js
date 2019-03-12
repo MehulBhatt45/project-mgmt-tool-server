@@ -14,8 +14,8 @@ noticeController.addNoticeWithoutImage = function(req,res){
 }
 
 noticeController.addNoticeWithImage = function(req,res){
-
-	console.log("reuested file",req.files.uploadFile);
+	console.log(req.body);
+	console.log("reuested file",req.files);
 	console.log("uploadfile=======>",req.body);
 	var files = [];
 	var Notice_data = {
