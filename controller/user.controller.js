@@ -57,9 +57,9 @@ userController.addUser = function(req,res){
 						// res.status(200).send("files uploaded successfully");
 						for(var i=0;i<files.length;i++){
 							if(_.includes(files[i].filename, '.pdf')){
-								var cv = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7];
+								var cv = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7]+"/"+files[i].fd.split('/')[8];
 							}else{
-								var profile = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7];
+								var profile = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7]+"/"+files[i].fd.split('/')[8];
 							}
 						}
 						newUser['CV'] = cv;
