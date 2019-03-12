@@ -24,7 +24,7 @@ var commentRouter = require('./routes/comment');
 var noticeRouter = require('./routes/notice');
 var tasksRouter = require('./routes/tasks');
 var app = express();
-// app.use(fileUpload());
+// app.use(fileUpload());xc
 app.set('superSecret', 'pmt');
 // Define mongoose Component
 
@@ -61,6 +61,7 @@ app.use('/comment',commentRouter);
 app.use('/notice',noticeRouter);
 app.use('/user', userRouter);
 app.use('/tasks' , tasksRouter);
+
 
 // catch 404 and forward to error handler
 
