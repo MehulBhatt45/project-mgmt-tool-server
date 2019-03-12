@@ -1,73 +1,61 @@
 var noticeModel = require('./../model/notice.model');
 let noticeController = {};
 var _ = require('lodash');
-
-noticeController.addNoticeWithoutImage = function(req,res){
+var dir = require('node-dir');
+var mkdir = require('mkdirp');
+var path = require('path');
+var fs = require('fs');
+noticeController.addNotice = function(req,res){
 
 	var Notice = new noticeModel(req.body);
 	Notice.save((error, newNotice)=>{
 		if (error) {
 			res.status(500).send(error);
-		}		
-		res.status(200).send(newNotice);
-	});
-}
-
-noticeController.addNoticeWithImage = function(req,res){
-
-	console.log("reuested file",req.files.uploadFile);
-	console.log("uploadfile=======>",req.body);
-	var files = [];
-	var Notice_data = {
-		title : req.body.title,
-		desc : req.body.desc,
-		published : req.body.published,
-		images : files,
-		expireon : req.body.expireon
-	};
-
-	var notice = new noticeModel(Notice_data);
-	console.log("Notice_data",Notice_data);
-	notice.save(function(error,savedNotice){
-		if (error) {
-			return res.status(500).send(error);
 		}else{
-			if(req.files.uploadFile.length>0){
-				for(var i = 0; i < req.files.uploadFile.length; i++){
-					var sampleFile = req.files.uploadFile[i];
-					sampleFile.mv('./uploads/notice/'+sampleFile.name, function(err) {
+			var uploadPath = path.join(__dirname, "../uploads/notice/"+newNotice._id+"/");
+			console.log(uploadPath);
+			req.file('uploadfile').upload({
+				maxBytes: 500000000,
+				dirname: uploadPath,
+				saveAs: function (__newFileStream, next) {
+					dir.files(uploadPath, function(err, files) {
 						if (err){
-							return res.status(500).send(err);
+							mkdir(uploadPath, 0775);
+							return next(undefined, __newFileStream.filename);
+						}else {
+							return next(undefined, __newFileStream.filename);
 						}
 					});
-					var images = sampleFile.name;
-					var imagesArr = images.split("\\");
-					images  = imagesArr[2];
-					files.push("/uploads/notice/"+sampleFile.name);
-					console.log("files array==>>>",files);
-					savedNotice.images = files;
-					savedNotice.save();
 				}
-			}else{
-				var sampleFile = req.files.uploadFile;
-				sampleFile.mv('./uploads/notice/'+sampleFile.name, function(err) {
-					if (err){
-						return res.status(500).send(err);
+			}, function(err, files){
+				if (err) {
+					console.log(err);
+					res.status(500).send(err);
+				}else{
+					console.log(files);
+					var fileNames=[];
+					if(files.length>0){
+						_.forEach(files, (gotFile)=>{
+							fileNames.push(gotFile.fd.split('/').reverse()[3]+"/"+gotFile.fd.split('/').reverse()[2]+"/"+gotFile.fd.split('/').reverse()[1]+"/"+gotFile.fd.split('/').reverse()[0])
+						})
 					}
-				});
-				var images = sampleFile.name;
-				var imagesArr = images.split("\\");
-				images  = imagesArr[2];
-				files.push("/uploads/notice/"+sampleFile.name);
-				console.log("files array==>>>",files);
-				savedNotice.images = files;
-				savedNotice.save();
-			}
-			res.status(200).send(savedNotice);
-		}
+					noticeModel
+					.findOneAndUpdate({_id: newNotice._id}, {$set: {images: fileNames}}, { upsert: true, new: true })
+					.exec((err , notice)=>{
+						if (err) {
+							console.log(err);
+							res.status(500).send(err);
+						}else{
+							res.status(200).send(notice);
+						}	
+					})
+				}
+			})
+		}	
 	});
-	console.log(req.body);
 }
+
+
 
 noticeController.deleteNotice = function(req,res){
 	var noticeId = req.params.noticeId;

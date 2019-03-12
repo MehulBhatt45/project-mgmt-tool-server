@@ -11,6 +11,10 @@ router.put('/update-details/:id', userController.updateUserById);
 router.get('/get-logs/:userId', userController.getUserWorkLogs);
 router.get('/get-all-developers', userController.getAllUsers);
 
-router.post('/get-all-developers-by-project-manager', userController.getAllUsersByProjectManager);
 
+// router.get('/get-logs/:userId', userController.getUserWorkLogs);
+// router.get('/get-all-developers', userController.getAllUsers);
+router.post('/get-all-developers-by-project-manager', userController.getAllUsersByProjectManager);
+router.get('/get-user-by-id/:userId',userController.getSingleUser);
+// router.post('/signup_without_file',userController.addUser_without_file);
 module.exports = router;

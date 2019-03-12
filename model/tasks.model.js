@@ -9,7 +9,7 @@ var tasksSchema = new Schema({
 	projectId: {type: Schema.Types.ObjectId , ref: 'Project'},
 	status: {type: String , default: 'to do'},
 	comment:[{ type: Schema.Types.ObjectId, ref: 'Comment'}],
-	priority:{ type: String , default: "medium"},
+	priority:{ type: Number },
 	uniqueId:{ type: String },
 	timelog:[{
 		operation: {type: String},
@@ -20,7 +20,7 @@ var tasksSchema = new Schema({
 	createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
 	startDate:{ type: Date },
 	completedAt: { type: Date },
-	dueDate:{ type: Date, default: null },
+	dueDate:{ type: String, default: null },
 	images: [{type: String, default: []}]
 },{timestamps: true});
 
