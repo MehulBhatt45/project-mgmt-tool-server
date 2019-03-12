@@ -5,6 +5,7 @@ var dir = require('node-dir');
 var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
+
 noticeController.addNotice = function(req,res){
 
 	var Notice = new noticeModel(req.body);
@@ -56,17 +57,6 @@ noticeController.addNotice = function(req,res){
 }
 
 
-
-noticeController.deleteNotice = function(req,res){
-	var noticeId = req.params.noticeId;
-	noticeModel.findOneAndDelete({_id:noticeId}).exec(function(err,deletedNotice){
-		if (err) res.status(500).send(err);
-		else{
-			res.status(200).send(deletedNotice);
-		}
-	})
-}
-
 noticeController.getAllNotice = function(req,res){
 
 	noticeModel.find({}).exec(function(err,Notices){
@@ -95,14 +85,8 @@ noticeController.updateNotice = function(req,res){
 				console.log(notices[i].expireon);
 				console.log(date);
 				if (notices[i].expireon>date){
-					// console.log("notice date",notices[i].expireon);
-					// console.log("system dte",date);
-					// console.log("greater");
 				}
 				else{
-					// console.log("notice date",notices[i].expireon);
-					// console.log("system dte",date);
-					// console.log("smaller");
 					notices[i].published = false;
 					notices[i].save();
 				}
@@ -112,5 +96,36 @@ noticeController.updateNotice = function(req,res){
 		}
 	})
 }
+
+noticeController.updateNoticeById = function(req,res){
+
+	var noticeId = req.params.noticeId;
+	console.log("notice Id to update=>>>>>",noticeId);
+
+	noticeModel
+	.findOneAndUpdate({_id:noticeId},req.body,{ upsert: true, new: true })
+	.exec((err , notice)=>{
+		if (err) {
+			console.log(err);
+			res.status(500).send(err);
+		}else{
+			res.status(200).send(notice);
+		}	
+	})
+	
+}
+
+noticeController.deleteNoticeById = function(req,res){
+
+	var noticeId = req.params.noticeId;
+	console.log("notice Id to update=>>>>>",noticeId);
+
+	noticeModel.deleteOne({_id : noticeId} , function(err , removed){
+		if(err) res.send(err);
+		else res.status(200).send(removed);
+	});
+}
+
+
 
 module.exports = noticeController; 
