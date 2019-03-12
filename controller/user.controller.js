@@ -57,9 +57,9 @@ userController.addUser = function(req,res){
 						// res.status(200).send("files uploaded successfully");
 						for(var i=0;i<files.length;i++){
 							if(_.includes(files[i].filename, '.pdf')){
-								var cv = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7];
+								var cv = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7]+"/"+files[i].fd.split('/')[8];
 							}else{
-								var profile = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7];
+								var profile = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7]+"/"+files[i].fd.split('/')[8];
 							}
 						}
 						newUser['CV'] = cv;
@@ -76,13 +76,44 @@ userController.addUser = function(req,res){
 		}			
 	})
 }
+userController.changeProfileByUserId = function(req,res){
+	userModel.find({_id:req.params.id}, function(err,user){
+		var user = req.params.id;
+		console.log("userId=============>",user);
+		if (err) {
+			res.status(500).send(err);
+		}else{
+			var uploadPath = path.join(__dirname, "../uploads/"+user._id+"/");
+			console.log(uploadPath);
+			req.file('uploadfile').upload({
+				maxBytes: 50000000000000,
+				dirname: uploadPath,
+				saveAs: function (__newFileStream, next) {
+					dir.files(uploadPath, function(err, files) {
+						if (err){
+							mkdir(uploadPath, 0775);
+							return next(undefined, __newFileStream.filename);
+						}else {
+							return next(undefined, __newFileStream.filename);
+						}
+					});
+				}
+			}, function(err, files){
+				if (err) {
+					console.log(err);
+					res.status(500).send(err);
+				}else{
+					console.log(files);
+					res.status(200).send(files);
+				}
 
-
-
-
-
+			})
+		}
+	})
+}
 
 userController.getSingleUser = function(req, res){
+	console.log("req.paras ===>" , req.params.userId);
 	userModel.findOne({_id:req.params.userId}, function(err,getuser){
 		if(err){
 			res.status(500).send(err);
@@ -92,7 +123,7 @@ userController.getSingleUser = function(req, res){
 	})
 }
 
-userController.resetPassword = function(req,res){
+userController.resetPassword = function(req,res){ 
 	console.log(req.body);
 	userModel.findOne({ email:req.body.email}).exec((err,user)=>{
 		if (err) {
@@ -205,69 +236,6 @@ userController.logIn = function(req,res){
 	}else{
 		return res.status(400).send({errMsg : 'Bad Data'});
 	}
-}
-
-userController.getUserWorkLogs = function(req,res){
-	var uniqueArray = [];
-	userModel.findOne({ _id: req.params.userId })
-	.exec((err, response) => {
-		if (err) {
-			return res.status(500).json({
-				status: false,
-				code: 500,
-				message: 'Internal Server Error'
-			});
-		} else {
-			projectModel
-			.find({pmanagerId: req.user._id})
-			.exec((err, project)=>{
-				if (err) {
-					res.status(500).send(err);
-				}
-				_.forEach(project, (pro)=>{
-					uniqueArray.push(pro._id);
-				})
-				console.log(uniqueArray);
-				async.parallel(
-				{
-					task: function (callback) {
-						taskModel.find()
-						.where({ userId: req.body.userId})
-						.where({ projectId: { $in: uniqueArray }})
-						.exec((err1, userList) => {
-							if (err1) callback([], null);
-							callback(null, userList);
-						})
-					},
-					bug: function (callback) {
-						bugModel.find()
-						.where({ userId: req.body.userId})
-						.where({ projectId: { $in: uniqueArray }})
-						.exec((err1, userList) => {
-							if (err1) callback([], null);
-							callback(null, userList);
-						})
-					},
-					issue: function (callback) {
-						issueModel.find()
-						.where({ userId: req.body.userId})
-						.where({ projectId: { $in: uniqueArray }})
-						.exec((err1, userList) => {
-							if (err1) callback([], null);
-							callback(null, userList);
-						})
-					}
-				}, function (err, results) {
-					return res.status(200).json({
-						status: true,
-						code: 200,
-						data: results
-					});
-				});
-			})
-		}
-
-	})
 }
 
 
