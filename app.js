@@ -27,6 +27,7 @@ var requeRouter = require('./routes/requirement');
 var commentRouter = require('./routes/comment');
 var employeeRouter = require('./routes/employee');
 var leaveRouter = require('./routes/leave');
+var notificationRouter = require('./routes/notification');
 
 var noticeRouter = require('./routes/notice');
 var tasksRouter = require('./routes/tasks');
@@ -68,12 +69,11 @@ app.use('/reque',requeRouter);
 app.use('/comment',commentRouter);
 app.use('/user', userRouter); 
 app.use('/employee',employeeRouter);
-
 app.use('/notice',noticeRouter);
-
 app.use('/tasks' , tasksRouter);
 app.use('/leave',leaveRouter);
 app.post('/email/send-email', emailController.sendEmail);
+app.use('/notification',notificationRouter);
 
 
 // catch 404 and forward to error handler
