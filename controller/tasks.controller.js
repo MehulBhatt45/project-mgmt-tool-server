@@ -203,7 +203,7 @@ tasksController.updateTaskById = function(req , res){
 tasksController.getAllTask = function(req , res){
 	tasksModel
 	.find({})
-	.populate('projectId assignTo')
+	.populate('projectId assignTo createdBy')
 	.exec((err , allTasks)=>{
 		if(err) res.send('err');
 		else res.send(allTasks);
