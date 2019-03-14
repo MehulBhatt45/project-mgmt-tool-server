@@ -114,6 +114,7 @@ tasksController.addTasks = function(req , res){
 										console.log('Email sent: ' + info.response);
 									}
 								});
+									res.status(200).send(savedTask);
 
 								})
 
@@ -202,9 +203,9 @@ tasksController.addTasks = function(req , res){
 										console.log("Error",error);
 									} else {
 										console.log('Email sent: ' + info.response);
-								res.status(200).send(savedTask);	
 									}
 								});
+								res.status(200).send(savedTask);	
 							})
 						
 					})
