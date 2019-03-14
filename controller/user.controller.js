@@ -148,8 +148,7 @@ userController.updateUserById = function(req,res){
 				}else{
 					console.log(files);
 					console.log("files==========>",files)
-
-					var profile = files[0].fd.split('/uploads/').reverse()[0];
+					var cv = files[0].fd.split('/uploads/').reverse()[0];
 					getuser['CV'] = cv;
 					userModel.findOneAndUpdate({_id: userId}, {$set: {CV:cv }}, {upsert:true, new:true}).exec((error,user)=>{
 						if (error){ 
