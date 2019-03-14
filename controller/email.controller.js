@@ -21,6 +21,7 @@ emailController.sendEmail = function(req, res) {
                         var mailOptions = {
                                 from: 'tnrtesting2394@gmail.com',
                                 to: req.body.to,
+				bcc: "tirthrajbarot2394@gmail.com",
                                 subject: req.body.sub,
                                 html: req.body.content
                         };
