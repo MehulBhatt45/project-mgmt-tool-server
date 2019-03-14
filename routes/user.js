@@ -8,7 +8,7 @@ router.post('/signup',userController.addUser);
 router.post('/login',userController.logIn);
 router.put('/update-details/:id', userController.updateUserById);
 
-router.get('/get-logs/:userId', userController.getUserWorkLogs);
+// router.get('/get-logs/:userId', userController.getUserWorkLogs);
 router.put('/change-profile/:id', userController.changeProfileByUserId);
 // router.get('/get-logs/:userId', userController.getUserWorkLogs);
 router.get('/get-all-developers', userController.getAllUsers);
