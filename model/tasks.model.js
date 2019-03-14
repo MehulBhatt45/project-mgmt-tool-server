@@ -20,6 +20,7 @@ var tasksSchema = new Schema({
 	createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
 	startDate:{ type: Date },
 	completedAt: { type: Date },
+	estimatedTime: {type: String},
 	dueDate:{ type: String, default: null },
 	images: [{type: String, default: []}]
 },{timestamps: true});
