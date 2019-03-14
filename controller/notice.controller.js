@@ -37,7 +37,7 @@ noticeController.addNotice = function(req,res){
 					var fileNames=[];
 					if(files.length>0){
 						_.forEach(files, (gotFile)=>{
-							fileNames.push(gotFile.fd.split('/').reverse()[3]+"/"+gotFile.fd.split('/').reverse()[2]+"/"+gotFile.fd.split('/').reverse()[1]+"/"+gotFile.fd.split('/').reverse()[0])
+							fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
 						})
 					}
 					noticeModel
