@@ -12,7 +12,7 @@ router.put('/update-details/:id', userController.updateUserById);
 router.put('/change-profile/:id', userController.changeProfileByUserId);
 // router.get('/get-logs/:userId', userController.getUserWorkLogs);
 router.get('/get-all-developers', userController.getAllUsers);
-
+router.put('/reset-password',userController.resetPassword);
 
 // router.get('/get-logs/:userId', userController.getUserWorkLogs);
 // router.get('/get-all-developers', userController.getAllUsers);
