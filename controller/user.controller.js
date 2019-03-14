@@ -76,41 +76,6 @@ userController.addUser = function(req,res){
 		}			
 	})
 }
-userController.changeProfileByUserId = function(req,res){
-	userModel.find({_id:req.params.id}, function(err,user){
-		var user = req.params.id;
-		console.log("userId=============>",user);
-		if (err) {
-			res.status(500).send(err);
-		}else{
-			var uploadPath = path.join(__dirname, "../uploads/"+user._id+"/");
-			console.log(uploadPath);
-			req.file('uploadfile').upload({
-				maxBytes: 50000000000000,
-				dirname: uploadPath,
-				saveAs: function (__newFileStream, next) {
-					dir.files(uploadPath, function(err, files) {
-						if (err){
-							mkdir(uploadPath, 0775);
-							return next(undefined, __newFileStream.filename);
-						}else {
-							return next(undefined, __newFileStream.filename);
-						}
-					});
-				}
-			}, function(err, files){
-				if (err) {
-					console.log(err);
-					res.status(500).send(err);
-				}else{
-					console.log(files);
-					res.status(200).send(files);
-				}
-
-			})
-		}
-	})
-}
 
 userController.getSingleUser = function(req, res){
 	console.log("req.paras ===>" , req.params.userId);
@@ -239,4 +204,57 @@ userController.logIn = function(req,res){
 }
 
 
+userController.changeProfileByUserId = function(req,res){
+	var userId = req.params.id
+	console.log("userId is==============>",userId);
+	userModel
+	.findByIdAndUpdate({_id:userId},{$set:req.body},{upsert:true, new:true},function(err,getuser){
+
+		if(err){
+			res.status(500).send(err);
+		}
+		else{
+			var uploadPath = path.join(__dirname, "../uploads/"+getuser._id+"/");
+			console.log(uploadPath);
+			req.file('profilePhoto').upload({
+				maxBytes: 50000000000000,
+				dirname: uploadPath,
+				saveAs: function (__newFileStream, next) {
+					dir.files(uploadPath, function(err, files) {
+						if (err){
+							mkdir(uploadPath, 0775);
+							return next(undefined, __newFileStream.filename);
+						}else {
+							return next(undefined, __newFileStream.filename);
+						}
+					});
+				}
+			}, function(err, files){
+				if (err) {
+					console.log(err);
+					res.status(500).send(err);
+				}else{
+					console.log(files);
+					console.log("files==========>",files)
+
+					var profile = files[0].fd.split('/')[6]+"/"+files[0].fd.split('/')[7]+"/"+files[0].fd.split('/')[8];
+					getuser['profilePhoto'] = profile;
+					userModel.findOneAndUpdate({_id: userId}, {$set: {profilePhoto:profile }}, {upsert:true, new:true}).exec((error,user)=>{
+						if (error){ 
+							res.status(500).send(error);
+						}else{
+							console.log(user);
+							res.status(200).send(user);
+						}
+					})
+				}
+
+			})
+		}
+	})
+	
+}
+
+
 module.exports = userController; 
+
