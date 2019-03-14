@@ -37,7 +37,7 @@ tasksController.addTasks = function(req , res){
 			var fileNames=[];
 			if(files.length>0){
 				_.forEach(files, (gotFile)=>{
-					fileNames.push(gotFile.fd.split('/').reverse()[2]+"/"+gotFile.fd.split('/').reverse()[1]+"/"+gotFile.fd.split('/').reverse()[0])
+					fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
 				})
 			}
 			tasksModel
@@ -460,7 +460,7 @@ tasksController.updateTaskById = function(req , res){
 tasksController.getAllTask = function(req , res){
 	tasksModel
 	.find({})
-	.populate('projectId assignTo')
+	.populate('projectId assignTo createdBy')
 	.exec((err , allTasks)=>{
 		if(err) res.send('err');
 		else res.send(allTasks);

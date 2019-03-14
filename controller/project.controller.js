@@ -48,7 +48,7 @@ projectController.addProject = function(req,res){
 							var fileNames = savedProject.avatar;
 							if(files.length>0){
 								_.forEach(files, (gotFile)=>{
-									fileNames = gotFile.fd.split('/').reverse()[3]+"/"+gotFile.fd.split('/').reverse()[2]+"/"+gotFile.fd.split('/').reverse()[1]+"/"+gotFile.fd.split('/').reverse()[0];
+									fileNames = gotFile.fd.split('/uploads/').reverse()[0];
 								})
 							}
 							projectModel

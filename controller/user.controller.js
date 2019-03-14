@@ -57,9 +57,9 @@ userController.addUser = function(req,res){
 						// res.status(200).send("files uploaded successfully");
 						for(var i=0;i<files.length;i++){
 							if(_.includes(files[i].filename, '.pdf')){
-								var cv = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7]+"/"+files[i].fd.split('/')[8];
+								var cv = files[i].fd.split('/uploads/').reverse()[0];
 							}else{
-								var profile = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7]+"/"+files[i].fd.split('/')[8];
+								var profile = files[i].fd.split('/uploads/').reverse()[0];
 							}
 						}
 						newUser['CV'] = cv;
@@ -237,13 +237,14 @@ userController.changeProfileByUserId = function(req,res){
 					console.log(files);
 					console.log("files==========>",files)
 
-					var profile = files[0].fd.split('/')[6]+"/"+files[0].fd.split('/')[7]+"/"+files[0].fd.split('/')[8];
+					var profile = files[0].fd.split('/uploads/').reverse()[0];
 					getuser['profilePhoto'] = profile;
 					userModel.findOneAndUpdate({_id: userId}, {$set: {profilePhoto:profile }}, {upsert:true, new:true}).exec((error,user)=>{
 						if (error){ 
 							res.status(500).send(error);
 						}else{
-							res.status(200).send(files);
+							console.log(user);
+							res.status(200).send(user);
 						}
 					})
 				}
