@@ -354,44 +354,77 @@ tasksController.updateTaskById = function(req , res){
 	var taskId = req.params.taskId;
 	var lastTask = false;
 	console.log("taskId ======+>" , taskId);
-	
 	console.log("req. body =====+>" , req.body);
-	tasksModel.findOneAndUpdate({_id: taskId} , req.body , {upsert: true , new: true}, function(err , updatedData){
-		if(err) res.send("err");
-		else{
-			projectModel.findOne({_id: updatedData.projectId})
-			.exec((err , resp)=>{
-				var flag = 5;
-				var final = 1
-				var q = JSON.stringify(updatedData.assignTo);
-				console.log("type of ==>", typeof q);
-				for(var i = 0;i< resp.Teams.length ; i++){
-					var p = JSON.stringify(resp.Teams[i]);
-					flag = p.localeCompare(q);
-					console.log("flag ===>" , flag);
-					if(flag == 0){
-						final = 0;
-					}
+	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/");
+	console.log(uploadPath);
+	req.file('fileUpload').upload({
+		maxBytes: 50000000000000,
+		dirname: uploadPath,
+		saveAs: function (__newFileStream, next) {
+			dir.files(uploadPath, function(err, files) {
+				if (err){
+					mkdir(uploadPath, 0775);
+					return next(undefined, __newFileStream.filename);
+				}else {
+					return next(undefined, __newFileStream.filename);
 				}
-				console.log("final ===>" , final);
-				if(final == 1){
-					resp.Teams.push(updatedData.assignTo);
-				}
-				resp.save();	
-
-				console.log("final task======>" , updatedData);
-				userModel.findOne({_id: updatedData.assignTo})
-				.exec((err , user)=>{
-					user.tasks.push(updatedData._id);
-					user.save();	
-
-					console.log("final task======>" , updatedData);
-					res.status(200).send(updatedData);	
-				})
-			})
-			// res.send(updatedData);
+			});
 		}
-	} )
+	}, function(err, files){
+		if (err) {
+			console.log(err);
+			res.status(500).send(err);
+		}else{
+			console.log(files);
+			tasksModel.findOne({_id: taskId}, function(err , task){
+			var fileNames=task.images;
+			// fileNames.push(req.body.images);
+			if(files.length>0){
+				_.forEach(files, (gotFile)=>{
+					fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
+				})
+			}
+			console.log(fileNames);
+			req.body['images'] = fileNames;
+			console.log("req. body =====+>" , req.body);
+			tasksModel.findOneAndUpdate({_id: taskId} , req.body , {upsert: true , new: true}, function(err , updatedData){
+				if(err) res.send("err");
+				else{
+					projectModel.findOne({_id: updatedData.projectId})
+					.exec((err , resp)=>{
+						var flag = 5;
+						var final = 1
+						var q = JSON.stringify(updatedData.assignTo);
+						console.log("type of ==>", typeof q);
+						for(var i = 0;i< resp.Teams.length ; i++){
+							var p = JSON.stringify(resp.Teams[i]);
+							flag = p.localeCompare(q);
+							console.log("flag ===>" , flag);
+							if(flag == 0){
+								final = 0;
+							}
+						}
+						console.log("final ===>" , final);
+						if(final == 1){
+							resp.Teams.push(updatedData.assignTo);
+						}
+						resp.save();	
+
+						console.log("final task======>" , updatedData);
+						userModel.findOne({_id: updatedData.assignTo})
+						.exec((err , user)=>{
+							user.tasks.push(updatedData._id);
+							user.save();	
+
+							console.log("final task======>" , updatedData);
+							res.status(200).send(updatedData);	
+						})
+					})
+				}
+			})
+			})
+		}
+	});
 }
 tasksController.getAllTask = function(req , res){
 	tasksModel
