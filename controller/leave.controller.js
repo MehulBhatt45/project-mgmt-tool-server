@@ -14,91 +14,223 @@ leaveController.applyLeave = function(req,res){
 		if(err) res.status(500).send(err)
 			else{	
 
-				// var output = `<!doctype html>
-				// 				<html>
-				// 				<head>
-				// 				<title> title111</title>
-				// 				</head>
-				// 				<body>
-				// 				<div style="width:75%;margin:0 auto;border-radius: 6px;
-				// 				box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-				// 				border: 1px solid #d3d3d3;">
-				// 				<center>
-				// 				<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+
+				res.status(200).send(leave)
 
 
-				// 				<div style="margin-left:30px;padding:0;">
-				// 				<p style="color:black;font-size:20px;">You have a new Leave Application from `+req.body.name+`</p>
-								
-				// 				<table style="color:black;">
-				// 				<tr style="height: 50px;width: 100%;">
-				// 				<td><b>Leave Date</b></td>
-				// 				<td style="padding-left: 50px;">`+req.body.leaveDate+`</td></tr>
-
-				// 				<tr style="height: 50px;">
-				// 				<td><b>Duration</b></td>
-				// 				<td style="padding-left: 50px;">`+req.body.duration+`</td></tr>
-
-
-				// 				<tr  style="height: 50px;">
-				// 				<td><b>Type of leave</b></td>
-				// 				<td style="padding-left: 50px;">`+req.body.typeOfLeave+`</td></tr>
+				var output = `<!doctype html>
+								<html>
+								<head>
+								<title> title111</title>
+								</head>
+								<body>
+								<div style="width:75%;margin:0 auto;border-radius: 6px;
+								box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+								border: 1px solid #d3d3d3;">
+								<center>
+								<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
 
 
-				// 				<tr style="height: 50px;">
-				// 				<td><b>Reason</b></td>
-				// 				<td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr>
+								<div style="margin-left:30px;padding:0;">
+								<p style="color:black;font-size:20px;">You have a new Leave Application from `+req.body.name+`</p>
 
-				// 				</table>
-				// 				</div>
-				// 				</body>
-				// 				</html>
-				// 				`;
+								<table style="color:black;">
+								<tr style="height: 50px;width: 100%;">
+								<td><b>Leave Date</b></td>
+								<td style="padding-left: 50px;">`+req.body.leaveDate+`</td></tr>
 
-				// var transporter = nodemailer.createTransport({
-				// 	host: "smtp.gmail.com",
-				// 	port: 465,
-				// 	secure: true,
-				// 	service: 'gmail',
-
-				// 	auth: {
-				// 		user: 'tnrtesting2394@gmail.com',
-				// 		pass: 'raoinfotech09'
-				// 	}
-				// });
+								<tr style="height: 50px;">
+								<td><b>Duration</b></td>
+								<td style="padding-left: 50px;">`+req.body.duration+`</td></tr>
 
 
-				// var mailOptions = {
-				// 	from: 'tnrtesting2394@gmail.com',
-				// 	to: 'foramtrada232@gmail.com',
-				// 	subject: 'Testing Email',
-				// 	text: 'Hi, this is a testing email from node server',
-				// 	html: output
-				// };
+								<tr  style="height: 50px;">
+								<td><b>Type of leave</b></td>
+								<td style="padding-left: 50px;">`+req.body.typeOfLeave+`</td></tr>
 
-				// transporter.sendMail(mailOptions, function(error, info){
-				// 	if (error) {
-				// 		console.log("Error",error);
-				// 	} else {
-				// 		console.log('Email sent: ' + info.response);
-						res.status(200).send(leave)
+
+								<tr style="height: 50px;">
+								<td><b>Reason</b></td>
+								<td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr>
+
+								</table>
+								</div>
+								</body>
+								</html>
+								`;
+
+				var transporter = nodemailer.createTransport({
+					host: "smtp.gmail.com",
+					port: 465,
+					secure: true,
+					service: 'gmail',
+
+					auth: {
+						user: 'tnrtesting2394@gmail.com',
+						pass: 'raoinfotech09'
 					}
 				});
-			// }
-		// })
-}
 
-leaveController.getLeaves = function(req,res){
-	leaveModel.find({status: "pending"})
-	.exec((err,status)=>{
-		if(err) res.status(500).send(err) 
-			else{
-				console.log(status)
 
-				res.status(200).send(status)
+				var mailOptions = {
+					from: 'tnrtesting2394@gmail.com',
+					to: 'foramtrada232@gmail.com',
+					subject: 'Testing Email',
+					text: 'Hi, this is a testing email from node server',
+					html: output
+				};
 
+				transporter.sendMail(mailOptions, function(error, info){
+					if (error) {
+						console.log("Error",error);
+					} else {
+						console.log('Email sent: ' + info.response);
+
+					}
+				});
 			}
 		})
 }
 
+leaveController.getLeaves = function(req,res){
+	leaveModel.find({status: "pending"})
+	.exec((err,resp)=>{
+		if(err){ 
+			console.log("error======>",err);
+			res.status(500).send(err) 
+		}
+		else{
+			console.log("response=====>",resp);
+
+			res.status(200).send(resp)
+		}
+	})
+}
+
+leaveController.updateLeaves = function(req,res){
+
+
+	leaveModel.findByIdAndUpdate({_id: req.params.id},req.body,{upsert:true},function(err,update){
+		console.log(update);
+		var status = update.status;
+		console.log("status====>",status);
+		
+
+		if(status == "approved"){
+				console.log("Leave Accepted");
+				var output = `<!doctype html>
+				<html>
+				<head>
+				<title> title111</title>
+				</head>
+				<body>
+				<div style="width:75%;margin:0 auto;border-radius: 6px;
+				box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+				border: 1px solid #d3d3d3;">
+				<center>
+				<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+
+
+				<div style="margin-left:30px;padding:0;">
+				<p style="color:black;font-size:20px;">Your leave is approved</p>
+
+				
+				</div>
+				</body>
+				</html>
+				`;
+
+				var transporter = nodemailer.createTransport({
+					host: "smtp.gmail.com",
+					port: 465,
+					secure: true,
+					service: 'gmail',
+
+					auth: {
+						user: 'vivekkbharda@gmail.com',
+						pass: '9228123224'
+					}
+				});
+
+
+				var mailOptions = {
+					from: 'vivekkbharda@gmail.com',
+					to: 'foramtrada232@gmail.com',
+					subject: 'Testing Email',
+					text: 'Hi, this is a testing email from node server',
+					html: output
+				};
+
+				transporter.sendMail(mailOptions, function(error, info){
+					if (error) {
+						console.log("Error",error);
+					} else {
+						console.log('Email sent: ' + info.response);
+					}
+				});
+				res.status(200).send(update)
+			}else if(status == "rejected"){
+				console.log("Leave Rejected");
+				var output = `<!doctype html>
+				<html>
+				<head>
+				<title> title111</title>
+				</head>
+				<body>
+				<div style="width:75%;margin:0 auto;border-radius: 6px;
+				box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+				border: 1px solid #d3d3d3;">
+				<center>
+				<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+
+
+				<div style="margin-left:30px;padding:0;">
+				<p style="color:black;font-size:20px;">Your leave is rejected.</p>
+
+				
+				</div>
+				</body>
+				</html>
+				`;
+
+				var transporter = nodemailer.createTransport({
+					host: "smtp.gmail.com",
+					port: 465,
+					secure: true,
+					service: 'gmail',
+
+					auth: {
+						user: 'vivekkbharda@gmail.com',
+						pass: '9228123224'
+					}
+				});
+
+
+				var mailOptions = {
+					from: 'vivekkbharda@gmail.com',
+					to: 'foramtrada232@gmail.com',
+					subject: 'Testing Email',
+					text: 'Hi, this is a testing email from node server',
+					html: output
+				};
+
+				transporter.sendMail(mailOptions, function(error, info){
+					if (error) {
+						console.log("Error",error);
+					} else {
+						console.log('Email sent: ' + info.response);
+					}
+				});
+				res.status(200).send(update)
+			}
+			else{
+				console.log("mail not send");
+			}
+	})
+}
+
+
+
 module.exports = leaveController;
+
+
