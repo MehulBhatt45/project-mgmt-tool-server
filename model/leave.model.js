@@ -19,10 +19,16 @@ var LeaveSchema = new Schema ({
 	email: {type:String, default:'user'},
 	name: String,
 	status: {type:String, default:'pending'},
+
 	leaveDate: String,
-	duration: String,
+	leaveDuration: String,
 	typeOfLeave: String,
 	reasonForLeave: String,
+	startingDate:{type:Date,default:Date.now()},
+	noOfDays:String,
+	endingDate:Date
+
+
 
 })
 

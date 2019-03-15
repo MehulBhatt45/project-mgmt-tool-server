@@ -13,6 +13,8 @@ const smtpTransport = require('nodemailer-smtp-transport');
 tasksController.addTasks = function(req , res){
 	console.log("cottrectt ;");
 
+
+
 	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/");
 	console.log(uploadPath);
 	req.file('fileUpload').upload({
@@ -104,75 +106,7 @@ tasksController.addTasks = function(req , res){
 									console.log(' found email send===>',foundTask);
 									console.log("final----->>>",foundTask.assignTo.email);
 									var email = foundTask.assignTo.email;
-								if(priority1 == '1'){
-									color = "#ff0000";
-								}else if(priority1 == '2'){
-									color = "#ff8100";
-								}else if(priority1 == '3'){
-									color = "#ffee21";
-								}else{
-									color="#0087ff"
-								}
-
-								var output = `<!doctype html>
-								<html>
-								<head>
-								<title> title111</title>
-								</head>
-								<body>
-								<div style="width:75%;margin:0 auto;border-radius: 6px;
-								box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-								border: 1px solid #d3d3d3;">
-								<center>
-								<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
-								<div style="margin-left:30px;padding:0;">
-								<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+color+`">`+priority1+`</span> priority task.</p>
-								<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
-								<table style="color:black;">
-								<tr style="height: 50px;width: 100%;">
-								<td><b>Title</b></td>
-								<td style="padding-left: 50px;">`+req.body.title+`</td></tr>
-
-								<tr style="height: 50px;">
-								<td><b>Description</b></td>
-								<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
-
-
-								<tr  style="height: 50px;">
-								<td><b>Priority</b></td>
-								<td style="padding-left: 50px;">`+req.body.priority+`</td></tr>
-
-
-								</table>
-								</div>
-								</body>
-								</html>
-								`;
-
-
-								var transporter = nodemailer.createTransport({
-									host: "smtp.gmail.com",
-									port: 465,
-									secure: true,
-									service: 'gmail',
-
-									auth: {
-										user: 'tnrtesting2394@gmail.com',
-										pass: 'raoinfotech09'
-									}
-								});
-
-
-								var mailOptions = {
-									from: 'tnrtesting2394@gmail.com',
-									to: email,
-									subject: 'Testing Email',
-									text: 'Hi, this is a testing email from node server',
-									html: output
-								};
-
+								
 								transporter.sendMail(mailOptions, function(error, info){
 									if (error) {
 										console.log("Error",error);
@@ -185,7 +119,9 @@ tasksController.addTasks = function(req , res){
 								})
 
 								})
-							}
+									res.status(200).send(savedTask);
+									}
+						
 							else{
 
 								console.log("final task======>" , savedTask);
@@ -418,44 +354,77 @@ tasksController.updateTaskById = function(req , res){
 	var taskId = req.params.taskId;
 	var lastTask = false;
 	console.log("taskId ======+>" , taskId);
-	
 	console.log("req. body =====+>" , req.body);
-	tasksModel.findOneAndUpdate({_id: taskId} , req.body , {upsert: true , new: true}, function(err , updatedData){
-		if(err) res.send("err");
-		else{
-			projectModel.findOne({_id: updatedData.projectId})
-			.exec((err , resp)=>{
-				var flag = 5;
-				var final = 1
-				var q = JSON.stringify(updatedData.assignTo);
-				console.log("type of ==>", typeof q);
-				for(var i = 0;i< resp.Teams.length ; i++){
-					var p = JSON.stringify(resp.Teams[i]);
-					flag = p.localeCompare(q);
-					console.log("flag ===>" , flag);
-					if(flag == 0){
-						final = 0;
-					}
+	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/");
+	console.log(uploadPath);
+	req.file('fileUpload').upload({
+		maxBytes: 50000000000000,
+		dirname: uploadPath,
+		saveAs: function (__newFileStream, next) {
+			dir.files(uploadPath, function(err, files) {
+				if (err){
+					mkdir(uploadPath, 0775);
+					return next(undefined, __newFileStream.filename);
+				}else {
+					return next(undefined, __newFileStream.filename);
 				}
-				console.log("final ===>" , final);
-				if(final == 1){
-					resp.Teams.push(updatedData.assignTo);
-				}
-				resp.save();	
-
-				console.log("final task======>" , updatedData);
-				userModel.findOne({_id: updatedData.assignTo})
-				.exec((err , user)=>{
-					user.tasks.push(updatedData._id);
-					user.save();	
-
-					console.log("final task======>" , updatedData);
-					res.status(200).send(updatedData);	
-				})
-			})
-			// res.send(updatedData);
+			});
 		}
-	} )
+	}, function(err, files){
+		if (err) {
+			console.log(err);
+			res.status(500).send(err);
+		}else{
+			console.log(files);
+			tasksModel.findOne({_id: taskId}, function(err , task){
+			var fileNames=task.images;
+			// fileNames.push(req.body.images);
+			if(files.length>0){
+				_.forEach(files, (gotFile)=>{
+					fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
+				})
+			}
+			console.log(fileNames);
+			req.body['images'] = fileNames;
+			console.log("req. body =====+>" , req.body);
+			tasksModel.findOneAndUpdate({_id: taskId} , req.body , {upsert: true , new: true}, function(err , updatedData){
+				if(err) res.send("err");
+				else{
+					projectModel.findOne({_id: updatedData.projectId})
+					.exec((err , resp)=>{
+						var flag = 5;
+						var final = 1
+						var q = JSON.stringify(updatedData.assignTo);
+						console.log("type of ==>", typeof q);
+						for(var i = 0;i< resp.Teams.length ; i++){
+							var p = JSON.stringify(resp.Teams[i]);
+							flag = p.localeCompare(q);
+							console.log("flag ===>" , flag);
+							if(flag == 0){
+								final = 0;
+							}
+						}
+						console.log("final ===>" , final);
+						if(final == 1){
+							resp.Teams.push(updatedData.assignTo);
+						}
+						resp.save();	
+
+						console.log("final task======>" , updatedData);
+						userModel.findOne({_id: updatedData.assignTo})
+						.exec((err , user)=>{
+							user.tasks.push(updatedData._id);
+							user.save();	
+
+							console.log("final task======>" , updatedData);
+							res.status(200).send(updatedData);	
+						})
+					})
+				}
+			})
+			})
+		}
+	});
 }
 tasksController.getAllTask = function(req , res){
 	tasksModel

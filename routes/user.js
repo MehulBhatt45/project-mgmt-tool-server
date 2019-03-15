@@ -12,11 +12,14 @@ router.put('/update-details/:id', userController.updateUserById);
 router.put('/change-profile/:id', userController.changeProfileByUserId);
 // router.get('/get-logs/:userId', userController.getUserWorkLogs);
 router.get('/get-all-developers', userController.getAllUsers);
-
+router.put('/reset-password',userController.resetPassword);
 
 // router.get('/get-logs/:userId', userController.getUserWorkLogs);
 // router.get('/get-all-developers', userController.getAllUsers);
 router.post('/get-all-developers-by-project-manager', userController.getAllUsersByProjectManager);
+router.put('/change-profile/:id', userController.changeProfileByUserId);
+
 router.get('/get-user-by-id/:userId',userController.getSingleUser);
+
 // router.post('/signup_without_file',userController.addUser_without_file);
 module.exports = router;
