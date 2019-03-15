@@ -166,7 +166,7 @@ userController.updateUserById = function(req,res){
 }
 
 userController.getAllUsers = function(req, res){
-	userModel.find({userRole: 'user'})
+	userModel.find({})
 	.exec((err,users)=>{
 		if (err) {
 			res.status(500).send(err);
