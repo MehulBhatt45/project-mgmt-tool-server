@@ -340,6 +340,42 @@ userController.getUserWorkLogs = function(req,res){
 }
 
 
+userController.changeProfileByUserId = function(req,res){
+	userModel.find({_id:req.params.userId}, function(err,user){
+		// 
+		
+		if (err) {
+			res.status(500).send(err);
+		}else{
+			var uploadPath = path.join(__dirname, "../uploads/"+user._id+"/");
+			console.log(uploadPath);
+			req.file('uploadfile').upload({
+				maxBytes: 50000000000000,
+				dirname: uploadPath,
+				saveAs: function (__newFileStream, next) {
+					dir.files(uploadPath, function(err, files) {
+						if (err){
+							mkdir(uploadPath, 0775);
+							return next(undefined, __newFileStream.filename);
+						}else {
+							return next(undefined, __newFileStream.filename);
+						}
+					});
+				}
+			}, function(err, files){
+				if (err) {
+					console.log(err);
+					res.status(500).send(err);
+				}else{
+					console.log(files);
+					res.status(200).send(files);
+				}
+
+			})
+		}
+	})
+}
+
 // userController.uploadFile = function(req,res){
 // 	console.log("uploadfile=======>",req.body);
 // 	var files = [];
