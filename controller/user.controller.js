@@ -166,7 +166,7 @@ userController.updateUserById = function(req,res){
 }
 
 userController.getAllUsers = function(req, res){
-	userModel.find({userRole: 'user'})
+	userModel.find({})
 	.exec((err,users)=>{
 		if (err) {
 			res.status(500).send(err);
@@ -292,6 +292,81 @@ userController.changeProfileByUserId = function(req,res){
 	})
 	
 }
+
+
+
+userController.changeProfileByUserId = function(req,res){
+	userModel.find({_id:req.params.userId}, function(err,user){
+		// 
+		
+		if (err) {
+			res.status(500).send(err);
+		}else{
+			var uploadPath = path.join(__dirname, "../uploads/"+user._id+"/");
+			console.log(uploadPath);
+			req.file('uploadfile').upload({
+				maxBytes: 50000000000000,
+				dirname: uploadPath,
+				saveAs: function (__newFileStream, next) {
+					dir.files(uploadPath, function(err, files) {
+						if (err){
+							mkdir(uploadPath, 0775);
+							return next(undefined, __newFileStream.filename);
+						}else {
+							return next(undefined, __newFileStream.filename);
+						}
+					});
+				}
+			}, function(err, files){
+				if (err) {
+					console.log(err);
+					res.status(500).send(err);
+				}else{
+					console.log(files);
+					res.status(200).send(files);
+				}
+
+			})
+		}
+	})
+}
+
+// userController.uploadFile = function(req,res){
+// 	console.log("uploadfile=======>",req.body);
+// 	var files = [];
+// 	var upload_file = {
+// 		fileName : files	
+// 	};
+
+// 	var postFile = new userModel(upload_file);
+// 	console.log("postFile",postFile);
+// 	postFile.save(function(error,file){
+// 		if (error) {
+// 			return res.status(500).send(error);
+// 		}else{
+// 			for(var i = 0; i < req.files.uploadFile.length; i++){
+// 				console.log("sampleFile", req.files.uploadFile[i]);				
+// 				var sampleFile = req.files.uploadFile[i];
+// 				sampleFile.mv('./uploads/'+sampleFile.name, function(err) {
+// 					if (err){
+// 						return res.status(500).send(err);
+// 					}else{
+// 					}
+// 				});
+// 				var fileName = sampleFile.name;
+// 				var fileNameArr = fileName.split("\\");
+// 				fileName  = fileNameArr[2];
+// 				files.push("/uploads/"+sampleFile.name);
+// 				console.log(files);
+// 				file.fileName = files;
+// 				file.save();
+// 			}
+// 			res.status(200).send(file);
+// 		}
+// 	});
+// 	console.log(req.body);
+// }	
+
 
 
 module.exports = userController; 
