@@ -4,8 +4,11 @@ var dir = require('node-dir');
 var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
+var _ = require('lodash');
 projectController.addProject = function(req,res){
 	// console.log("req files =============>" , req.files);
+	req.body.Teams = req.body.Teams.split(',');
+	console.log("req body",req.body);
 	var flag = 5;
 	projectModel.find({}).exec((err , allProjects)=>{
 		for(var i = 0; i < allProjects.length; i++){
@@ -45,7 +48,7 @@ projectController.addProject = function(req,res){
 							var fileNames = savedProject.avatar;
 							if(files.length>0){
 								_.forEach(files, (gotFile)=>{
-									fileNames = gotFile.fd.split('/').reverse()[3]+"/"+gotFile.fd.split('/').reverse()[2]+"/"+gotFile.fd.split('/').reverse()[1]+"/"+gotFile.fd.split('/').reverse()[0];
+									fileNames = gotFile.fd.split('/uploads/').reverse()[0];
 								})
 							}
 							projectModel
@@ -64,7 +67,6 @@ projectController.addProject = function(req,res){
 			})
 		}
 	})
-	console.log("req body",req.body);
 }
 
 
@@ -208,8 +210,10 @@ projectController.deleteFile = function(req, res){
 projectController.getDeveloperOfProject = function(req , res){
 	console.log("projectId ========>" , req.params.projectId);
 	var projectId = req.params.projectId;
-	projectModel.findOne({_id: projectId})
+	projectModel
+	.findOne({_id: projectId})
 	.select('Teams')
+	.populate('Teams')
 	.exec((err , foundTeam)=>{
 		if(err) res.send(err)
 		else res.status(200).send(foundTeam);

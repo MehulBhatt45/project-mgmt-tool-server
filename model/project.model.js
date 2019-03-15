@@ -26,6 +26,7 @@ var ProjectSchema = new Schema({
 	clientFullName:{type:String},
 	clientContactNo:{type:String},
 	clientDesignation:{type:String},
+	deadline: {type:Date},
 },{timestamps: true});
 
 

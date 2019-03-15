@@ -22,8 +22,8 @@ var UserSchema = new Schema({
 
 UserSchema.pre('save', function(next) {
     var user = this;
-    console.log("=====================>", user);
-    if (!user.isModified('password')) return next();
+    console.log("Im Model=====================>", user);
+    // if (!user.isModified('password')) return next();
 
     bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
         if (err) return next(err);
@@ -36,8 +36,8 @@ UserSchema.pre('save', function(next) {
     });
 });
 
-UserSchema.methods.comparePassword = function(userPassword, cb) {
-    bcrypt.compare(userPassword, this.password, function(err, isMatch) {
+UserSchema.methods.comparePassword = function(userPassword, password, cb) {
+    bcrypt.compare(userPassword, password, function(err, isMatch) {
         if (err) return cb(err);
         cb(null, isMatch);
     });
