@@ -5,7 +5,8 @@ var auth = require('./auth');
 
 
 
-router.post('/leaveApplication', leaveController.applyLeave);	
+router.post('/leaveApplication', leaveController.applyLeave);
+router.get('/pendingLeaves' , leaveController.getLeaves);	
 
 
 
