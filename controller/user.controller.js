@@ -57,9 +57,9 @@ userController.addUser = function(req,res){
 						// res.status(200).send("files uploaded successfully");
 						for(var i=0;i<files.length;i++){
 							if(_.includes(files[i].filename, '.pdf')){
-								var cv = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7];
+								var cv = files[i].fd.split('/uploads/').reverse()[0];
 							}else{
-								var profile = files[i].fd.split('/')[6]+"/"+files[i].fd.split('/')[7];
+								var profile = files[i].fd.split('/uploads/').reverse()[0];
 							}
 						}
 						newUser['CV'] = cv;
@@ -77,12 +77,8 @@ userController.addUser = function(req,res){
 	})
 }
 
-
-
-
-
-
 userController.getSingleUser = function(req, res){
+	console.log("req.paras ===>" , req.params.userId);
 	userModel.findOne({_id:req.params.userId}, function(err,getuser){
 		if(err){
 			res.status(500).send(err);
@@ -92,7 +88,7 @@ userController.getSingleUser = function(req, res){
 	})
 }
 
-userController.resetPassword = function(req,res){
+userController.resetPassword = function(req,res){ 
 	console.log(req.body);
 	userModel.findOne({ email:req.body.email}).exec((err,user)=>{
 		if (err) {
@@ -119,16 +115,54 @@ userController.resetPassword = function(req,res){
 
 
 }
-
 userController.updateUserById = function(req,res){
 
-	userModel.findOneAndUpdate({_id:req.params.id},{$set:req.body},function(err,getuser){
+	var userId = req.params.id
+	console.log("userId is==============>",userId);
+	userModel
+	.findByIdAndUpdate({_id:userId},{$set:req.body},{upsert:true, new:true},function(err,getuser){
+
 		if(err){
 			res.status(500).send(err);
 		}
-		res.status(200).send(getuser);
+		else{
+			var uploadPath = path.join(__dirname, "../uploads/"+getuser._id+"/");
+			console.log(uploadPath);
+			req.file('profilePhoto').upload({
+				maxBytes: 50000000000000,
+				dirname: uploadPath,
+				saveAs: function (__newFileStream, next) {
+					dir.files(uploadPath, function(err, files) {
+						if (err){
+							mkdir(uploadPath, 0775);
+							return next(undefined, __newFileStream.filename);
+						}else {
+							return next(undefined, __newFileStream.filename);
+						}
+					});
+				}
+			}, function(err, files){
+				if (err) {
+					console.log(err);
+					res.status(500).send(err);
+				}else{
+					console.log(files);
+					console.log("files==========>",files)
+					var cv = files[0].fd.split('/uploads/').reverse()[0];
+					getuser['CV'] = cv;
+					userModel.findOneAndUpdate({_id: userId}, {$set: {CV:cv }}, {upsert:true, new:true}).exec((error,user)=>{
+						if (error){ 
+							res.status(500).send(error);
+						}else{
+							console.log(user);
+							res.status(200).send(user);
+						}
+					})
+				}
+
+			})
+		}
 	})
-	console.log(req.body);
 }
 
 userController.getAllUsers = function(req, res){
@@ -181,7 +215,7 @@ userController.logIn = function(req,res){
 			if (err) {
 				return res.status(500).send( { errMsg : err });
 			}else if(user){
-				user.comparePassword(req.body.password,(error, isMatch)=>{
+				user.comparePassword(req.body.password, user.password,(error, isMatch)=>{
 					if (error){
 						return res.status(403).send( { errMsg : 'User not found' });
 					}else if(isMatch){
@@ -207,68 +241,58 @@ userController.logIn = function(req,res){
 	}
 }
 
-userController.getUserWorkLogs = function(req,res){
-	var uniqueArray = [];
-	userModel.findOne({ _id: req.params.userId })
-	.exec((err, response) => {
-		if (err) {
-			return res.status(500).json({
-				status: false,
-				code: 500,
-				message: 'Internal Server Error'
-			});
-		} else {
-			projectModel
-			.find({pmanagerId: req.user._id})
-			.exec((err, project)=>{
-				if (err) {
-					res.status(500).send(err);
-				}
-				_.forEach(project, (pro)=>{
-					uniqueArray.push(pro._id);
-				})
-				console.log(uniqueArray);
-				async.parallel(
-				{
-					task: function (callback) {
-						taskModel.find()
-						.where({ userId: req.body.userId})
-						.where({ projectId: { $in: uniqueArray }})
-						.exec((err1, userList) => {
-							if (err1) callback([], null);
-							callback(null, userList);
-						})
-					},
-					bug: function (callback) {
-						bugModel.find()
-						.where({ userId: req.body.userId})
-						.where({ projectId: { $in: uniqueArray }})
-						.exec((err1, userList) => {
-							if (err1) callback([], null);
-							callback(null, userList);
-						})
-					},
-					issue: function (callback) {
-						issueModel.find()
-						.where({ userId: req.body.userId})
-						.where({ projectId: { $in: uniqueArray }})
-						.exec((err1, userList) => {
-							if (err1) callback([], null);
-							callback(null, userList);
-						})
-					}
-				}, function (err, results) {
-					return res.status(200).json({
-						status: true,
-						code: 200,
-						data: results
+
+userController.changeProfileByUserId = function(req,res){
+	var userId = req.params.id
+	console.log("userId is==============>",userId);
+	userModel
+	.findByIdAndUpdate({_id:userId},{$set:req.body},{upsert:true, new:true},function(err,getuser){
+
+		if(err){
+			res.status(500).send(err);
+		}
+		else{
+			var uploadPath = path.join(__dirname, "../uploads/"+getuser._id+"/");
+			console.log(uploadPath);
+			req.file('profilePhoto').upload({
+				maxBytes: 50000000000000,
+				dirname: uploadPath,
+				saveAs: function (__newFileStream, next) {
+					dir.files(uploadPath, function(err, files) {
+						if (err){
+							mkdir(uploadPath, 0775);
+							return next(undefined, __newFileStream.filename);
+						}else {
+							return next(undefined, __newFileStream.filename);
+						}
 					});
-				});
+				}
+			}, function(err, files){
+				if (err) {
+					console.log(err);
+					res.status(500).send(err);
+				}else{
+					console.log(files);
+					console.log("files==========>",files)
+
+					var profile = files[0].fd.split('/uploads/').reverse()[0];
+					getuser['profilePhoto'] = profile;
+					userModel.findOneAndUpdate({_id: userId}, {$set: {profilePhoto:profile }}, {upsert:true, new:true}).exec((error,user)=>{
+						if (error){ 
+							res.status(500).send(error);
+						}else{
+							console.log(user);
+							res.status(200).send(user);
+						}
+					})
+				}
+
 			})
 		}
-
 	})
+	
 }
 
 
 module.exports = userController; 
+
