@@ -1,21 +1,25 @@
 var leaveModel = require ('../model/leave.model');
 var userModel = require('../model/user.model');
+var nodemailer = require ('nodemailer');
+const smtpTransport = require ('nodemailer-smtp-transport');
 let leaveController = {};
 var nodemailer = require('nodemailer');
-const smtpTransport = require('nodemailer-smtp-transport');
+
 
 
 leaveController.applyLeave = function(req,res){
+	console.log("fun ma jay che ke nai ============>")
+	userModel.find({userRole: ''})
 	// userModel.find({email: req.body.email})
 	// console.log("ave che kai=========>",req.body)
 	var leave = new leaveModel(req.body);
 	console.log("nthi mdtu ke mde che", leave);
 	leave.save(function(err,leave){
 		if(err) res.status(500).send(err)
+
 			else{	
 
 
-				res.status(200).send(leave)
 
 
 				var output = `<!doctype html>
@@ -93,8 +97,10 @@ leaveController.applyLeave = function(req,res){
 						console.log("Error",error);
 					} else {
 						console.log('Email sent: ' + info.response);
+						res.status(200).send(leave)
 					}
 				});
+
 			}
 		})
 }
@@ -113,6 +119,20 @@ leaveController.getLeaves = function(req,res){
 		}
 	})
 }
+
+
+leaveController.getLeavesById = function(req,res){
+	leaveModel.find({email:req.params.email},function(err,resp){
+		if(err){
+			res.status(500).send(err);
+		}else{
+			// resp = req.params.email;
+			console.log("finddddddddddd",resp);
+		}
+	})
+	// console.log("find emaillllllllll",email);
+}
+
 
 leaveController.updateLeaves = function(req,res){
 
@@ -234,6 +254,7 @@ leaveController.updateLeaves = function(req,res){
 			console.log("mail not send");
 		}
 	})
+
 }
 
 

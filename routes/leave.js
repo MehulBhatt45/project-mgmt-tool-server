@@ -5,9 +5,11 @@ var auth = require('./auth');
 
 
 
+
 router.post('/add-leave', leaveController.applyLeave);	
 router.get('/get-pendingLeave',leaveController.getLeaves);
 router.put('/update-status-by-id/:id',leaveController.updateLeaves);
+router.get('/leavesById/:email',leaveController.getLeavesById);
 
 
 module.exports = router;
