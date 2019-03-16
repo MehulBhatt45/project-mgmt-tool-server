@@ -9,6 +9,7 @@ var nodemailer = require('nodemailer');
 
 leaveController.applyLeave = function(req,res){
 	console.log("fun ma jay che ke nai ============>")
+	userModel.find({userRole: ''})
 	// userModel.find({email: req.body.email})
 	// console.log("ave che kai=========>",req.body)
 	var leave = new leaveModel(req.body);
@@ -18,77 +19,87 @@ leaveController.applyLeave = function(req,res){
 
 			else{	
 
-				res.status(200).send(leave)
-
-				// var output = `<!doctype html>
-				// 				<html>
-				// 				<head>
-				// 				<title> title111</title>
-				// 				</head>
-				// 				<body>
-				// 				<div style="width:75%;margin:0 auto;border-radius: 6px;
-				// 				box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-				// 				border: 1px solid #d3d3d3;">
-				// 				<center>
-				// 				<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
 
 
-				// 				<div style="margin-left:30px;padding:0;">
-				// 				<p style="color:black;font-size:20px;">You have a new Leave Application from `+req.body.name+`</p>
 
-				// 				<table style="color:black;">
-				// 				<tr style="height: 50px;width: 100%;">
-				// 				<td><b>Leave Date</b></td>
-				// 				<td style="padding-left: 50px;">`+req.body.leaveDate+`</td></tr>
-
-				// 				<tr style="height: 50px;">
-				// 				<td><b>Duration</b></td>
-				// 				<td style="padding-left: 50px;">`+req.body.duration+`</td></tr>
-
-
-				// 				<tr  style="height: 50px;">
-				// 				<td><b>Type of leave</b></td>
-				// 				<td style="padding-left: 50px;">`+req.body.typeOfLeave+`</td></tr>
+				var output = `<!doctype html>
+				<html>
+				<head>
+				<title> title111</title>
+				</head>
+				<body>
+				<div style="width:75%;margin:0 auto;border-radius: 6px;
+				box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+				border: 1px solid #d3d3d3;">
+				<center>
+				<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
 
 
-				// 				<tr style="height: 50px;">
-				// 				<td><b>Reason</b></td>
-				// 				<td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr>
+				<div style="margin-left:30px;padding:0;">
+				<p style="color:black;font-size:20px;">You have a new Leave Application from <span style="font-weight:bold;">`+req.body.name+`</span></p>
 
-				// 				</table>
-				// 				</div>
-				// 				</body>
-				// 				</html>
-				// 				`;
+				<table style="color:black;">
+				<tr style="height: 50px;">
+				<td><b>Duration</b></td>
+				<td style="padding-left: 50px;">`+req.body.leaveDuration+`</td></tr>
 
-				// var transporter = nodemailer.createTransport({
-				// 	host: "smtp.gmail.com",
-				// 	port: 465,
-				// 	secure: true,
-				// 	service: 'gmail',
+				<tr style="height: 50px;">
+				<td><b>Duration</b></td>
+				<td style="padding-left: 50px;">`+req.body.noOfDays+`</td></tr>
+				
+				<tr style="height: 50px;width: 100%;">
+				<td><b>Leave Date</b></td>
+				<td style="padding-left: 50px;">`+req.body.startingDate+`</td></tr>
 
-				// 	auth: {
-				// 		user: 'tnrtesting2394@gmail.com',
-				// 		pass: 'raoinfotech09'
-				// 	}
-				// });
+				<tr style="height: 50px;width: 100%;">
+				<td><b>Leave Date</b></td>
+				<td style="padding-left: 50px;">`+req.body.endingDate+`</td></tr>
 
 
-				// var mailOptions = {
-				// 	from: 'tnrtesting2394@gmail.com',
-				// 	to: 'foramtrada232@gmail.com',
-				// 	subject: 'Testing Email',
-				// 	text: 'Hi, this is a testing email from node server',
-				// 	html: output
-				// };
+				<tr  style="height: 50px;">
+				<td><b>Type of leave</b></td>
+				<td style="padding-left: 50px;">`+req.body.typeOfLeave+`</td></tr>
 
-				// transporter.sendMail(mailOptions, function(error, info){
-				// 	if (error) {
-				// 		console.log("Error",error);
-				// 	} else {
-				// 		console.log('Email sent: ' + info.response);
-				// 	}
-				// });
+
+				<tr style="height: 50px;">
+				<td><b>Reason</b></td>
+				<td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr>
+
+				</table>
+				</div>
+				</body>
+				</html>
+				`;
+
+				var transporter = nodemailer.createTransport({
+					host: "smtp.gmail.com",
+					port: 465,
+					secure: true,
+					service: 'gmail',
+
+					auth: {
+						user: 'raoinfotechp@gmail.com',
+						pass: 'raoinfotech@123'
+					}
+				});
+
+
+				var mailOptions = {
+					from: 'raoinfotechp@gmail.com',
+					to: 'foramtrada232@gmail.com',
+					subject: 'Testing Email',
+					text: 'Hi, this is a testing email from node server',
+					html: output
+				};
+
+				transporter.sendMail(mailOptions, function(error, info){
+					if (error) {
+						console.log("Error",error);
+					} else {
+						console.log('Email sent: ' + info.response);
+						res.status(200).send(leave)
+					}
+				});
 
 			}
 		})
@@ -109,126 +120,139 @@ leaveController.getLeaves = function(req,res){
 	})
 }
 
+
+leaveController.getLeavesById = function(req,res){
+	leaveModel.find({email:req.params.email},function(err,resp){
+		if(err){
+			res.status(500).send(err);
+		}else{
+			// resp = req.params.email;
+			console.log("finddddddddddd",resp);
+		}
+	})
+	// console.log("find emaillllllllll",email);
+}
+
+
 leaveController.updateLeaves = function(req,res){
 
 
 	leaveModel.findByIdAndUpdate({_id: req.params.id},req.body,{upsert:true},function(err,update){
 		console.log(update);
 		var status = update.status;
+		var email = update.email;
+		console.log("email===>",email);
 		console.log("status====>",status);
 		
 
 		if(status == "approved"){
-				console.log("Leave Accepted");
-				var output = `<!doctype html>
-				<html>
-				<head>
-				<title> title111</title>
-				</head>
-				<body>
-				<div style="width:75%;margin:0 auto;border-radius: 6px;
-				box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-				border: 1px solid #d3d3d3;">
-				<center>
-				<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+			console.log("Leave Accepted");
+			var output = `<!doctype html>
+			<html>
+			<head>
+			<title> title111</title>
+			</head>
+			<body>
+			<div style="width:75%;margin:0 auto;border-radius: 6px;
+			box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+			border: 1px solid #d3d3d3;">
+			<center>
+			<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
 
 
-				<div style="margin-left:30px;padding:0;">
-				<p style="color:black;font-size:20px;">Your leave is approved</p>
+			<div style="margin-left:30px;padding:0;">
+			<p style="color:black;font-size:20px;">Your leave is <span style="color:#28B463;font-weight:bold;">APPROVED.</span></p>
+			</div>
+			</body>
+			</html>
+			`;
 
-				
-				</div>
-				</body>
-				</html>
-				`;
+			var transporter = nodemailer.createTransport({
+				host: "smtp.gmail.com",
+				port: 465,
+				secure: true,
+				service: 'gmail',
 
-				var transporter = nodemailer.createTransport({
-					host: "smtp.gmail.com",
-					port: 465,
-					secure: true,
-					service: 'gmail',
-
-					auth: {
-						user: 'vivekkbharda@gmail.com',
-						pass: '9228123224'
-					}
-				});
+				auth: {
+					user: 'raoinfotechp@gmail.com',
+					pass: 'raoinfotech@123'
+				}
+			});
 
 
-				var mailOptions = {
-					from: 'vivekkbharda@gmail.com',
-					to: 'foramtrada232@gmail.com',
-					subject: 'Testing Email',
-					text: 'Hi, this is a testing email from node server',
-					html: output
-				};
+			var mailOptions = {
+				from: 'raoinfotechp@gmail.com',
+				to: email,
+				subject: 'Testing Email',
+				text: 'Hi, this is a testing email from node server',
+				html: output
+			};
 
-				transporter.sendMail(mailOptions, function(error, info){
-					if (error) {
-						console.log("Error",error);
-					} else {
-						console.log('Email sent: ' + info.response);
-					}
-				});
-				res.status(200).send(update)
-			}else if(status == "rejected"){
-				console.log("Leave Rejected");
-				var output = `<!doctype html>
-				<html>
-				<head>
-				<title> title111</title>
-				</head>
-				<body>
-				<div style="width:75%;margin:0 auto;border-radius: 6px;
-				box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-				border: 1px solid #d3d3d3;">
-				<center>
-				<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
-				<div style="margin-left:30px;padding:0;">
-				<p style="color:black;font-size:20px;">Your leave is rejected.</p>
-
-				
-				</div>
-				</body>
-				</html>
-				`;
-
-				var transporter = nodemailer.createTransport({
-					host: "smtp.gmail.com",
-					port: 465,
-					secure: true,
-					service: 'gmail',
-
-					auth: {
-						user: 'vivekkbharda@gmail.com',
-						pass: '9228123224'
-					}
-				});
+			transporter.sendMail(mailOptions, function(error, info){
+				if (error) {
+					console.log("Error",error);
+				} else {
+					console.log('Email sent: ' + info.response);
+				}
+			});
+			res.status(200).send(update)
+		}else if(status == "rejected"){
+			console.log("Leave Rejected");
+			var output = `<!doctype html>
+			<html>
+			<head>
+			<title> title111</title>
+			</head>
+			<body>
+			<div style="width:75%;margin:0 auto;border-radius: 6px;
+			box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+			border: 1px solid #d3d3d3;">
+			<center>
+			<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
 
 
-				var mailOptions = {
-					from: 'vivekkbharda@gmail.com',
-					to: 'foramtrada232@gmail.com',
-					subject: 'Testing Email',
-					text: 'Hi, this is a testing email from node server',
-					html: output
-				};
+			<div style="margin-left:30px;padding:0;">
+			<p style="color:black;font-size:20px;">Your leave is <span style="color:#E74C3C;font-weight:bold;">REJECTED.</p>
 
-				transporter.sendMail(mailOptions, function(error, info){
-					if (error) {
-						console.log("Error",error);
-					} else {
-						console.log('Email sent: ' + info.response);
-					}
-				});
-				res.status(200).send(update)
-			}
-			else{
 
-				console.log("mail not send");
-			}
+			</div>
+			</body>
+			</html>
+			`;
+
+			var transporter = nodemailer.createTransport({
+				host: "smtp.gmail.com",
+				port: 465,
+				secure: true,
+				service: 'gmail',
+
+				auth: {
+					user: 'raoinfotechp@gmail.com',
+					pass: 'raoinfotech@123'
+				}
+			});
+
+
+			var mailOptions = {
+				from: 'raoinfotechp@gmail.com',
+				to: email,
+				subject: 'Testing Email',
+				text: 'Hi, this is a testing email from node server',
+				html: output
+			};
+
+			transporter.sendMail(mailOptions, function(error, info){
+				if (error) {
+					console.log("Error",error);
+				} else {
+					console.log('Email sent: ' + info.response);
+				}
+			});
+			res.status(200).send(update)
+		}
+		else{
+			console.log("mail not send");
+		}
 	})
 
 }
