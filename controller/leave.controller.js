@@ -122,16 +122,37 @@ leaveController.getLeaves = function(req,res){
 
 
 leaveController.getLeavesById = function(req,res){
-	leaveModel.find({email:req.params.email},function(err,resp){
+	leaveModel.find({email:req.body.email})
+	.exec((err,respond)=>{
 		if(err){
-			res.status(500).send(err);
-		}else{
-			// resp = req.params.email;
-			console.log("finddddddddddd",resp);
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("response============<<<<<<<<<<<<<",respond);
+			res.status(200).send(respond);
 		}
 	})
-	// console.log("find emaillllllllll",email);
 }
+
+// leaveController.myLeaves = function(req,res){
+// 	var userId = req.params.id
+// 	console.log("userId is -------------======>",userId);
+// 	userModel.findByIdAndUpdate({_id:userId})
+// 	.exec((err,status)=>{
+// 		if(err){
+// 			res.status(500).send(err);
+// 		}else{
+// 			leaveModel.find({status:'approved'}, {status:'rejected'}), function(err,respond){
+// 				if(err){
+// 					res.status(500).send(err);
+// 				}else{
+// 					console.log("ressssssssssp",respond)
+// 				}
+// 			}		
+// 		}
+// 	})
+// }
 
 
 leaveController.updateLeaves = function(req,res){
