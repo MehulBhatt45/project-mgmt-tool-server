@@ -284,6 +284,26 @@ userController.changeProfileByUserId = function(req,res){
 	
 }
 
+userController.getDevelpoersNotInProjectTeam = function(req, res){
+	projectModel
+	.findOne({_id: req.params.projectId})
+	.exec((err, project)=>{
+		if(err)
+			res.status(500).send(err)
+		else{
+			userModel
+			.find({_id: {$nin: project.Teams}})
+			.exec((error, developers)=>{
+				if (err) {
+					res.status(500).send(error);
+				}else{
+					res.status(200).send(developers)
+				}
+			})
+		}
+	})
+}
+
 
 module.exports = userController; 
 
