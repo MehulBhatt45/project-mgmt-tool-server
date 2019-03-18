@@ -122,12 +122,15 @@ leaveController.getLeaves = function(req,res){
 
 
 leaveController.getLeavesById = function(req,res){
-	leaveModel.find({email:req.params.email},function(err,resp){
+	leaveModel.find({email:req.body.email})
+	.exec((err,respond)=>{
 		if(err){
-			res.status(500).send(err);
-		}else{
-			// resp = req.params.email;
-			console.log("finddddddddddd",resp);
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("response============<<<<<<<<<<<<<",respond);
+			res.status(200).send(respond);
 		}
 	})
 }
