@@ -19,7 +19,12 @@ notificationController.getAllUsers = function(req, res){
 		}else if (users){
 			res.status(200).send(users);
 			req.session.users = users;
-			console.log("response in session",req.session.users);
+			for(i=0;i<users.length;i++){
+				
+				console.log("response in session",req.session.users[i].token);
+
+			}
+			
 		}else{
 			res.status(404).send( { msg : 'Users not found' });
 		}

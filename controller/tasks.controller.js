@@ -107,7 +107,7 @@ tasksController.addTasks = function(req , res){
 									console.log(' found email send===>',foundTask);
 									console.log("final----->>>",foundTask.assignTo.email);
 									var email = foundTask.assignTo.email;
-									
+
 									transporter.sendMail(mailOptions, function(error, info){
 										if (error) {
 											console.log("Error",error);
@@ -122,8 +122,9 @@ tasksController.addTasks = function(req , res){
 
 							})
 								res.status(200).send(savedTask);
+								pushNotification.postCode('dynamic title','dynamic content',req.session.users.token);
 							}
-							
+
 							else{
 
 								console.log("final task======>" , savedTask);
@@ -208,6 +209,7 @@ tasksController.addTasks = function(req , res){
 								}
 							});
 							res.status(200).send(savedTask);
+							pushNotification.postCode('dynamic title','dynamic content',req.session.users.token);
 
 						})
 
