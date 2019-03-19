@@ -13,7 +13,8 @@ var UserSchema = new Schema({
     profilePhoto: String,
     CV: String,
     projects:[{type:Schema.Types.ObjectId, ref: 'Project'}],
-    tasks: [{type: Schema.Types.ObjectId , ref: 'Tasks'}]
+    tasks: [{type: Schema.Types.ObjectId , ref: 'Tasks'}],
+ 
 },{timestamps: true});
 
 
