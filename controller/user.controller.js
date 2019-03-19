@@ -305,6 +305,17 @@ userController.getDevelpoersNotInProjectTeam = function(req, res){
 	})
 }
 
+userController.deleteEmployeeById = function(req,res){
+	var developerid = req.params.developerid;
+	console.log("id-----()",developerid);
+	userModel.findOneAndDelete({_id:developerid},function(err,emp){
+		if(err){
+			res.status(500).send(err);
+		}
+		res.status(200).send(emp);
+		
+	})
+}
 
 module.exports = userController; 
 

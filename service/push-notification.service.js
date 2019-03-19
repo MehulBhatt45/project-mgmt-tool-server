@@ -14,7 +14,7 @@ obj.postCode = function (title,body,user) {
 		"registration_ids" :[user]
 	}
 	post_data = JSON.stringify(post_data);
-	console.log("post data",post_data);
+	//console.log("post data",post_data);
 
 
   // An object of options to indicate where to post to
@@ -28,14 +28,14 @@ obj.postCode = function (title,body,user) {
   		'Authorization': 'key=AAAAtcO-yDs:APA91bHAhrA-O2DldJDCdZfdMKFw_FWs4VgusFMc7rXbuonfwYIm_TWjiR-JyKPOLzPMPHnDVKniWM0F98Kc-wQKLvJ2n7whZwPKsgzhEgBNlkBVP2C4uQov_9pnbuHz4CmL4j3MyO5a'
   	}
   };
-  console.log("post options",post_options);
+  //console.log("post options",post_options);
   // Set up the request
   var post_req = http.request(post_options, function(res) {
-  	console.log('Status: ' + res.statusCode);
-  	console.log('Headers: ' + JSON.stringify(res.headers));
+  	//console.log('Status: ' + res.statusCode);
+  	//console.log('Headers: ' + JSON.stringify(res.headers));
   	res.setEncoding('utf8');
   	res.on('data', function (chunk) {
-  		console.log('Response: ' + chunk);
+  		//console.log('Response: ' + chunk);
   	});
   });
 
