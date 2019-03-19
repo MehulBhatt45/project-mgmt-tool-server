@@ -116,8 +116,7 @@ userController.resetPassword = function(req,res){
 
 }
 userController.updateUserById = function(req,res){
-
-	var userId = req.params.id
+	var userId = req.params.userId;
 	console.log("userId is==============>",userId);
 	userModel
 	.findByIdAndUpdate({_id:userId},{$set:req.body},{upsert:true, new:true},function(err,getuser){
@@ -128,7 +127,7 @@ userController.updateUserById = function(req,res){
 		else{
 			var uploadPath = path.join(__dirname, "../uploads/"+getuser._id+"/");
 			console.log("IN UPDATE DETAILS==============>",uploadPath);
-			req.file('profilePhoto').upload({
+			req.file('cv').upload({
 				maxBytes: 50000000000000,
 				dirname: uploadPath,
 				saveAs: function (__newFileStream, next) {
@@ -148,7 +147,9 @@ userController.updateUserById = function(req,res){
 				}else{
 					console.log(files);
 					console.log("files==========>",files)
-					var cv = files[0].fd.split('/uploads/').reverse()[0];
+					var cv = "";
+					if(files && files.length)
+						cv = files[0].fd.split('/uploads/').reverse()[0];
 					getuser['CV'] = cv;
 					userModel.findOneAndUpdate({_id: userId}, {$set: {CV:cv }}, {upsert:true, new:true}).exec((error,user)=>{
 						if (error){ 
