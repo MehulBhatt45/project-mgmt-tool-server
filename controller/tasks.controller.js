@@ -116,13 +116,13 @@ tasksController.addTasks = function(req , res){
 										}
 									});
 									res.status(200).send(savedTask);
-									pushNotification.postCode('dynamic title','dynamic content',req.session.users.token);
+									pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
 
 								})
 
 							})
 								res.status(200).send(savedTask);
-								pushNotification.postCode('dynamic title','dynamic content',req.session.users.token);
+								pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
 							}
 
 							else{
@@ -209,7 +209,7 @@ tasksController.addTasks = function(req , res){
 								}
 							});
 							res.status(200).send(savedTask);
-							pushNotification.postCode('dynamic title','dynamic content',req.session.users.token);
+							pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
 
 						})
 
