@@ -6,7 +6,7 @@ var auth = require('./auth');
 /* GET users listing. */
 router.post('/signup',userController.addUser);
 router.post('/login',userController.logIn);
-router.put('/update-details/:id', userController.updateUserById);
+router.put('/update-details/:userId', userController.updateUserById);
 
 // router.get('/get-logs/:userId', userController.getUserWorkLogs);
 // router.put('/change-profile/:id', userController.changeProfileByUserId);
