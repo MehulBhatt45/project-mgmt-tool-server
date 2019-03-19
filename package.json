@@ -27,6 +27,7 @@
     "move-file": "^1.1.0",
     "node-cron": "^2.0.3",
     "node-dir": "^0.1.17",
+    "node-pushnotifications": "^1.1.8",
     "nodemailer-smtp-transport": "^2.7.4",
     "pug": "2.0.0-beta11",
     "random-token": "0.0.8",
