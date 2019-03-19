@@ -15,7 +15,7 @@ const smtpTransport = require('nodemailer-smtp-transport');
 
 // const sendmail = require('sendmail')();
 
-taskController.addTask = function(req,res){
+taskController.addTask = function(req,res){		
 	// if(!req.body.assignTo && req.user.userRole != 'projectManager'){
 	// 	req.body['assignTo'] = req.user._id;
 	// }
