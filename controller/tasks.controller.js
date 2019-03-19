@@ -107,6 +107,7 @@ tasksController.addTasks = function(req , res){
 									console.log(' found email send===>',foundTask);
 									console.log("final----->>>",foundTask.assignTo.email);
 									var email = foundTask.assignTo.email;
+									console.log("email===>>>>>",email);
 
 									transporter.sendMail(mailOptions, function(error, info){
 										if (error) {
@@ -208,7 +209,11 @@ tasksController.addTasks = function(req , res){
 									console.log('Email sent: ' + info.response);
 								}
 							});
+<<<<<<< HEAD
 							pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
+=======
+							//apushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
+>>>>>>> 2aeee7c6586d190c8da24df79e72661c6fa128e9
 							res.status(200).send(savedTask);
 
 						})
@@ -331,8 +336,13 @@ tasksController.addTasks = function(req , res){
 
 				resp.save();	
 				console.log("final task======>" , savedTask);
+<<<<<<< HEAD
 				pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);	
 				res.status(200).send(savedTask);
+=======
+				pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
+				res.status(200).send(savedTask);	
+>>>>>>> 2aeee7c6586d190c8da24df79e72661c6fa128e9
 			})	
 		}).catch((err)=>{
 			console.log(err);
