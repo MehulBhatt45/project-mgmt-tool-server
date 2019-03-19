@@ -31,6 +31,7 @@ var notificationRouter = require('./routes/notification');
 
 var noticeRouter = require('./routes/notice');
 var tasksRouter = require('./routes/tasks');
+var pushNotification = require('./service/push-notification.service');
 var app = express();
 // app.use(fileUpload());xc
 app.set('superSecret', 'pmt');
@@ -120,5 +121,8 @@ cron.schedule('0 0 * * *', () => {
 
 //app.listen(4000);
 
+//pushnotification calling
+
+pushNotification.postCode('dynamic title','dynamic content','ehjtwSZhY0k:APA91bFa1IDMVpXXF2W17my6-fDnQP5JBO2ppRodV7yh-McO5uxzeyr3z5iIxX1imNkEgoYiqpES_uxmkryZQYEtbeCNOmnzZEf1Vu7cDLV5cAdsv_ZAAhQjVtoEU_AJ3SMplmoRgk-h');
 
 module.exports = app;
