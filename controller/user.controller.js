@@ -130,7 +130,7 @@ userController.updateUserById = function(req,res){
 		}
 		else{
 			var uploadPath = path.join(__dirname, "../uploads/"+getuser._id+"/");
-			console.log(uploadPath);
+			console.log("IN UPDATE DETAILS==============>",uploadPath);
 			req.file('profilePhoto').upload({
 				maxBytes: 50000000000000,
 				dirname: uploadPath,
@@ -169,7 +169,7 @@ userController.updateUserById = function(req,res){
 }
 
 userController.getAllUsers = function(req, res){
-	userModel.find({userRole: 'user'})
+	userModel.find({})
 	.exec((err,users)=>{
 		if (err) {
 			res.status(500).send(err);
@@ -246,54 +246,65 @@ userController.logIn = function(req,res){
 
 
 userController.changeProfileByUserId = function(req,res){
+	console.log("userId is==============>");
 	var userId = req.params.id
-	console.log("userId is==============>",userId);
-	userModel
-	.findByIdAndUpdate({_id:userId},{$set:req.body},{upsert:true, new:true},function(err,getuser){
-
-		if(err){
-			res.status(500).send(err);
+	var uploadPath = path.join(__dirname, "../uploads/"+userId+"/");
+	console.log("IN UPDATE PROFILE=============>",uploadPath);
+	req.file('profilePhoto').upload({
+		maxBytes: 50000000000000,
+		dirname: uploadPath,
+		saveAs: function (__newFileStream, next) {
+			dir.files(uploadPath, function(err, files) {
+				if (err){
+					mkdir(uploadPath, 0775);
+					return next(undefined, __newFileStream.filename);
+				}else {
+					return next(undefined, __newFileStream.filename);
+				}
+			});
 		}
-		else{
-			var uploadPath = path.join(__dirname, "../uploads/"+getuser._id+"/");
-			console.log(uploadPath);
-			req.file('profilePhoto').upload({
-				maxBytes: 50000000000000,
-				dirname: uploadPath,
-				saveAs: function (__newFileStream, next) {
-					dir.files(uploadPath, function(err, files) {
-						if (err){
-							mkdir(uploadPath, 0775);
-							return next(undefined, __newFileStream.filename);
-						}else {
-							return next(undefined, __newFileStream.filename);
-						}
-					});
-				}
-			}, function(err, files){
-				if (err) {
-					console.log(err);
-					res.status(500).send(err);
+	}, function(err, files){
+		if (err) {
+			console.log(err);
+			res.status(500).send(err);
+		}else{
+			console.log(files);
+			console.log("files==========>",files)
+
+			var profile = files[0].fd.split('/uploads/').reverse()[0];
+			// getuser['profilePhoto'] = profile;
+			userModel.findOneAndUpdate({_id: userId}, {$set: {profilePhoto:profile }}, {upsert:true, new:true}).exec((error,user)=>{
+				if (error){ 
+					res.status(500).send(error);
 				}else{
-					console.log(files);
-					console.log("files==========>",files)
-
-					var profile = files[0].fd.split('/uploads/').reverse()[0];
-					getuser['profilePhoto'] = profile;
-					userModel.findOneAndUpdate({_id: userId}, {$set: {profilePhoto:profile }}, {upsert:true, new:true}).exec((error,user)=>{
-						if (error){ 
-							res.status(500).send(error);
-						}else{
-							console.log(user);
-							res.status(200).send(user);
-						}
-					})
+					console.log(user);
+					res.status(200).send(user);
 				}
+			})
+		}
 
+	})
+	
+}
+
+userController.getDevelpoersNotInProjectTeam = function(req, res){
+	projectModel
+	.findOne({_id: req.params.projectId})
+	.exec((err, project)=>{
+		if(err)
+			res.status(500).send(err)
+		else{
+			userModel
+			.find({_id: {$nin: project.Teams}})
+			.exec((error, developers)=>{
+				if (err) {
+					res.status(500).send(error);
+				}else{
+					res.status(200).send(developers)
+				}
 			})
 		}
 	})
-	
 }
 
 leaveController.sendEmail = function(req,res){
