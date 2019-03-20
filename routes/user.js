@@ -6,7 +6,7 @@ var auth = require('./auth');
 /* GET users listing. */
 router.post('/signup',userController.addUser);
 router.post('/login',userController.logIn);
-router.put('/update-details/:id', userController.updateUserById);
+router.put('/update-details/:userId', userController.updateUserById);
 
 // router.get('/get-logs/:userId', userController.getUserWorkLogs);
 // router.put('/change-profile/:id', userController.changeProfileByUserId);
@@ -21,6 +21,7 @@ router.put('/change-profile/:id', userController.changeProfileByUserId);
 
 router.get('/get-user-by-id/:userId',userController.getSingleUser);
 router.get('/get-user-not-in-project-team/:projectId',userController.getDevelpoersNotInProjectTeam);
+router.delete('/deleteEmp/:developerid',userController.deleteEmployeeById);
 
 // router.post('/signup_without_file',userController.addUser_without_file);
 module.exports = router;

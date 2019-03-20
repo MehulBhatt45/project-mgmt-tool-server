@@ -31,6 +31,7 @@ var notificationRouter = require('./routes/notification');
 
 var noticeRouter = require('./routes/notice');
 var tasksRouter = require('./routes/tasks');
+var pushNotification = require('./service/push-notification.service');
 var app = express();
 // app.use(fileUpload());xc
 app.set('superSecret', 'pmt');
@@ -102,8 +103,8 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
 // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+res.status(err.status || 500);
+res.render('error');
 });
 
 
@@ -117,8 +118,20 @@ cron.schedule('0 0 * * *', () => {
 
 });
 
+//API Calling for all User to notify
+
+request('http://localhost:4000/notification/allUsers',function (error, response, body) {
+  console.log('error:', error); // Print the error if one occurred
+  //console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+});
+
+
 
 //app.listen(4000);
 
+//pushnotification calling
+
+//pushNotification.postCode('dynamic title','dynamic content','efZH5tQnd5Q:APA91bGdWbqylgR_VAd1lUr0oXXCRxLiI3kZ3ETWJa2L6ahzCxV_Hklb3TyXmkn7zG_qKFEmasNQG3EzLKE9GHIOTzRz7wXgtrlNZzPcWmaKhokhpkkBr2rET67U3pIFlsB9jzFz8sjF');
 
 module.exports = app;
+	

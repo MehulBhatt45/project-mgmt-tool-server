@@ -46,7 +46,9 @@ employeeController.getEmployeeById = function(req,res){
 }
 
 employeeController.deleteEmployeeById = function(req,res){
-	employeeModel.findByIdAndRemove({_id:req.params.id},function(err,emp){
+	var developerid = req.params.developerid;
+	console.log("id-----()",developerid);
+	employeeModel.findOneAndDelete({_id:developerid},function(err,emp){
 		if(err){
 			res.status(500).send(err);
 		}

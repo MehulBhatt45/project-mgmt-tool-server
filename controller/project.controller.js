@@ -7,7 +7,7 @@ var fs = require('fs');
 var _ = require('lodash');
 projectController.addProject = function(req,res){
 	// console.log("req files =============>" , req.files);
-	req.body.Teams = req.body.Teams.split(',');
+	// req.body.Teams = req.body.Teams.split(',');
 	console.log("req body",req.body);
 	var flag = 5;
 	projectModel.find({}).exec((err , allProjects)=>{
@@ -216,7 +216,7 @@ projectController.getDeveloperOfProject = function(req , res){
 	.populate('Teams')
 	.exec((err , foundTeam)=>{
 		if(err) res.send(err)
-		else res.status(200).send(foundTeam);
+			else res.status(200).send(foundTeam);
 	})
 }
 module.exports = projectController;
