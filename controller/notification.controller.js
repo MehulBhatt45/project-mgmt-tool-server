@@ -36,10 +36,9 @@ notificationController.getAllUsers = function(req, res){
 			req.session.userarray = [];
 
 			for(i=0;i<users.length;i++){
-				
 				req.session.userarray.push(req.session.users[i].token);
-
 			}
+			
 			console.log("token array",req.session.userarray);
 			
 		}else{
@@ -58,7 +57,7 @@ notificationController.getUserById = function(req, res){
 			res.status(200).send(users);
 		}else{
 			res.status(404).send( { msg : 'Users not found' });
-		}
+		}	
 	})
 }
 
