@@ -153,7 +153,19 @@ leaveController.getLeavesById = function(req,res){
 // 		}
 // 	})
 // }
-
+leaveController.getAllLeavesApps = function(req,res){
+	leaveModel.find({})
+	.exec((err,listOfLeaves)=>{
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("list of all leaves application",listOfLeaves);
+			res.status(200).send(listOfLeaves);
+		}
+	})
+}
 
 leaveController.updateLeaves = function(req,res){
 
