@@ -3,6 +3,7 @@ var taskModel = require('../model/task.model');
 var bugModel = require('../model/bug.model');
 var projectModel = require('../model/project.model');
 var issueModel = require('../model/issue.model');
+SALT_WORK_FACTOR = 10;
 var async = require('async');
 var userController = {};
 var bcrypt = require('bcryptjs');
@@ -304,6 +305,31 @@ userController.getDevelpoersNotInProjectTeam = function(req, res){
 	})
 }
 
+userController.forgotPassword = function (req,res) {
+	console.log("forgot password");
+	userModel.findOne({ email : req.body.email } )
+	.exec((err, user)=>{
+		if (err) {
+			return res.status(500).send( { errMsg : err });
+		}else if(user){
+			user.password = req.body.password;
+			user.save(function(error, changedUser) {
+				if (error) res.status(500).send(error);
+				res.status(200).send({msg:"password changed", data:user});
+			});
+			// bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+			// 	if (err) return res.status(500).send(err);
+			// 	bcrypt.hash(user.password, salt, function(err, hash) {
+			// 		if (err) return res.status(500).send(err);
+			// 		console.log(hash);
+			// 	});
+			// });
+		}else{
+			return res.status(403).send( { errMsg : 'User not found' });
+		}
+	});
+	
+}
 
 module.exports = userController; 
 

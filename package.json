@@ -21,7 +21,7 @@
     "jsonwebtoken": "^8.4.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.24.0",
-    "mongoose": "^5.4.12",
+    "mongoose": "^5.4.19",
     "mongoose-bcrypt": "^1.6.0",
     "morgan": "~1.9.0",
     "move-file": "^1.1.0",
