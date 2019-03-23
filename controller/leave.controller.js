@@ -135,6 +135,36 @@ leaveController.getLeavesById = function(req,res){
 	})
 }
 
+leaveController.getApprovedLeaves = function(req,res){
+	leaveModel.find({status:'approved'})
+	.exec((err,respond)=>{
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err);
+		}
+		else{
+			console.log("respnose of approved",respond);
+			res.status(200).send(respond);
+		}
+	})
+}
+
+
+
+leaveController.getRejectedLeaves = function(req,res){
+	leaveModel.find({status: 'rejected'})
+	.exec((err,negative)=>{
+		if(err){
+			console.log("errrrrrr",err);
+			res.status(500).send(err);
+		}
+		else{
+			console.log("negative response=======>",negative);
+			res.status(200).send(negative);
+		}
+	})
+}
+
 // leaveController.myLeaves = function(req,res){
 // 	var userId = req.params.id
 // 	console.log("userId is -------------======>",userId);
