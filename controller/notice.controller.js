@@ -127,5 +127,49 @@ noticeController.deleteNoticeById = function(req,res){
 }
 
 
+noticeController.changePhotoById = function(req,res){
+	console.log("userId is==============>");
+	var noticeId = req.params.noticeId
+	var uploadPath = path.join(__dirname, "../uploads/notice/"+noticeId+"/");
+	console.log("IN UPDATE PROFILE=============>",uploadPath);
+	req.file('profilePhoto').upload({
+		maxBytes: 50000000000000,
+		dirname: uploadPath,
+		saveAs: function (__newFileStream, next) {
+			dir.files(uploadPath, function(err, files) {
+				if (err){
+					mkdir(uploadPath, 0775);
+					return next(undefined, __newFileStream.filename);
+				}else {
+					return next(undefined, __newFileStream.filename);
+				}
+			});
+		}
+	}, function(err, files){
+		if (err) {
+			console.log(err);
+			res.status(500).send(err);
+		}else{
+			console.log(files);
+			console.log("files==========>",files)
+
+			var profile = files[0].fd.split('/uploads/').reverse()[0];
+			// getuser['profilePhoto'] = profile;
+			noticeModel.findOneAndUpdate({_id: noticeId}, {$set: {images:profile }}, {upsert:true, new:true}).exec((error,user)=>{
+				if (error){ 
+					res.status(500).send(error);
+				}else{
+					console.log(user);
+					res.status(200).send(user);
+				}
+			})
+		}
+
+	})
+	
+}
+
+
+
 
 module.exports = noticeController; 

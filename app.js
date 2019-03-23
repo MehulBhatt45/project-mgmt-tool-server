@@ -141,14 +141,14 @@ request('http://localhost:4000/notification/allUsers',function (error, response,
 
 
 // var secureServer = https.createServer(credentials, app);
-var secureServer = http.createServer(app);
-secureServer.listen(4000);
-secureServer.on('error',function(err){
-	console.error('Error starting the server = ',err);
-});
-secureServer.on('listening', function(){
-  console.log("Secure Server listening 443")
-});
+// var secureServer = http.createServer(app);
+// secureServer.listen(4000);
+// secureServer.on('error',function(err){
+// 	console.error('Error starting the server = ',err);
+// });
+// secureServer.on('listening', function(){
+//   console.log("Secure Server listening 443")
+// });
 
 // app.listen(4000);
 

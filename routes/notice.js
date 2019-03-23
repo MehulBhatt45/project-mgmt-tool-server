@@ -8,6 +8,7 @@ router.delete('/delete-notice-by-id/:noticeId',noticeController.deleteNoticeById
 router.put('/update-notice-by-id/:noticeId',noticeController.updateNoticeById);
 router.get('/allnotice',noticeController.getAllNotice);
 router.get('/updatenotice',noticeController.updateNotice);
+router.put('/change-photo/:noticeId',noticeController.changePhotoById);
 
 module.exports = router;
 
