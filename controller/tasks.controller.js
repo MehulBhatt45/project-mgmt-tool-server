@@ -175,8 +175,6 @@ tasksController.addTasks = function(req , res){
 										res.status(200).send(savedTask);
 									})
 								})
-								// pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
-								// res.status(200).send(savedTask);
 							}
 						})
 					})
@@ -226,68 +224,83 @@ tasksController.addTasks = function(req , res){
 								}else{
 									color="#0087ff"
 								}
+							});
 
-								var output = `<!doctype html>
-								<html>
-								<head>
-								<title> title111</title>
-								</head>
-								<body>
-								<div style="width:75%;margin:0 auto;border-radius: 6px;
-								box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-								border: 1px solid #d3d3d3;">
-								<center>
-								<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
-								<div style="margin-left:30px;padding:0;">
-								<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+color+`">`+priority1+`</span> priority task.</p>
-								<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
-								<table style="color:black;">
-								<tr style="height: 50px;width: 100%;">
-								<td><b>Title</b></td>
-								<td style="padding-left: 50px;">`+req.body.title+`</td></tr>
-
-								<tr style="height: 50px;">
-								<td><b>Description</b></td>
-								<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
+							var output = `<!doctype html>
+							<html>
+							<head>
+							<title> title111</title>
+							</head>
+							<body>
+							<div style="width:75%;margin:0 auto;border-radius: 6px;
+							box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+							border: 1px solid #d3d3d3;">
+							<center>
+							<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
 
 
-								<tr  style="height: 50px;">
-								<td><b>Priority</b></td>
-								<td style="padding-left: 50px;">`+req.body.priority+`</td></tr>
+							<div style="margin-left:30px;padding:0;">
+							<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+color+`">`+priority1+`</span> priority task.</p>
+							<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
+							<table style="color:black;">
+							<tr style="height: 50px;width: 100%;">
+							<td><b>Title</b></td>
+							<td style="padding-left: 50px;">`+req.body.title+`</td></tr>
+
+							<tr style="height: 50px;">
+							<td><b>Description</b></td>
+							<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
 
 
-								</table>
-								</div>
-								</body>
-								</html>
-								`;
-								var mailOptions = {
-									from: 'tnrtesting2394@gmail.com',
-									to: 'foramtrada232@gmail.com',
-									subject: 'Testing Email',
-									text: 'Hi, this is a testing email from node server',
-									html: output
-								};
-								transporter.sendMail(mailOptions, function(error, info){
-									if (error) {
-										console.log("Error",error);
-									} else {
-										console.log('Email sent: ' + info.response);
-									}
-								});
-								pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
-								res.status(200).send(savedTask);	
-							})	
-						}).catch((err)=>{
-							console.log(err);
+							<tr  style="height: 50px;">
+							<td><b>Priority</b></td>
+							<td style="padding-left: 50px;">`+req.body.priority+`</td></tr>
+
+
+							</table>
+							</div>
+							</body>
+							</html>
+							`;
+
+
+							var transporter = nodemailer.createTransport({
+								host: "smtp.gmail.com",
+								port: 465,
+								secure: true,
+								service: 'gmail',
+
+								auth: {
+									user: 'tnrtesting2394@gmail.com',
+									pass: 'raoinfotech09'
+								}
+							});
+
+
+							var mailOptions = {
+								from: 'tnrtesting2394@gmail.com',
+								to: email,
+								subject: 'Testing Email',
+								text: 'Hi, this is a testing email from node server',
+								html: output
+							};
+
+							transporter.sendMail(mailOptions, function(error, info){
+								if (error) {
+									console.log("Error",error);
+								} else {
+									console.log('Email sent: ' + info.response);
+								}
+							});
+							pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
+
+							res.status(200).send(savedTask);
 						})
 					})
 				}
 			})
 		}
-	});
+	})
 }
 
 tasksController.getTaskByProjectId = function(req , res){

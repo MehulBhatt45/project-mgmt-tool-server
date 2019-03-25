@@ -7,4 +7,5 @@ router.get('/allUsers',notificationController.getAllUsers);
 router.get('/userById/:userId',notificationController.getUserById);
 
 
+
 module.exports = router;
