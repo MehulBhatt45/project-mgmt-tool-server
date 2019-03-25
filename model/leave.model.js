@@ -7,13 +7,14 @@ var LeaveSchema = new Schema ({
 	name: {type:String, required: true},
 	status: {type:String, default:'pending'},
 
-	leaveDate: {type:String, required: true},
-	leaveDuration:{type:String, required: true},
-	typeOfLeave: {type:String, required: true},
-	reasonForLeave: {type:String, required: true},
+	leaveDate: {type:String},
+	leaveDuration:{type:String},
+	typeOfLeave: {type:String},
+	reasonForLeave: {type:String},
 	startingDate:{type:Date,default:Date.now()},
-	noOfDays:{type:String, required: true},
-	endingDate:Date
+	noOfDays:String,
+	endingDate:Date,
+	uploadFile:String,
 
 })
 
