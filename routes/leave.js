@@ -10,6 +10,7 @@ router.post('/add-leave', leaveController.applyLeave);
 router.get('/get-pendingLeave',leaveController.getLeaves);
 router.put('/update-status-by-id/:id',leaveController.updateLeaves);
 router.post('/leavesByEmail',leaveController.getLeavesById);
+router.get('/list-of-all-leaves-app',leaveController.getAllLeavesApps);
 // router.get('/empLeaves/:id',leaveController.myLeaves);
 
 

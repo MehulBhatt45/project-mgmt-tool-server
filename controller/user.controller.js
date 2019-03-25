@@ -14,6 +14,11 @@ var path = require('path');
 var fs = require('fs');
 var dir = require('node-dir');
 var _ = require('lodash');
+var nodemailer = require ('nodemailer');
+const smtpTransport = require ('nodemailer-smtp-transport');
+var nodemailer = require('nodemailer');
+var jwt = require('jsonwebtoken'); // Import JWT Package
+var secret = 'secret'; // Create custom secret for use in JWT
 
 userController.addUser = function(req,res){
 	console.log("req body ===>" , req.body);
@@ -117,8 +122,7 @@ userController.resetPassword = function(req,res){
 
 }
 userController.updateUserById = function(req,res){
-
-	var userId = req.params.id
+	var userId = req.params.userId;
 	console.log("userId is==============>",userId);
 	userModel
 	.findByIdAndUpdate({_id:userId},{$set:req.body},{upsert:true, new:true},function(err,getuser){
@@ -129,7 +133,7 @@ userController.updateUserById = function(req,res){
 		else{
 			var uploadPath = path.join(__dirname, "../uploads/"+getuser._id+"/");
 			console.log("IN UPDATE DETAILS==============>",uploadPath);
-			req.file('profilePhoto').upload({
+			req.file('cv').upload({
 				maxBytes: 50000000000000,
 				dirname: uploadPath,
 				saveAs: function (__newFileStream, next) {
@@ -149,7 +153,9 @@ userController.updateUserById = function(req,res){
 				}else{
 					console.log(files);
 					console.log("files==========>",files)
-					var cv = files[0].fd.split('/uploads/').reverse()[0];
+					var cv = "";
+					if(files && files.length)
+						cv = files[0].fd.split('/uploads/').reverse()[0];
 					getuser['CV'] = cv;
 					userModel.findOneAndUpdate({_id: userId}, {$set: {CV:cv }}, {upsert:true, new:true}).exec((error,user)=>{
 						if (error){ 
@@ -312,23 +318,63 @@ userController.forgotPassword = function (req,res) {
 		if (err) {
 			return res.status(500).send( { errMsg : err });
 		}else if(user){
-			user.password = req.body.password;
-			user.save(function(error, changedUser) {
-				if (error) res.status(500).send(error);
-				res.status(200).send({msg:"password changed", data:user});
+			// console.log(user.name);
+			user.temporarytoken = jwt.sign({ name: user.name, email: user.email }, secret, { expiresIn: '1min' }); // Create a token for activating account through e-mail
+			// console.log(user.temporarytoken);
+			var output = "Hello";
+			var transporter = nodemailer.createTransport({
+				host: "smtp.gmail.com",
+				port: 465,
+				secure: true,
+				service: 'gmail',
+
+				auth: {
+					user: 'raoinfotechp@gmail.com',
+					pass: 'raoinfotech@123'
+				}
 			});
-			// bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-			// 	if (err) return res.status(500).send(err);
-			// 	bcrypt.hash(user.password, salt, function(err, hash) {
-			// 		if (err) return res.status(500).send(err);
-			// 		console.log(hash);
-			// 	});
-			// });
+
+			var mailOptions = {
+				from: 'raoinfotechp@gmail.com',
+				to: req.body.email,
+				subject: 'Localhost Forgot Password Request',
+				text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="http://localhost:4200/#/forgotpwd/'+ user.temporarytoken,
+				html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 1 minute.<br><br><a href="http://localhost:4200/#/forgotpwd/' + user.temporarytoken + '">http://localhost:4200/#/forgotpwd/</a>'
+			};
+
+			transporter.sendMail(mailOptions, function(error, info){
+				if (error) {
+					console.log("Error",error);
+				} else {
+					console.log('Email sent: ' + info.response);
+					res.status(200).send(user);
+				}
+			});
 		}else{
 			return res.status(403).send( { errMsg : 'User not found' });
 		}
 	});
-	
+}
+
+userController.updatePassword = function (req,res) {
+	var token = req.body.token;
+	jwt.verify(token, secret, function(err, decoded) {
+		// console.log(decoded);
+		userModel.findOne({ email:decoded.email }).exec((err,user)=>{
+			if (err) {
+				return res.status(500).send( { errMsg : err });
+			}else if(user){
+				user.password = req.body.password;
+				user.save(function(error, changedUser) {
+					if (error) res.status(500).send(error);
+					res.status(200).send({ msg:"password changed" });
+				});
+			}
+			else{
+				res.status(403).send({ errMsg : "Not authorised" });
+			}
+		});
+	}); 
 }
 
 module.exports = userController; 
