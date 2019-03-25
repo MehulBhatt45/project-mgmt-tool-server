@@ -6,7 +6,6 @@ var LeaveSchema = new Schema ({
 	email: {type:String, default:'user', required: true},
 	name: {type:String, required: true},
 	status: {type:String, default:'pending'},
-
 	leaveDate: {type:String},
 	leaveDuration:{type:String},
 	typeOfLeave: {type:String},
