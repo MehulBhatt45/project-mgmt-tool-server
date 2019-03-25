@@ -4,6 +4,12 @@ var nodemailer = require ('nodemailer');
 const smtpTransport = require ('nodemailer-smtp-transport');
 let leaveController = {};
 var nodemailer = require('nodemailer');
+var mkdir = require('mkdirp');
+var path = require('path');
+var fs = require('fs');
+var dir = require('node-dir');
+var _ = require('lodash');
+
 
 
 
@@ -18,7 +24,35 @@ leaveController.applyLeave = function(req,res){
 		if(err) res.status(500).send(err)
 
 			else{	
-
+				var uploadPath = path.join(__dirname, "../uploads/"+leave._id+"/");
+				console.log("upload path=======<",uploadPath);
+				req.file('uploadFile').upload({
+					maxBytes: 50000000,
+					dirname: uploadPath,
+					saveAs: function (__newFileStream, next){
+						dir.files(uploadPath, function(err,files){
+							if (err){
+								mkdir(uploadPath, 0775);
+								return next(undefined, __newFileStream.filename);
+							}else {
+								return next(undefined, __newFileStream.filename);
+							}
+						});
+					}
+				}, function(err,files){
+					if(err){
+						console.log(err);
+						res.status(500).send(err);
+					}else{
+						console.log(files);
+						var fileNames = [];
+						if (files.length>0){
+							_.forEach(files, (gotFile)=>{
+								fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
+							})
+						}
+					}
+				})
 
 
 
@@ -198,10 +232,10 @@ leaveController.getAllLeavesApps = function(req,res){
 }
 
 leaveController.updateLeaves = function(req,res){
-
-
-	leaveModel.findByIdAndUpdate({_id: req.params.id},req.body,{upsert:true},function(err,update){
-		console.log(update);
+	console.log("req boddy =======++>" , req.body);
+	console.log("req boddy =======++>" , req.params);
+	leaveModel.findOneAndUpdate({_id: req.params.id},req.body,{upsert:true , new: true},function(err,update){
+		console.log("Updated ==================>" , update);
 		var status = update.status;
 		var email = update.email;
 		console.log("email===>",email);
@@ -258,7 +292,7 @@ leaveController.updateLeaves = function(req,res){
 					console.log('Email sent: ' + info.response);
 				}
 			});
-			res.status(200).send(update)
+			res.status(200).send(update);
 		}else if(status == "rejected"){
 			console.log("Leave Rejected");
 			var output = `<!doctype html>
@@ -315,6 +349,7 @@ leaveController.updateLeaves = function(req,res){
 		}
 		else{
 			console.log("mail not send");
+
 		}
 	})
 
