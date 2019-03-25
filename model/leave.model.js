@@ -11,7 +11,7 @@ var LeaveSchema = new Schema ({
 	typeOfLeave: {type:String, required: true},
 	reasonForLeave: {type:String, required: true},
 	startingDate:{type:Date,default:Date.now()},
-	noOfDays:{type:String, required: true},
+	noOfDays:{type:String},
 	endingDate:Date
 
 })
