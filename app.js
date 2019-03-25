@@ -24,7 +24,7 @@ var skipper = require('skipper')
 var emailController = require('./controller/email.controller.js');
 var userRouter = require('./routes/user');
 var projectRouter = require('./routes/project');
-var taskRouter = require('./routes/task');
+var taskRouter = require('./routes/tasks');
 var bugRouter = require('./routes/bug');
 var issueRouter = require('./routes/issue');
 var requeRouter = require('./routes/requirement');
@@ -77,7 +77,7 @@ app.use(skipper());
 
 //All Controller Router deifne hear
 app.use('/project',projectRouter);
-app.use('/task',taskRouter);
+app.use('/tasks',taskRouter);
 app.use('/bug',bugRouter);
 app.use('/issue',issueRouter);
 app.use('/reque',requeRouter);
