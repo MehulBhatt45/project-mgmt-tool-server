@@ -30,7 +30,7 @@
     "node-dir": "^0.1.17",
     "node-pushnotifications": "^1.1.8",
     "nodemailer-smtp-transport": "^2.7.4",
-    "pug": "2.0.0-beta11",
+    "pug": "^2.0.3",
     "random-token": "0.0.8",
     "request": "^2.88.0",
     "sendmail": "^1.4.1",
