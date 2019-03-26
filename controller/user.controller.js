@@ -112,9 +112,8 @@ userController.resetPassword = function(req,res){
 			return res.status(400).send( { errMsg : 'Bad request' });
 		}
 	})
-
-
 }
+
 userController.updateUserById = function(req,res){
 	var userId = req.params.userId;
 	console.log("userId is==============>",userId);
