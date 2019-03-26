@@ -264,19 +264,6 @@ tasksController.addTasks = function(req , res){
 							`;
 
 
-							var transporter = nodemailer.createTransport({
-								host: "smtp.gmail.com",
-								port: 465,
-								secure: true,
-								service: 'gmail',
-
-								auth: {
-									user: 'tnrtesting2394@gmail.com',
-									pass: 'raoinfotech09'
-								}
-							});
-
-
 							var mailOptions = {
 								from: 'tnrtesting2394@gmail.com',
 								to: email,

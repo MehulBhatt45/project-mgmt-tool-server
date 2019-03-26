@@ -213,7 +213,7 @@ userController.getAllUsersByProjectManager = function(req, res){
 }
 
 userController.logIn = function(req,res){
-	// console.log("req.method" , req.method);
+	console.log("req.method" , req.body);
 	if(req.method == 'POST' && req.body.email && req.body.password){
 		userModel.findOne({ email : req.body.email } )
 		// .select('-password')
