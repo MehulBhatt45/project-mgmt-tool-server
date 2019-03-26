@@ -319,7 +319,7 @@ userController.forgotPassword = function (req,res) {
 			return res.status(500).send( { errMsg : err });
 		}else if(user){
 			// console.log(user.name);
-			user.temporarytoken = jwt.sign({ name: user.name, email: user.email }, secret, { expiresIn: '1min' }); // Create a token for activating account through e-mail
+			user.temporarytoken = jwt.sign({ name: user.name, email: user.email }, secret, { expiresIn: '10min' }); // Create a token for activating account through e-mail
 			// console.log(user.temporarytoken);
 			var output = "Hello";
 			var transporter = nodemailer.createTransport({
@@ -338,8 +338,8 @@ userController.forgotPassword = function (req,res) {
 				from: 'raoinfotechp@gmail.com',
 				to: req.body.email,
 				subject: 'Localhost Forgot Password Request',
-				text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="http://localhost:4200/#/forgotpwd/'+ user.temporarytoken,
-				html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 1 minute.<br><br><a href="http://localhost:4200/#/forgotpwd/' + user.temporarytoken + '">http://localhost:4200/#/forgotpwd/</a>'
+				text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="http://206.189.231.135:4000/#/forgotpwd/'+ user.temporarytoken,
+				html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 10 minutes.<br><br><a href="http://206.189.231.135:4000/#/forgotpwd/' + user.temporarytoken + '">http://206.189.231.135:4000/#/forgotpwd/</a>'
 			};
 
 			transporter.sendMail(mailOptions, function(error, info){
