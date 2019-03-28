@@ -134,6 +134,19 @@ leaveController.getLeavesById = function(req,res){
 		}
 	})
 }
+leaveController.getAllLeaves = function(req,res){
+	leaveModel.find({})
+	.exec((err,respond)=>{
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("response============<<<<<<<<<<<<<",respond);
+			res.status(200).send(respond);
+		}
+	})
+}
 
 // leaveController.myLeaves = function(req,res){
 // 	var userId = req.params.id
