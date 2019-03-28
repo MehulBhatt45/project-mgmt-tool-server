@@ -21,7 +21,8 @@ router.put('/change-profile/:id', userController.changeProfileByUserId);
 
 router.get('/get-user-by-id/:userId',userController.getSingleUser);
 router.get('/get-user-not-in-project-team/:projectId',userController.getDevelpoersNotInProjectTeam);
-router.delete('/deleteEmp/:developerid',userController.deleteEmployeeById);
+router.put('/forgot-password',userController.forgotPassword);
+router.put('/update-password',userController.updatePassword);
 
 // router.post('/signup_without_file',userController.addUser_without_file);
 module.exports = router;
