@@ -3,9 +3,9 @@ var Schema = mongoose.Schema;
 var CommentSchema = new Schema({
 
 	content: String,
-	userId: { type: Schema.Types.ObjectId, ref: 'User'},
-	taskId: { type: Schema.Types.ObjectId, ref: 'Task'},
-	postedOn: { type: Date, default: Date.now },
+	userId: { type: Schema.Types.ObjectId, ref: 'User' , required:true},
+	taskId: { type: Schema.Types.ObjectId, ref: 'Task', required:true},
+	postedOn: { type: Date, default: Date.now ,required:true},
 	images: [{type: String, default: []}]
 },{timestamps: true})
 
