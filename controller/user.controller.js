@@ -3,6 +3,7 @@ var taskModel = require('../model/task.model');
 var bugModel = require('../model/bug.model');
 var projectModel = require('../model/project.model');
 var issueModel = require('../model/issue.model');
+SALT_WORK_FACTOR = 10;
 var async = require('async');
 var userController = {};
 var bcrypt = require('bcryptjs');
@@ -13,8 +14,12 @@ var path = require('path');
 var fs = require('fs');
 var dir = require('node-dir');
 var _ = require('lodash');
-// var nodemailer = require('nodemailer');
-// const smtpTransport = require('nodemailer-smtp-transport');
+
+var nodemailer = require ('nodemailer');
+const smtpTransport = require ('nodemailer-smtp-transport');
+var nodemailer = require('nodemailer');
+var jwt = require('jsonwebtoken'); // Import JWT Package
+var secret = 'secret'; // Create custom secret for use in JWT
 
 
 userController.addUser = function(req,res){
@@ -115,12 +120,10 @@ userController.resetPassword = function(req,res){
 			return res.status(400).send( { errMsg : 'Bad request' });
 		}
 	})
-
-
 }
-userController.updateUserById = function(req,res){
 
-	var userId = req.params.id
+userController.updateUserById = function(req,res){
+	var userId = req.params.userId;
 	console.log("userId is==============>",userId);
 	userModel
 	.findByIdAndUpdate({_id:userId},{$set:req.body},{upsert:true, new:true},function(err,getuser){
@@ -131,7 +134,7 @@ userController.updateUserById = function(req,res){
 		else{
 			var uploadPath = path.join(__dirname, "../uploads/"+getuser._id+"/");
 			console.log("IN UPDATE DETAILS==============>",uploadPath);
-			req.file('profilePhoto').upload({
+			req.file('cv').upload({
 				maxBytes: 50000000000000,
 				dirname: uploadPath,
 				saveAs: function (__newFileStream, next) {
@@ -151,7 +154,9 @@ userController.updateUserById = function(req,res){
 				}else{
 					console.log(files);
 					console.log("files==========>",files)
-					var cv = files[0].fd.split('/uploads/').reverse()[0];
+					var cv = "";
+					if(files && files.length)
+						cv = files[0].fd.split('/uploads/').reverse()[0];
 					getuser['CV'] = cv;
 					userModel.findOneAndUpdate({_id: userId}, {$set: {CV:cv }}, {upsert:true, new:true}).exec((error,user)=>{
 						if (error){ 
@@ -209,7 +214,7 @@ userController.getAllUsersByProjectManager = function(req, res){
 }
 
 userController.logIn = function(req,res){
-	// console.log("req.method" , req.method);
+	console.log("req.method" , req.body);
 	if(req.method == 'POST' && req.body.email && req.body.password){
 		userModel.findOne({ email : req.body.email } )
 		// .select('-password')
@@ -307,77 +312,71 @@ userController.getDevelpoersNotInProjectTeam = function(req, res){
 	})
 }
 
-// leaveController.sendEmail = function(req,res){
-// 	var mail = new l(req.body);
-// 	console.log("mail is here==========>", mail);
-// 	mail.save(function(err,mail){
-// 		if(err) res.status(500).send(err)
-// 			else{	
 
-// 				var output = `<!doctype html>
-// 				<html>
-// 				<head>
-// 				<title> title111</title>
-// 				</head>
-// 				<body>
-// 				<div style="width:75%;margin:0 auto;border-radius: 6px;
-// 				box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-// 				border: 1px solid #d3d3d3;">
-// 				<center>
-// 				<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+userController.forgotPassword = function (req,res) {
+	console.log("forgot password");
+	userModel.findOne({ email : req.body.email } )
+	.exec((err, user)=>{
+		if (err) {
+			return res.status(500).send( { errMsg : err });
+		}else if(user){
+			// console.log(user.name);
+			user.temporarytoken = jwt.sign({ name: user.name, email: user.email }, secret, { expiresIn: '10min' }); // Create a token for activating account through e-mail
+			// console.log(user.temporarytoken);
+			var output = "Hello";
+			var transporter = nodemailer.createTransport({
+				host: "smtp.gmail.com",
+				port: 465,
+				secure: true,
+				service: 'gmail',
 
+				auth: {
+					user: 'raoinfotechp@gmail.com',
+					pass: 'raoinfotech@123'
+				}
+			});
 
-// 				<div style="margin-left:30px;padding:0;">
-// 				<p style="color:black;font-size:20px;">You have a new Leave Application from `+req.body.name+`</p>
+			var mailOptions = {
+				from: 'raoinfotechp@gmail.com',
+				to: req.body.email,
+				subject: 'Localhost Forgot Password Request',
+				text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="http://localhost:4200/#/forgotpwd/'+ user.temporarytoken,
+				html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 10 minutes.<br><br><a href="http://localhost:4200/#/forgotpwd/' + user.temporarytoken + '">http://localhost:4200/#/forgotpwd/</a>'
+			};
 
-// 				<table style="color:black;">
-// 				<tr style="height: 50px;width: 100%;">
-// 				<td><b>Leave Date</b></td>
-// 				<td style="padding-left: 50px;">`+req.body.subject+`</td></tr>
-
-// 				<tr style="height: 50px;">
-// 				<td><b>Duration</b></td>
-// 				<td style="padding-left: 50px;">`+req.body.content+`</td></tr>
-
-// 				</table>
-// 				</div>
-// 				</body>
-// 				</html>
-// 				`;
-
-// 				var transporter = nodemailer.createTransport({
-// 					host: "smtp.gmail.com",
-// 					port: 465,
-// 					secure: true,
-// 					service: 'gmail',
-
-// 					auth: {
-// 						user: 'tnrtesting2394@gmail.com',
-// 						pass: 'raoinfotech09'
-// 					}
-// 				});
-
-
-// 				var mailOptions = {
-// 					from: 'tnrtesting2394@gmail.com',
-// 					to: 'foramtrada232@gmail.com',
-// 					subject: 'Testing Email',
-// 					text: 'Hi, this is a testing email from node server',
-// 					html: output
-// 				};
-
-// 				transporter.sendMail(mailOptions, function(error, info){
-// 					if (error) {
-// 						console.log("Error",error);
-// 					} else {
-// 						console.log('Email sent: ' + info.response);
-// 						res.status(200).send(mail)
-// 					}
-// 				});
-// 			}
-// 		})
-// }
-
+			transporter.sendMail(mailOptions, function(error, info){
+				if (error) {
+					console.log("Error",error);
+				} else {
+					console.log('Email sent: ' + info.response);
+					res.status(200).send(user);
+				}
+			});
+		}else{
+			return res.status(403).send( { errMsg : 'User not found' });
+		}
+	});
+}
+userController.updatePassword = function (req,res) {
+	var token = req.body.token;
+	jwt.verify(token, secret, function(err, decoded) {
+		// console.log(decoded);
+		userModel.findOne({ email:decoded.email }).exec((err,user)=>{
+			if (err) {
+				return res.status(500).send( { errMsg : err });
+			}else if(user){
+				user.password = req.body.password;
+				user.save(function(error, changedUser) {
+					if (error) res.status(500).send(error);
+					res.status(200).send({ msg:"password changed" });
+				});
+			}
+			else{
+				res.status(403).send({ errMsg : "Not authorised" });
+			}
+		});
+	}); 
+}
 
 module.exports = userController; 
 

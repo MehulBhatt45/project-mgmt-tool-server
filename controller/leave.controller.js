@@ -4,6 +4,12 @@ var nodemailer = require ('nodemailer');
 const smtpTransport = require ('nodemailer-smtp-transport');
 let leaveController = {};
 var nodemailer = require('nodemailer');
+var mkdir = require('mkdirp');
+var path = require('path');
+var fs = require('fs');
+var dir = require('node-dir');
+var _ = require('lodash');
+
 
 
 
@@ -18,7 +24,35 @@ leaveController.applyLeave = function(req,res){
 		if(err) res.status(500).send(err)
 
 			else{	
-
+				var uploadPath = path.join(__dirname, "../uploads/"+leave._id+"/");
+				console.log("upload path=======<",uploadPath);
+				req.file('uploadFile').upload({
+					maxBytes: 50000000,
+					dirname: uploadPath,
+					saveAs: function (__newFileStream, next){
+						dir.files(uploadPath, function(err,files){
+							if (err){
+								mkdir(uploadPath, 0775);
+								return next(undefined, __newFileStream.filename);
+							}else {
+								return next(undefined, __newFileStream.filename);
+							}
+						});
+					}
+				}, function(err,files){
+					if(err){
+						console.log(err);
+						res.status(500).send(err);
+					}else{
+						console.log(files);
+						var fileNames = [];
+						if (files.length>0){
+							_.forEach(files, (gotFile)=>{
+								fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
+							})
+						}
+					}
+				})
 
 
 
@@ -148,6 +182,36 @@ leaveController.getAllLeaves = function(req,res){
 	})
 }
 
+leaveController.getApprovedLeaves = function(req,res){
+	leaveModel.find({status:'approved'})
+	.exec((err,respond)=>{
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err);
+		}
+		else{
+			console.log("respnose of approved",respond);
+			res.status(200).send(respond);
+		}
+	})
+}
+
+
+
+leaveController.getRejectedLeaves = function(req,res){
+	leaveModel.find({status: 'rejected'})
+	.exec((err,negative)=>{
+		if(err){
+			console.log("errrrrrr",err);
+			res.status(500).send(err);
+		}
+		else{
+			console.log("negative response=======>",negative);
+			res.status(200).send(negative);
+		}
+	})
+}
+
 // leaveController.myLeaves = function(req,res){
 // 	var userId = req.params.id
 // 	console.log("userId is -------------======>",userId);
@@ -166,13 +230,25 @@ leaveController.getAllLeaves = function(req,res){
 // 		}
 // 	})
 // }
-
+leaveController.getAllLeavesApps = function(req,res){
+	leaveModel.find({})
+	.exec((err,listOfLeaves)=>{
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("list of all leaves application",listOfLeaves);
+			res.status(200).send(listOfLeaves);
+		}
+	})
+}
 
 leaveController.updateLeaves = function(req,res){
-
-
-	leaveModel.findByIdAndUpdate({_id: req.params.id},req.body,{upsert:true},function(err,update){
-		console.log(update);
+	console.log("req boddy =======++>" , req.body);
+	console.log("req boddy =======++>" , req.params);
+	leaveModel.findOneAndUpdate({_id: req.params.id},req.body,{upsert:true , new: true},function(err,update){
+		console.log("Updated ==================>" , update);
 		var status = update.status;
 		var email = update.email;
 		console.log("email===>",email);
@@ -229,7 +305,7 @@ leaveController.updateLeaves = function(req,res){
 					console.log('Email sent: ' + info.response);
 				}
 			});
-			res.status(200).send(update)
+			res.status(200).send(update);
 		}else if(status == "rejected"){
 			console.log("Leave Rejected");
 			var output = `<!doctype html>
@@ -286,6 +362,7 @@ leaveController.updateLeaves = function(req,res){
 		}
 		else{
 			console.log("mail not send");
+
 		}
 	})
 

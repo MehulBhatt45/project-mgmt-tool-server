@@ -1,4 +1,8 @@
 var createError = require('http-errors');
+var fs = require('fs');
+
+var http = require('http');
+var https = require('https');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -20,7 +24,7 @@ var skipper = require('skipper')
 var emailController = require('./controller/email.controller.js');
 var userRouter = require('./routes/user');
 var projectRouter = require('./routes/project');
-var taskRouter = require('./routes/task');
+var taskRouter = require('./routes/tasks');
 var bugRouter = require('./routes/bug');
 var issueRouter = require('./routes/issue');
 var requeRouter = require('./routes/requirement');
@@ -30,8 +34,18 @@ var leaveRouter = require('./routes/leave');
 var notificationRouter = require('./routes/notification');
 
 var noticeRouter = require('./routes/notice');
-var tasksRouter = require('./routes/tasks');
+// var tasksRouter = require('./routes/tasks');
 var pushNotification = require('./service/push-notification.service');
+
+
+
+
+// https
+// var privateKey = fs.readFileSync('/var/www/html/project_mgmt_tool/client/ssl/server.key', 'utf8');
+// var certificate = fs.readFileSync('/var/www/html/project_mgmt_tool/client/ssl/server.crt', 'utf8');
+// var credentials = {key: privateKey, cert: certificate};
+
+
 var app = express();
 // app.use(fileUpload());xc
 app.set('superSecret', 'pmt');
@@ -63,7 +77,7 @@ app.use(skipper());
 
 //All Controller Router deifne hear
 app.use('/project',projectRouter);
-app.use('/task',taskRouter);
+app.use('/tasks',taskRouter);
 app.use('/bug',bugRouter);
 app.use('/issue',issueRouter);
 app.use('/reque',requeRouter);
@@ -71,7 +85,7 @@ app.use('/comment',commentRouter);
 app.use('/user', userRouter); 
 app.use('/employee',employeeRouter);
 app.use('/notice',noticeRouter);
-app.use('/tasks' , tasksRouter);
+// app.use('/tasks' , tasksRouter);
 app.use('/leave',leaveRouter);
 app.post('/email/send-email', emailController.sendEmail);
 app.use('/notification',notificationRouter);
@@ -84,11 +98,11 @@ app.use(function (req, res, next) {
 	res.header('Access-Control-Allow-Origin','*');
 	res.header('Access-Control-Allow-Headers','origin, X-Requested-With, Content-Type, Accept, Authorization, x-access-token');
 	if (req.method === 'OPTIONS') {
-		res.header('Access-Control-Allow-Methods','PUT,POST,PATCH,DELETE,GET');
-		return res.status(200).json({});
+	res.header('Access-Control-Allow-Methods','PUT,POST,PATCH,DELETE,GET');
+	return res.status(200).json({});
 	}
 	else{
-		next();
+	next();
 
 	}
 });
@@ -98,31 +112,48 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+ // set locals, only providing error in development
+ res.locals.message = err.message;
+ res.locals.error = req.app.get('env') === 'development' ? err : {};
 
 // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+res.status(err.status || 500);
+res.render('error');
 });
 
 
 cron.schedule('0 0 * * *', () => {
 	console.log('running a task every minute');
 	request('http://localhost:4000/notice/updatenotice',function (error, response, body) {
-  console.log('error:', error); // Print the error if one occurred
-  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-  console.log('body:', body); // Print the HTML for the Google homepage.
+ console.log('error:', error); // Print the error if one occurred
+ console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+ console.log('body:', body); // Print the HTML for the Google homepage.
 });
 
 });
 
+//API Calling for all User to notify
 
-//app.listen(4000);
+request('http://localhost:4000/notification/allUsers',function (error, response, body) {
+ console.log('error:', error); // Print the error if one occurred
+ //console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+});
+
+
+// var secureServer = https.createServer(credentials, app);
+// var secureServer = http.createServer(app);
+// secureServer.listen(4000);
+// secureServer.on('error',function(err){
+// console.error('Error starting the server = ',err);
+// });
+// secureServer.on('listening', function(){
+// console.log("Secure Server listening 443")
+// });
+
+// app.listen(4000);
 
 //pushnotification calling
 
-pushNotification.postCode('dynamic title','dynamic content','ehjtwSZhY0k:APA91bFa1IDMVpXXF2W17my6-fDnQP5JBO2ppRodV7yh-McO5uxzeyr3z5iIxX1imNkEgoYiqpES_uxmkryZQYEtbeCNOmnzZEf1Vu7cDLV5cAdsv_ZAAhQjVtoEU_AJ3SMplmoRgk-h');
+//pushNotification.postCode('dynamic title','dynamic content','efZH5tQnd5Q:APA91bGdWbqylgR_VAd1lUr0oXXCRxLiI3kZ3ETWJa2L6ahzCxV_Hklb3TyXmkn7zG_qKFEmasNQG3EzLKE9GHIOTzRz7wXgtrlNZzPcWmaKhokhpkkBr2rET67U3pIFlsB9jzFz8sjF');
 
 module.exports = app;
