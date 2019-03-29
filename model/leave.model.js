@@ -2,7 +2,6 @@ var mongoose = require ('mongoose');
 var Schema = mongoose.Schema;
 
 var LeaveSchema = new Schema ({
-
 	email: {type:String, default:'user', required: true},
 	name: {type:String, required: true},
 	status: {type:String, default:'pending'},
@@ -17,6 +16,4 @@ var LeaveSchema = new Schema ({
 
 })
 
-
-
-module.exports = mongoose.model('leave', LeaveSchema);
+module.exports = mongoose.model('leave', LeaveSchema);			
