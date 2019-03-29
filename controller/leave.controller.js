@@ -45,10 +45,10 @@ leaveController.applyLeave = function(req,res){
 						res.status(500).send(err);
 					}else{
 						console.log(files);
-						var fileNames;
+						var fileNames = [];
 						if (files.length>0){
 							_.forEach(files, (gotFile)=>{
-								fileNames = gotFile.fd.split('/uploads/').reverse()[0];
+								fileNames.push(gotFile.fd.split('/uploads/').reverse()[0]);
 							})
 						}
 						leaveModel.findOneAndUpdate({_id:leave._id}, {$set:{attechment:fileNames}},{upsert:true, new:true} )
@@ -173,6 +173,23 @@ leaveController.getLeavesById = function(req,res){
 		}
 	})
 }
+
+leaveController.getById = function(req,res){
+	leaveId = req.params.leaveId;
+
+	leaveModel.find({_id:leaveId})
+	.exec((err,respond)=>{
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("response============<<<<<<<<<<<<<",respond);
+			res.status(200).send(respond);
+		}
+	})
+}
+
 
 leaveController.getApprovedLeaves = function(req,res){
 	leaveModel.find({status:'approved'})
@@ -360,7 +377,22 @@ leaveController.updateLeaves = function(req,res){
 
 }
 
-
+leaveController.AddComments = function(req,res){
+	leaveId = req.body.leaveId;
+	comment = req.body.comment;
+	console.log("leaveid====>>",leaveId);
+	console.log("comment",comment);
+	leaveModel.findOneAndUpdate({_id:leaveId},{$set:{comment:comment}},{upsert:true, new:true})
+	.exec((err,comments)=>{
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			res.status(200).send(comments);
+		}
+	})
+}
 
 module.exports = leaveController;
 
