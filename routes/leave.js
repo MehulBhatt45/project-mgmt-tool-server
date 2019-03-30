@@ -15,6 +15,7 @@ router.get('/approvedLeaves',leaveController.getApprovedLeaves);
 router.get('/rejectedLeaves',leaveController.getRejectedLeaves);
 router.put('/addComments',leaveController.AddComments);
 router.get('/leaveid:leaveId',leaveController.getById);
+router.get('/leavesByUserId/:useremail',leaveController.getByUserId);
 // router.get('/empLeaves/:id',leaveController.myLeaves);
 
 

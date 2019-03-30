@@ -174,6 +174,23 @@ leaveController.getLeavesById = function(req,res){
 	})
 }
 
+leaveController.getByUserId = function(req,res){
+	useremail = req.params.useremail;
+	console.log("userid==========>>>>",useremail);
+	leaveModel.find({email:useremail})
+	.exec((err,respond)=>{
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("response============<<<<<<<<<<<<<",respond);
+			res.status(200).send(respond);
+		}
+	})
+}
+
+
 leaveController.getById = function(req,res){
 	leaveId = req.params.leaveId;
 
