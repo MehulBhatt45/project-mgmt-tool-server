@@ -67,6 +67,19 @@ noticeController.getAllNotice = function(req,res){
 	})
 }
 
+
+noticeController.getNoticeById = function(req,res){
+
+	noticeId = req.params.noticeId;
+
+	noticeModel.findOne({_id:noticeId}).exec(function(err,Notices){
+		if (err) res.status(500).send(err);
+		else{
+			res.status(200).send(Notices);
+		}
+	})
+}
+
 noticeController.updateNotice = function(req,res){
 
 	noticeModel.find({}).exec(function(err,notices){

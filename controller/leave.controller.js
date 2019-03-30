@@ -14,8 +14,8 @@ var _ = require('lodash');
 
 
 leaveController.applyLeave = function(req,res){
-	console.log("fun ma jay che ke nai ============>")
-	userModel.find({userRole: ''})
+	console.log("fun ma jay che ke nai ============>",req.body);
+	// userModel.find({userRole: ''})
 	// userModel.find({email: req.body.email})
 	// console.log("ave che kai=========>",req.body)
 	var leave = new leaveModel(req.body);
@@ -26,7 +26,7 @@ leaveController.applyLeave = function(req,res){
 			else{	
 				var uploadPath = path.join(__dirname, "../uploads/"+leave._id+"/");
 				console.log("upload path=======<",uploadPath);
-				req.file('uploadFile').upload({
+				req.file('attechment').upload({
 					maxBytes: 50000000,
 					dirname: uploadPath,
 					saveAs: function (__newFileStream, next){
@@ -48,92 +48,97 @@ leaveController.applyLeave = function(req,res){
 						var fileNames = [];
 						if (files.length>0){
 							_.forEach(files, (gotFile)=>{
-								fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
+								fileNames.push(gotFile.fd.split('/uploads/').reverse()[0]);
 							})
 						}
+						leaveModel.findOneAndUpdate({_id:leave._id}, {$set:{attechment:fileNames}},{upsert:true, new:true} )
+						.exec((err,uploadFile)=>{
+							if(err){
+								console.log(err);
+								res.status(500).send(err);
+							}else{
+								var output = `<!doctype html>
+								<html>
+								<head>
+								<title> title111</title>
+								</head>
+								<body>
+								<div style="width:75%;margin:0 auto;border-radius: 6px;
+								box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+								border: 1px solid #d3d3d3;">
+								<center>
+								<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+
+
+								<div style="margin-left:30px;padding:0;">
+								<p style="color:black;font-size:20px;">You have a new Leave Application from <span style="font-weight:bold;">`+req.body.name+`</span></p>
+
+								<table style="color:black;">
+								<tr style="height: 50px;">
+								<td><b>Duration</b></td>
+								<td style="padding-left: 50px;">`+req.body.leaveDuration+`</td></tr>
+
+								<tr style="height: 50px;">
+								<td><b>Duration</b></td>
+								<td style="padding-left: 50px;">`+req.body.noOfDays+`</td></tr>
+								
+								<tr style="height: 50px;width: 100%;">
+								<td><b>Leave Date</b></td>
+								<td style="padding-left: 50px;">`+req.body.startingDate+`</td></tr>
+
+								<tr style="height: 50px;width: 100%;">
+								<td><b>Leave Date</b></td>
+								<td style="padding-left: 50px;">`+req.body.endingDate+`</td></tr>
+
+
+								<tr  style="height: 50px;">
+								<td><b>Type of leave</b></td>
+								<td style="padding-left: 50px;">`+req.body.typeOfLeave+`</td></tr>
+
+
+								<tr style="height: 50px;">
+								<td><b>Reason</b></td>
+								<td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr>
+
+								</table>
+								</div>
+								</body>
+								</html>
+								`;
+
+								var transporter = nodemailer.createTransport({
+									host: "smtp.gmail.com",
+									port: 465,
+									secure: true,
+									service: 'gmail',
+
+									auth: {
+										user: 'raoinfotechp@gmail.com',
+										pass: 'raoinfotech@123'
+									}
+								});
+
+
+								var mailOptions = {
+									from: 'raoinfotechp@gmail.com',
+									to: 'foramtrada232@gmail.com',
+									subject: 'Testing Email',
+									text: 'Hi, this is a testing email from node server',
+									html: output
+								};
+
+								transporter.sendMail(mailOptions, function(error, info){
+									if (error) {
+										console.log("Error",error);
+									} else {
+										console.log('Email sent: ' + info.response);
+										res.status(200).send(leave)
+									}
+								});
+							}
+						})
 					}
 				})
-
-
-
-				var output = `<!doctype html>
-				<html>
-				<head>
-				<title> title111</title>
-				</head>
-				<body>
-				<div style="width:75%;margin:0 auto;border-radius: 6px;
-				box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-				border: 1px solid #d3d3d3;">
-				<center>
-				<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
-				<div style="margin-left:30px;padding:0;">
-				<p style="color:black;font-size:20px;">You have a new Leave Application from <span style="font-weight:bold;">`+req.body.name+`</span></p>
-
-				<table style="color:black;">
-				<tr style="height: 50px;">
-				<td><b>Duration</b></td>
-				<td style="padding-left: 50px;">`+req.body.leaveDuration+`</td></tr>
-
-				<tr style="height: 50px;">
-				<td><b>Duration</b></td>
-				<td style="padding-left: 50px;">`+req.body.noOfDays+`</td></tr>
-				
-				<tr style="height: 50px;width: 100%;">
-				<td><b>Leave Date</b></td>
-				<td style="padding-left: 50px;">`+req.body.startingDate+`</td></tr>
-
-				<tr style="height: 50px;width: 100%;">
-				<td><b>Leave Date</b></td>
-				<td style="padding-left: 50px;">`+req.body.endingDate+`</td></tr>
-
-
-				<tr  style="height: 50px;">
-				<td><b>Type of leave</b></td>
-				<td style="padding-left: 50px;">`+req.body.typeOfLeave+`</td></tr>
-
-
-				<tr style="height: 50px;">
-				<td><b>Reason</b></td>
-				<td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr>
-
-				</table>
-				</div>
-				</body>
-				</html>
-				`;
-
-				var transporter = nodemailer.createTransport({
-					host: "smtp.gmail.com",
-					port: 465,
-					secure: true,
-					service: 'gmail',
-
-					auth: {
-						user: 'raoinfotechp@gmail.com',
-						pass: 'raoinfotech@123'
-					}
-				});
-
-
-				var mailOptions = {
-					from: 'raoinfotechp@gmail.com',
-					to: 'foramtrada232@gmail.com',
-					subject: 'Testing Email',
-					text: 'Hi, this is a testing email from node server',
-					html: output
-				};
-
-				transporter.sendMail(mailOptions, function(error, info){
-					if (error) {
-						console.log("Error",error);
-					} else {
-						console.log('Email sent: ' + info.response);
-						res.status(200).send(leave)
-					}
-				});
 
 			}
 		})
@@ -168,6 +173,23 @@ leaveController.getLeavesById = function(req,res){
 		}
 	})
 }
+
+leaveController.getById = function(req,res){
+	leaveId = req.params.leaveId;
+
+	leaveModel.find({_id:leaveId})
+	.exec((err,respond)=>{
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("response============<<<<<<<<<<<<<",respond);
+			res.status(200).send(respond);
+		}
+	})
+}
+
 
 leaveController.getApprovedLeaves = function(req,res){
 	leaveModel.find({status:'approved'})
@@ -355,7 +377,22 @@ leaveController.updateLeaves = function(req,res){
 
 }
 
-
+leaveController.AddComments = function(req,res){
+	leaveId = req.body.leaveId;
+	comment = req.body.comment;
+	console.log("leaveid====>>",leaveId);
+	console.log("comment",comment);
+	leaveModel.findOneAndUpdate({_id:leaveId},{$set:{comment:comment}},{upsert:true, new:true})
+	.exec((err,comments)=>{
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			res.status(200).send(comments);
+		}
+	})
+}
 
 module.exports = leaveController;
 

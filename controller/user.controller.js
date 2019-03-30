@@ -118,9 +118,8 @@ userController.resetPassword = function(req,res){
 			return res.status(400).send( { errMsg : 'Bad request' });
 		}
 	})
-
-
 }
+
 userController.updateUserById = function(req,res){
 	var userId = req.params.userId;
 	console.log("userId is==============>",userId);
@@ -338,8 +337,8 @@ userController.forgotPassword = function (req,res) {
 				from: 'raoinfotechp@gmail.com',
 				to: req.body.email,
 				subject: 'Localhost Forgot Password Request',
-				text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="http://206.189.231.135:4000/#/forgotpwd/'+ user.temporarytoken,
-				html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 10 minutes.<br><br><a href="http://206.189.231.135:4000/#/forgotpwd/' + user.temporarytoken + '">http://206.189.231.135:4000/#/forgotpwd/</a>'
+				text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="http://localhost:4200/#/forgotpwd/'+ user.temporarytoken,
+				html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 10 minutes.<br><br><a href="http://localhost:4200/#/forgotpwd/' + user.temporarytoken + '">http://localhost:4200/#/forgotpwd/</a>'
 			};
 
 			transporter.sendMail(mailOptions, function(error, info){

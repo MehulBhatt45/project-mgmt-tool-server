@@ -13,6 +13,8 @@ router.post('/leavesByEmail',leaveController.getLeavesById);
 router.get('/list-of-all-leaves-app',leaveController.getAllLeavesApps);
 router.get('/approvedLeaves',leaveController.getApprovedLeaves);
 router.get('/rejectedLeaves',leaveController.getRejectedLeaves);
+router.put('/addComments',leaveController.AddComments);
+router.get('/leaveid:leaveId',leaveController.getById);
 // router.get('/empLeaves/:id',leaveController.myLeaves);
 
 
