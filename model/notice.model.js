@@ -6,7 +6,7 @@ var NoticeSchema = new Schema({
 	desc: {type:String , required:true},
 	images:[{type: String}],
     published:{type:Boolean , required:true},
-    expireon:{type:Date , required:true},
+    expireon:{type:Date},
     createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
 },{timestamps: true});
 

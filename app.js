@@ -32,6 +32,7 @@ var commentRouter = require('./routes/comment');
 var employeeRouter = require('./routes/employee');
 var leaveRouter = require('./routes/leave');
 var notificationRouter = require('./routes/notification');
+var sprintRouter = require('./routes/sprint');
 
 var noticeRouter = require('./routes/notice');
 // var tasksRouter = require('./routes/tasks');
@@ -89,6 +90,7 @@ app.use('/notice',noticeRouter);
 app.use('/leave',leaveRouter);
 app.post('/email/send-email', emailController.sendEmail);
 app.use('/notification',notificationRouter);
+app.use('/sprint',sprintRouter);
 
 
 // catch 404 and forward to error handler
