@@ -135,6 +135,20 @@ leaveController.getLeavesById = function(req,res){
 	})
 }
 
+
+leaveController.getLeavesByDevelopersId = function(req,res){
+	userModel.findOne({userId: req.body._id})
+	.exec((error,resp)=>{
+		if (error) {
+			console.log("error==>",error);
+			res.status(500).send(err)
+		}else{
+			console.log("get developer====>",resp);
+			res.status(200).send(resp);
+		}
+	})
+}
+
 // leaveController.myLeaves = function(req,res){
 // 	var userId = req.params.id
 // 	console.log("userId is -------------======>",userId);
@@ -156,7 +170,6 @@ leaveController.getLeavesById = function(req,res){
 
 
 leaveController.updateLeaves = function(req,res){
-
 
 	leaveModel.findByIdAndUpdate({_id: req.params.id},req.body,{upsert:true},function(err,update){
 		console.log(update);
