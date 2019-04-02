@@ -18,8 +18,7 @@ sprintController.getSprintByProject = function (req,res) {
 
 	var projectId = req.params.projectId;
 	console.log("projectid===>>>",projectId);
-	sprintModel
-	.find({projectid:projectId})
+	sprintModel.find({projectId:projectId})
 	.exec(function(err,sprints){
 		if (err) res.status(500).send(err);
 		res.status(200).send(sprints);
@@ -50,6 +49,18 @@ sprintController.updateSprintById = function(req,res){
 		}
 	})
 }
+
+sprintController.sprintBySprintId = function (req,res) {
+
+	var sprintId = req.params.sprintId;
+	console.log("projectid===>>>",sprintId);
+	sprintModel.find({_id:sprintId})
+	.exec(function(err,sprint){
+		if (err) res.status(500).send(err);
+		res.status(200).send(sprint);
+	})
+}
+
 
 module.exports = sprintController; 
 

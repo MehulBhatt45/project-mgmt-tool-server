@@ -156,6 +156,5 @@ request('http://localhost:4000/notification/allUsers',function (error, response,
 
 //pushnotification calling
 
-//pushNotification.postCode('dynamic title','dynamic content','efZH5tQnd5Q:APA91bGdWbqylgR_VAd1lUr0oXXCRxLiI3kZ3ETWJa2L6ahzCxV_Hklb3TyXmkn7zG_qKFEmasNQG3EzLKE9GHIOTzRz7wXgtrlNZzPcWmaKhokhpkkBr2rET67U3pIFlsB9jzFz8sjF');
-
+pushNotification.postCode('dynamic title','dynamic content','fbqqxPUPQLY:APA91bHo1q6asi29IGf8DJUZkoUltLaqqVHLegQOfhOIU0wD04D3YY7oUI3mo2fpe0mLuA-vaakpE-qQVO8Tq861eS9rgJS_NW4uEFRbeJNKRR4teJVxo5m5sqp5YAfPvR2724Z5IfFH');
 module.exports = app;
