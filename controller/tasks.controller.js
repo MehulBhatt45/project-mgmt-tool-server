@@ -294,7 +294,7 @@ tasksController.getTaskByProjectId = function(req , res){
 	console.log("req.parasm :" , req.params);
 	var projectId = req.params.taskId;
 	tasksModel.find({projectId : projectId})
-	.populate('assignTo createdBy')
+	.populate('assignTo createdBy sprint')
 	.exec((err , foundTask)=>{
 		if(err) res.send("err");
 		else res.send(foundTask);
