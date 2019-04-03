@@ -103,8 +103,8 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
 // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+res.status(err.status || 500);
+res.render('error');
 });
 
 
@@ -134,3 +134,4 @@ request('http://localhost:4000/notification/allUsers',function (error, response,
 //pushNotification.postCode('dynamic title','dynamic content','efZH5tQnd5Q:APA91bGdWbqylgR_VAd1lUr0oXXCRxLiI3kZ3ETWJa2L6ahzCxV_Hklb3TyXmkn7zG_qKFEmasNQG3EzLKE9GHIOTzRz7wXgtrlNZzPcWmaKhokhpkkBr2rET67U3pIFlsB9jzFz8sjF');
 
 module.exports = app;
+	
