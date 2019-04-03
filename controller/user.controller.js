@@ -186,6 +186,21 @@ userController.getAllUsers = function(req, res){
 	})
 }
 
+
+userController.getAllProjectManager = function(req, res){
+	console.log("all project Manager==>>");
+	userModel.find({userRole:'projectManager'})
+	.exec((err,users)=>{
+		if (err) {
+			res.status(500).send(err);
+		}else if (users){
+			res.status(200).send(users);
+		}else{
+			res.status(404).send( { msg : 'Users not found' });
+		}
+	})
+}
+
 userController.getAllUsersByProjectManager = function(req, res){
 	var uniqueArray = [];
 	projectModel
@@ -377,6 +392,29 @@ userController.updatePassword = function (req,res) {
 		});
 	}); 
 }
+
+
+userController.getProjectMngrNotInProject = function(req, res){
+	console.log("getProjectMngrNotInProject");
+	projectModel
+	.findOne({_id: req.params.projectId})
+	.exec((err, project)=>{
+		if(err)
+			res.status(500).send(err)
+		else{
+			userModel
+			.find({$and: [{_id: {$nin: project.pmanagerId}},{userRole:'projectManager'}]})
+			.exec((error, developers)=>{
+				if (err) {
+					res.status(500).send(error);
+				}else{
+					res.status(200).send(developers)
+				}
+			})
+		}
+	})
+}
+
 
 module.exports = userController; 
 

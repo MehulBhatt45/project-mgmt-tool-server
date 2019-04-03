@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var ProjectSchema = new Schema({
 	title: {type:String, required: true},
 	desc: {type:String},
-	pmanagerId:{ type: Schema.Types.ObjectId, ref: 'User', required: true },
+	pmanagerId:[{ type: Schema.Types.ObjectId, ref: 'User', required: true }],
 	tasks: [{type: Schema.Types.ObjectId, ref: 'Taskss'}],
 	Teams:[{ type: Schema.Types.ObjectId, ref: 'User'}],
 	taskId: [{type: Schema.Types.ObjectId, ref: 'Task'}],

@@ -2,7 +2,6 @@ var mongoose = require ('mongoose');
 var Schema = mongoose.Schema;
 
 var LeaveSchema = new Schema ({
-
 	email: {type:String},
 	name:String,
 	status: {type:String, default:'pending'},
@@ -13,10 +12,9 @@ var LeaveSchema = new Schema ({
 	startingDate:{type:Date,default:Date.now()},
 	noOfDays:String,
 	endingDate:Date,
-	attechment:[{type: String, default: []}]
+	attechment:[{type: String, default: []}],
+	comment:String
 
 })
 
-
-
-module.exports = mongoose.model('leave', LeaveSchema);
+module.exports = mongoose.model('leave', LeaveSchema);			

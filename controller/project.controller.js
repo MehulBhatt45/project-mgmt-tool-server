@@ -219,4 +219,20 @@ projectController.getDeveloperOfProject = function(req , res){
 			else res.status(200).send(foundTeam);
 	})
 }
+
+projectController.getProjectByPmanagerId = function(req, res){
+	var pmanagerId = req.params.pmanagerId;
+	projectModel
+	.find({pmanagerId :pmanagerId})
+	.select('projects Teams')
+	.exec((err , found)=>{
+		if( err) res.send(err);
+		else{
+			res.send(found);
+		}
+	})
+}
+
+
 module.exports = projectController;
+
