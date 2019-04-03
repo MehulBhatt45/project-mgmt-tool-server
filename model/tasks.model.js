@@ -4,9 +4,10 @@ var Schema = mongoose.Schema;
 var tasksSchema = new Schema({
 	type: {type: String },
 	title: {type: String , required: true},
-	desc: {type: String},
-	assignTo: {type: Schema.Types.ObjectId , ref: 'User' },
-	projectId: {type: Schema.Types.ObjectId , ref: 'Project'},
+	desc: {type: String, required: true},
+	assignTo: {type: Schema.Types.ObjectId , ref: 'User', required: true },
+	sprint: {type: Schema.Types.ObjectId ,ref :'Sprint', required:true},
+	projectId: {type: Schema.Types.ObjectId , ref: 'Project', required: true},
 	status: {type: String , default: 'to do'},
 	comment:[{ type: Schema.Types.ObjectId, ref: 'Comment'}],
 	priority:{ type: Number },
