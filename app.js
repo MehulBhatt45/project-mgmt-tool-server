@@ -32,6 +32,8 @@ var commentRouter = require('./routes/comment');
 var employeeRouter = require('./routes/employee');
 var leaveRouter = require('./routes/leave');
 var notificationRouter = require('./routes/notification');
+var attedenceRouter = require('./routes/attendence');
+
 
 var noticeRouter = require('./routes/notice');
 // var tasksRouter = require('./routes/tasks');
@@ -51,7 +53,7 @@ var app = express();
 app.set('superSecret', 'pmt');
 // Define mongoose Component
 
-mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
+mongoose.connect('mongodb://206.189.231.135:27017/projectMngtTool', {useNewUrlParser: true})
 
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
@@ -85,6 +87,7 @@ app.use('/comment',commentRouter);
 app.use('/user', userRouter); 
 app.use('/employee',employeeRouter);
 app.use('/notice',noticeRouter);
+app.use('/attendence',attedenceRouter);
 // app.use('/tasks' , tasksRouter);
 app.use('/leave',leaveRouter);
 app.post('/email/send-email', emailController.sendEmail);
@@ -154,6 +157,5 @@ request('http://localhost:4000/notification/allUsers',function (error, response,
 
 //pushnotification calling
 
-//pushNotification.postCode('dynamic title','dynamic content','efZH5tQnd5Q:APA91bGdWbqylgR_VAd1lUr0oXXCRxLiI3kZ3ETWJa2L6ahzCxV_Hklb3TyXmkn7zG_qKFEmasNQG3EzLKE9GHIOTzRz7wXgtrlNZzPcWmaKhokhpkkBr2rET67U3pIFlsB9jzFz8sjF');
-
+pushNotification.postCode('dynamic title','dynamic content','fbqqxPUPQLY:APA91bHo1q6asi29IGf8DJUZkoUltLaqqVHLegQOfhOIU0wD04D3YY7oUI3mo2fpe0mLuA-vaakpE-qQVO8Tq861eS9rgJS_NW4uEFRbeJNKRR4teJVxo5m5sqp5YAfPvR2724Z5IfFH');
 module.exports = app;
