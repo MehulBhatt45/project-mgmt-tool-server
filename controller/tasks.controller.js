@@ -21,6 +21,7 @@ var transporter = nodemailer.createTransport({
 		pass: 'raoinfotech09'
 	}
 });
+var uniqueId;
 
 tasksController.addTasks = function(req , res){
 	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/");
