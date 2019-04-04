@@ -1,5 +1,6 @@
 var leaveModel = require ('../model/leave.model');
 var userModel = require('../model/user.model');
+var projectModel = require('../model/project.model');
 var nodemailer = require ('nodemailer');
 const smtpTransport = require ('nodemailer-smtp-transport');
 let leaveController = {};
@@ -9,6 +10,8 @@ var path = require('path');
 var fs = require('fs');
 var dir = require('node-dir');
 var _ = require('lodash');
+var pushNotification = require('./../service/push-notification.service');
+
 
 
 
@@ -51,6 +54,7 @@ leaveController.applyLeave = function(req,res){
 								fileNames.push(gotFile.fd.split('/uploads/').reverse()[0]);
 							})
 						}
+						leave['attechment'] = fileNames;
 						leaveModel.findOneAndUpdate({_id:leave._id}, {$set:{attechment:fileNames}},{upsert:true, new:true} )
 						.exec((err,uploadFile)=>{
 							if(err){
@@ -81,7 +85,7 @@ leaveController.applyLeave = function(req,res){
 								<tr style="height: 50px;">
 								<td><b>Duration</b></td>
 								<td style="padding-left: 50px;">`+req.body.noOfDays+`</td></tr>
-								
+
 								<tr style="height: 50px;width: 100%;">
 								<td><b>Leave Date</b></td>
 								<td style="padding-left: 50px;">`+req.body.startingDate+`</td></tr>
@@ -132,18 +136,32 @@ leaveController.applyLeave = function(req,res){
 										console.log("Error",error);
 									} else {
 										console.log('Email sent: ' + info.response);
-										res.status(200).send(leave)
+										
 									}
 								});
+								pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
+								res.status(200).send(leave)
 							}
 						})
 					}
 				})
-
 			}
 		})
 }
 
+
+leaveController.getTeamsByPmanagerId = function(req, res){
+	var pmanagerId = req.params.pmanagerId;
+	projectModel
+	.find({pmanagerId :pmanagerId})
+	.select('projects Teams')
+	.exec((err , found)=>{
+		if( err) res.send(err);
+		else{
+			res.send(found);
+		}
+	})
+}
 leaveController.getLeaves = function(req,res){
 	leaveModel.find({status: "pending"})
 	.exec((err,resp)=>{
@@ -173,6 +191,19 @@ leaveController.getLeavesById = function(req,res){
 		}
 	})
 }
+leaveController.getAllLeaves = function(req,res){
+	leaveModel.find({})
+	.exec((err,respond)=>{
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("response============<<<<<<<<<<<<<",respond);
+			res.status(200).send(respond);
+		}
+	})
+}
 
 leaveController.getByUserId = function(req,res){
 	useremail = req.params.useremail;
@@ -189,7 +220,6 @@ leaveController.getByUserId = function(req,res){
 		}
 	})
 }
-
 
 leaveController.getById = function(req,res){
 	leaveId = req.params.leaveId;
@@ -269,6 +299,17 @@ leaveController.getAllLeavesApps = function(req,res){
 		}
 	})
 }
+
+// leaveController.getAllLeavesByProjectManager = function(req,res){
+// 	leaveModel.find({})
+// 	.exec((err,listOfLeaves)=>{
+// 		if (err) 
+// 		{
+// 			console.log("error",err);
+// 			res.status(500).send(err)
+// 		}
+
+// }
 
 leaveController.updateLeaves = function(req,res){
 	console.log("req boddy =======++>" , req.body);
@@ -393,7 +434,6 @@ leaveController.updateLeaves = function(req,res){
 	})
 
 }
-
 leaveController.AddComments = function(req,res){
 	leaveId = req.body.leaveId;
 	comment = req.body.comment;
@@ -412,5 +452,3 @@ leaveController.AddComments = function(req,res){
 }
 
 module.exports = leaveController;
-
-

@@ -101,11 +101,11 @@ app.use(function (req, res, next) {
 	res.header('Access-Control-Allow-Origin','*');
 	res.header('Access-Control-Allow-Headers','origin, X-Requested-With, Content-Type, Accept, Authorization, x-access-token');
 	if (req.method === 'OPTIONS') {
-	res.header('Access-Control-Allow-Methods','PUT,POST,PATCH,DELETE,GET');
-	return res.status(200).json({});
+		res.header('Access-Control-Allow-Methods','PUT,POST,PATCH,DELETE,GET');
+		return res.status(200).json({});
 	}
 	else{
-	next();
+		next();
 
 	}
 });
@@ -157,5 +157,5 @@ request('http://localhost:4000/notification/allUsers',function (error, response,
 
 //pushnotification calling
 
-pushNotification.postCode('dynamic title','dynamic content','fbqqxPUPQLY:APA91bHo1q6asi29IGf8DJUZkoUltLaqqVHLegQOfhOIU0wD04D3YY7oUI3mo2fpe0mLuA-vaakpE-qQVO8Tq861eS9rgJS_NW4uEFRbeJNKRR4teJVxo5m5sqp5YAfPvR2724Z5IfFH');
+pushNotification.postCode('your team member take leave','it is pending','fbqqxPUPQLY:APA91bHo1q6asi29IGf8DJUZkoUltLaqqVHLegQOfhOIU0wD04D3YY7oUI3mo2fpe0mLuA-vaakpE-qQVO8Tq861eS9rgJS_NW4uEFRbeJNKRR4teJVxo5m5sqp5YAfPvR2724Z5IfFH');
 module.exports = app;

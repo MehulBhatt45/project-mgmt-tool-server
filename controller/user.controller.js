@@ -14,11 +14,13 @@ var path = require('path');
 var fs = require('fs');
 var dir = require('node-dir');
 var _ = require('lodash');
+
 var nodemailer = require ('nodemailer');
 const smtpTransport = require ('nodemailer-smtp-transport');
 var nodemailer = require('nodemailer');
 var jwt = require('jsonwebtoken'); // Import JWT Package
 var secret = 'secret'; // Create custom secret for use in JWT
+
 
 userController.addUser = function(req,res){
 	console.log("req body ===>" , req.body);
@@ -325,6 +327,7 @@ userController.getDevelpoersNotInProjectTeam = function(req, res){
 	})
 }
 
+
 userController.forgotPassword = function (req,res) {
 	console.log("forgot password");
 	userModel.findOne({ email : req.body.email } )
@@ -369,7 +372,6 @@ userController.forgotPassword = function (req,res) {
 		}
 	});
 }
-
 userController.updatePassword = function (req,res) {
 	var token = req.body.token;
 	jwt.verify(token, secret, function(err, decoded) {
@@ -415,4 +417,5 @@ userController.getProjectMngrNotInProject = function(req, res){
 
 
 module.exports = userController; 
+
 
