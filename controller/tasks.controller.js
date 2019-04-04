@@ -1,6 +1,7 @@
 var tasksModel = require('../model/tasks.model');
 var projectModel = require('../model/project.model');
 var userModel = require('../model/user.model');
+var notificationModel = require('../model/notification.model');
 var _ = require('lodash');
 let tasksController = {};
 var dir = require('node-dir');
@@ -172,8 +173,20 @@ tasksController.addTasks = function(req , res){
 												console.log('Email sent: ' + info.response);
 											}
 										});
-										pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
-										res.status(200).send(savedTask);
+										var obj = {
+											"id": savedTask.assignTo._id,
+											"title": "You have new task",
+											"desc": "New task has been assigned to you by Project Manager"
+										}
+										var notification = new notificationModel(obj);
+										notification.save(function(err,savedNotification){
+											if(err){
+												res.status(500).send(err);		
+											}
+											console.log(savedNotification);
+											pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
+											res.status(200).send(savedTask);
+										}) 
 									})
 								})
 							}
@@ -287,8 +300,8 @@ tasksController.addTasks = function(req , res){
 					})
 				}
 			})
-		}
-	})
+}
+})
 }
 
 tasksController.getTaskByProjectId = function(req , res){
