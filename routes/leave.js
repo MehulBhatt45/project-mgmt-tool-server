@@ -17,6 +17,7 @@ router.get('/rejectedLeaves',leaveController.getRejectedLeaves);
 router.put('/addComments',leaveController.AddComments);
 router.get('/leaveid:leaveId',leaveController.getById);
 router.get('/leavesByUserId/:useremail',leaveController.getByUserId);
+router.get('/getTeamByPmanagerId/:pmanagerId',leaveController.getTeamsByPmanagerId);
 // router.get('/leaveByManagerId:managerId',getAllLeavesByProjectManager);
 // router.get('/empLeaves/:id',leaveController.myLeaves);
 

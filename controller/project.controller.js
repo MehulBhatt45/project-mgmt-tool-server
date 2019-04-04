@@ -233,6 +233,5 @@ projectController.getProjectByPmanagerId = function(req, res){
 	})
 }
 
-
 module.exports = projectController;
 
