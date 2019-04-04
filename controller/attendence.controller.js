@@ -25,8 +25,9 @@ attendenceController.employeeAttendence = function(req,res){
 		if(foundEmp){
 			console.log("found student ============+>" , foundEmp);
 			currentEmployee = foundEmp[0]._id;
+			console.log("cuureeeeeent",currentEmployee);
 			console.log(new Date().toLocaleTimeString());
-			attendenceModel.findOne({student_id: currentEmployee , date: currentDate },function(err , updatedEmployee){
+			attendenceModel.findOne({user_Id:currentEmployee , date: currentDate },function(err , updatedEmployee){
 				console.log("updated Studemnt ====================>" , updatedEmployee);
 				if(updatedEmployee != null){
 					console.log("count status in ** updatedEmployee != null** ============>" , updatedEmployee.in_out.length);
@@ -55,11 +56,11 @@ attendenceController.employeeAttendence = function(req,res){
 				else{	
 					console.log( "updatedEmployee == null")
 					console.log(new Date().toLocaleTimeString());
-					console.log("else");
+					console.log("else ==.cureen",currentEmployee);
 					var date = new Date();
 					var obj = {
 						date: new Date(),
-						student_id: currentEmployee,
+						user_Id: currentEmployee,
 						in_out: [{
 							checkIn: new Date(),
 						}]
