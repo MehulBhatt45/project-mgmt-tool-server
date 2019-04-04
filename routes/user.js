@@ -12,6 +12,8 @@ router.put('/update-details/:userId', userController.updateUserById);
 // router.put('/change-profile/:id', userController.changeProfileByUserId);
 // router.get('/get-logs/:userId', userController.getUserWorkLogs);
 router.get('/get-all-developers', userController.getAllUsers);
+router.get('/get-all-project-manager', userController.getAllProjectManager);
+
 router.put('/reset-password',userController.resetPassword);
 
 // router.get('/get-logs/:userId', userController.getUserWorkLogs);
@@ -21,7 +23,9 @@ router.put('/change-profile/:id', userController.changeProfileByUserId);
 
 router.get('/get-user-by-id/:userId',userController.getSingleUser);
 router.get('/get-user-not-in-project-team/:projectId',userController.getDevelpoersNotInProjectTeam);
-router.delete('/deleteEmp/:developerid',userController.deleteEmployeeById);
+router.get('/get-project-mngr-not-in-project-team/:projectId',userController.getProjectMngrNotInProject);
+router.put('/forgot-password',userController.forgotPassword);
+router.put('/update-password',userController.updatePassword);
 
 // router.post('/signup_without_file',userController.addUser_without_file);
 module.exports = router;

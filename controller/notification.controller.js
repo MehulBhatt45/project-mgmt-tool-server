@@ -1,6 +1,17 @@
 var notificationModel = require('../model/notification.model');
 let notificationController = {};
 
+
+
+notificationController.addNotification = function(req, res){
+	var notification = new notificationModel(req.body);
+	notification.save(function(err,SavedUser){
+		if (err) res.status(500).send(err);
+		res.status(200).send(SavedUser);
+	})
+}
+
+
 notificationController.addUser = function(req,res){
 	console.log("notificatiion data",req.body);
 	var userId = req.body.userId;
@@ -60,6 +71,7 @@ notificationController.getUserById = function(req, res){
 		}	
 	})
 }
+
 
 
 module.exports = notificationController; 

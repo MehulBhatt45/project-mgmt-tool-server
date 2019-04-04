@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var ProjectSchema = new Schema({
 	title: {type:String, required: true},
 	desc: {type:String},
-	pmanagerId:{ type: Schema.Types.ObjectId, ref: 'User', required: true },
+	pmanagerId:[{ type: Schema.Types.ObjectId, ref: 'User', required: true }],
 	tasks: [{type: Schema.Types.ObjectId, ref: 'Taskss'}],
 	Teams:[{ type: Schema.Types.ObjectId, ref: 'User'}],
 	taskId: [{type: Schema.Types.ObjectId, ref: 'Task'}],
@@ -17,15 +17,11 @@ var ProjectSchema = new Schema({
 		require: true,
 		text: true
 	},
-	clientEmail: {type: String , /*required: true*/},
-	clientFullName:  {type: String, /*required: true*/},
-	clientContactNo: {type: String, /*required: true*/},
-	clientDesignation: {type: String},	
+	clientEmail: {type: String ,required: true},
+	clientFullName:  {type: String,required: true},
+	clientContactNo: {type: String,required: true},
+	clientDesignation: {type: String,required:true},	
 	createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
-	clientEmail:{type:String},
-	clientFullName:{type:String},
-	clientContactNo:{type:String},
-	clientDesignation:{type:String},
 	deadline: {type:Date},
 },{timestamps: true});
 

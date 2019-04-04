@@ -5,8 +5,6 @@ const smtpTransport = require ('nodemailer-smtp-transport');
 let leaveController = {};
 var nodemailer = require('nodemailer');
 
-
-
 leaveController.applyLeave = function(req,res){
 	console.log("fun ma jay che ke nai ============>")
 	userModel.find({userRole: ''})
@@ -18,9 +16,6 @@ leaveController.applyLeave = function(req,res){
 		if(err) res.status(500).send(err)
 
 			else{	
-
-
-
 
 				var output = `<!doctype html>
 				<html>
@@ -83,7 +78,6 @@ leaveController.applyLeave = function(req,res){
 					}
 				});
 
-
 				var mailOptions = {
 					from: 'raoinfotechp@gmail.com',
 					to: 'foramtrada232@gmail.com',
@@ -104,7 +98,6 @@ leaveController.applyLeave = function(req,res){
 			}
 		})
 }
-
 leaveController.getLeaves = function(req,res){
 	leaveModel.find({status: "pending"})
 	.exec((err,resp)=>{
@@ -119,7 +112,6 @@ leaveController.getLeaves = function(req,res){
 		}
 	})
 }
-
 
 leaveController.getLeavesById = function(req,res){
 	leaveModel.find({email:req.body.email})
@@ -290,8 +282,6 @@ leaveController.updateLeaves = function(req,res){
 	})
 
 }
-
-
 
 module.exports = leaveController;
 
