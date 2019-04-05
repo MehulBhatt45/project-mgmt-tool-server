@@ -51,7 +51,8 @@ var app = express();
 app.set('superSecret', 'pmt');
 // Define mongoose Component
 
-mongoose.connect('mongodb://127.0.0.1:27017/projectMngtTool', {useNewUrlParser: true})
+
+mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
 
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
@@ -97,11 +98,11 @@ app.use(function (req, res, next) {
 	res.header('Access-Control-Allow-Origin','*');
 	res.header('Access-Control-Allow-Headers','origin, X-Requested-With, Content-Type, Accept, Authorization, x-access-token');
 	if (req.method === 'OPTIONS') {
-	res.header('Access-Control-Allow-Methods','PUT,POST,PATCH,DELETE,GET');
-	return res.status(200).json({});
+		res.header('Access-Control-Allow-Methods','PUT,POST,PATCH,DELETE,GET');
+		return res.status(200).json({});
 	}
 	else{
-	next();
+		next();
 
 	}
 });
@@ -155,3 +156,4 @@ request('http://localhost:4000/notification/allUsers',function (error, response,
 // pushNotification.postCode('dynamic title','dynamic content','ecCQmR59kvE:APA91bH41i0zPzxoA6HizVANTUnCu_Ac5nTCj90cd_KXANWtKu_bMS49aymzGWsG2Z33KB80R4YGcj4L7-RspDLtX22tKa1Usk2Y8a4WXSHyQe2Y5YKui_D6TRsF4LM3_fnvvR3xtvjg');
 
 module.exports = app;
+

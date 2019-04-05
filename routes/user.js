@@ -15,6 +15,7 @@ router.get('/get-all-developers', userController.getAllUsers);
 router.get('/get-all-project-manager', userController.getAllProjectManager);
 
 router.put('/reset-password',userController.resetPassword);
+// router.post('/send-email',userController.sendEmail);
 
 // router.get('/get-logs/:userId', userController.getUserWorkLogs);
 // router.get('/get-all-developers', userController.getAllUsers);

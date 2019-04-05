@@ -13,7 +13,7 @@ var LeaveSchema = new Schema ({
 	noOfDays:String,
 	endingDate:Date,
 	attechment:[{type: String, default: []}],
-	comment:String
+	comment:String,
 
 })
 

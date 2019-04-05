@@ -69,6 +69,8 @@ projectController.addProject = function(req,res){
 	})
 }
 
+
+
 projectController.getAllProject = function(req,res){
 	projectModel
 	.find({})
@@ -219,50 +221,16 @@ projectController.getDeveloperOfProject = function(req , res){
 }
 
 projectController.getProjectByPmanagerId = function(req, res){
-	 var uniqueArray = [];
 	var pmanagerId = req.params.pmanagerId;
 	projectModel
 	.find({pmanagerId :pmanagerId})
-	.populate('')
-	// .select('projects Teams')
+	.select('projects Teams')
 	.exec((err , found)=>{
 		if( err) res.send(err);
 		else{
 			res.send(found);
-		// })
-	}
-		})
-	}
-	// 		_.forEach(found, (pro)=>{
-	// // 			console.log("projects",pro);
-	// 			uniqueArray.push(...pro.Projects);
-
-	// })
-	// projectModel
-	// .findOne({pmanagerId})
-	// console.log("pmanager===>",pmanagerId)
-	// console.log(pmanagerId);
-	// .populate('pmanagerId')
-	// var uniqueArray = [];
-	// projectModel
-	// .find({pmanagerId: req.body.pmId})
-	// // var pmanagerId = req.params.id;
-	// // projectModel.findOne({pmanagerId})
-	// // .populate('projectId')
-	// .exec((err,respond)=>{
-	// 	if(err){
-	// 		console.log("error",err);
-	// 		res.status(500).send(err)
-	// 	}
-	// 	else {
-	// 		_.forEach(respond, (pro)=>{
-	// 			console.log("projects",pro);
-	// 			uniqueArray.push(...pro.Projects);
-	// 		console.log("uniqueArray",uniqueArray);
-	// 		console.log("resp===>",respond);
-	// 		res.status(200).send(respond);
-	// 		})
-	// 	}
-	// })
+		}
+	})
+}
 
 module.exports = projectController;

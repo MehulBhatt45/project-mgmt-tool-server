@@ -1,5 +1,6 @@
 var notificationModel = require('../model/notification.model');
 var sendnotificationModel = require('../model/sendNotification.model');
+
 let notificationController = {};
 var pushNotification = require('./../service/push-notification.service');
 
@@ -93,6 +94,44 @@ notificationController.addNotification = function(req, res){
 			}	
 		})
 	}
+
+
+notificationController.getUserById = function(req, res){
+	userId = req.params.userId;
+	notificationModel.findOne({userId:userId})
+	.exec((err,users)=>{
+		if (err) {
+			res.status(500).send(err);
+		}else if (users){
+			res.status(200).send(users);
+		}else{
+			res.status(404).send( { msg : 'Users not found' });
+		}	
+	})
+}
+notificationController.sendNotificationToPmanager = function(req,res){
+	var notification = new notificationModel(req.body);
+	notification.save(function(err,user){
+		if(err){
+			res.status(500).send(err);
+		}
+		res.status(201).send(notification);
+	})
+
+}
+
+notificationController.getNotificationOfPmanager = function(req,res){
+	notificationModel.find({})
+	.exec((err,users)=>{
+		if (err) {
+			res.status(500).send(err);
+		}else if (users){
+			res.status(200).send(users);
+		}else{
+			res.status(404).send( { msg : 'Users not found' });
+		}
+	})
+}
 
 
 

@@ -15,4 +15,5 @@ router.post('/get-all-files', projectController.getAllFiles);
 router.post('/delete-file', projectController.deleteFile);
 router.get('/get-developer-of-project/:projectId' , projectController.getDeveloperOfProject);
 router.get('/get-project-by-pmanagerId/:pmanagerId' , projectController.getProjectByPmanagerId);
+
 module.exports = router;
