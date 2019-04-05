@@ -27,6 +27,7 @@ router.get('/get-user-not-in-project-team/:projectId',userController.getDevelpoe
 router.get('/get-project-mngr-not-in-project-team/:projectId',userController.getProjectMngrNotInProject);
 router.put('/forgot-password',userController.forgotPassword);
 router.put('/update-password',userController.updatePassword);
+router.delete('/delete-user/:userId',userController.deleteUserById);
 
 // router.post('/signup_without_file',userController.addUser_without_file);
 module.exports = router;
