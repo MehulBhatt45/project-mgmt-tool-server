@@ -10,7 +10,8 @@ var AttendenceSchema = new Schema({
 		checkIn:Date,
 		checkOut: {type:Date, default:null},
 	}],
-	userId:[{type:Schema.Types.ObjectId, ref:'User'}],
+	user_Id:{type:Schema.Types.ObjectId, ref:'User'},
+	date:Date,
 
 });
 module.exports = mongoose.model('attendence',AttendenceSchema);

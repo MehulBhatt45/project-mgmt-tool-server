@@ -10,18 +10,19 @@ var path = require('path');
 var fs = require('fs');
 var nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
+
 var pushNotification = require('./../service/push-notification.service');
 var transporter = nodemailer.createTransport({
 	host: "smtp.gmail.com",
 	port: 465,
 	secure: true,
 	service: 'gmail',
-
 	auth: {
 		user: 'tnrtesting2394@gmail.com',
 		pass: 'raoinfotech09'
 	}
 });
+var uniqueId;
 
 tasksController.addTasks = function(req , res){
 	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/");
@@ -101,6 +102,7 @@ tasksController.addTasks = function(req , res){
 									foundedUser.tasks.push(savedTask._id);
 									foundedUser.save();
 									console.log("resp1 receive");
+
 									var priority1 = req.body.priority;
 									var color;
 									var color;
@@ -235,9 +237,11 @@ tasksController.addTasks = function(req , res){
 				}else if(priority1 == '3'){
 					color = "#ffee21";
 				}else{
+
 					color="#0087ff"
 				}
 			});
+
 
 			var output = `<!doctype html>
 			<html>
@@ -290,6 +294,7 @@ tasksController.addTasks = function(req , res){
 					console.log("Error",error);
 				} else {
 					console.log('Email sent: ' + info.response);
+
 				}
 			});
 			pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
@@ -301,6 +306,7 @@ tasksController.addTasks = function(req , res){
 })
 }
 })
+
 }
 
 
@@ -346,8 +352,10 @@ tasksController.updateTaskById = function(req , res){
 		}else{
 			console.log(files);
 			tasksModel.findOne({_id: taskId}, function(err , task){
+
 				var fileNames=req.body.images;
 			// fileNames.push(req.body.images);
+
 			if(files.length>0){
 				_.forEach(files, (gotFile)=>{
 					fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
@@ -384,7 +392,6 @@ tasksController.updateTaskById = function(req , res){
 						.exec((err , user)=>{
 							user.tasks.push(updatedData._id);
 							user.save();	
-
 							console.log("final task======>" , updatedData);
 							res.status(200).send(updatedData);	
 						})

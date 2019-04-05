@@ -72,38 +72,27 @@ leaveController.applyLeave = function(req,res){
 								border: 1px solid #d3d3d3;">
 								<center>
 								<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
 								<div style="margin-left:30px;padding:0;">
 								<p style="color:black;font-size:20px;">You have a new Leave Application from <span style="font-weight:bold;">`+req.body.name+`</span></p>
-
 								<table style="color:black;">
 								<tr style="height: 50px;">
 								<td><b>Duration</b></td>
 								<td style="padding-left: 50px;">`+req.body.leaveDuration+`</td></tr>
-
 								<tr style="height: 50px;">
 								<td><b>Duration</b></td>
 								<td style="padding-left: 50px;">`+req.body.noOfDays+`</td></tr>
-
 								<tr style="height: 50px;width: 100%;">
 								<td><b>Leave Date</b></td>
 								<td style="padding-left: 50px;">`+req.body.startingDate+`</td></tr>
-
 								<tr style="height: 50px;width: 100%;">
 								<td><b>Leave Date</b></td>
 								<td style="padding-left: 50px;">`+req.body.endingDate+`</td></tr>
-
-
 								<tr  style="height: 50px;">
 								<td><b>Type of leave</b></td>
 								<td style="padding-left: 50px;">`+req.body.typeOfLeave+`</td></tr>
-
-
 								<tr style="height: 50px;">
 								<td><b>Reason</b></td>
 								<td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr>
-
 								</table>
 								</div>
 								</body>
@@ -335,8 +324,6 @@ leaveController.updateLeaves = function(req,res){
 			border: 1px solid #d3d3d3;">
 			<center>
 			<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
 			<div style="margin-left:30px;padding:0;">
 			<p style="color:black;font-size:20px;">Your leave is <span style="color:#28B463;font-weight:bold;">APPROVED.</span></p>
 			</div>
@@ -386,12 +373,8 @@ leaveController.updateLeaves = function(req,res){
 			border: 1px solid #d3d3d3;">
 			<center>
 			<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
 			<div style="margin-left:30px;padding:0;">
 			<p style="color:black;font-size:20px;">Your leave is <span style="color:#E74C3C;font-weight:bold;">REJECTED.</p>
-
-
 			</div>
 			</body>
 			</html>
