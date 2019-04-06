@@ -39,16 +39,22 @@ attendenceController.employeeAttendence = function(req,res){
 						previousDifference = updatedEmployee.in_out[count].checkOut - updatedEmployee.in_out[count].checkIn; 
 						updatedEmployee.difference = +previousDifference + +updatedEmployee.difference;
 						updatedEmployee.save(function(err, upSt){
-							if (err) res.send(err);
-							console.log("updatedEmployee != null");
-							res.send(upSt);
+							if(err){
+								res.send(err)
+							}
+							else{
+								console.log("updatedEmployee != null");
+								res.send(upSt);
+							}
 						})
 					}
 					else{
 						updatedEmployee.in_out.push({checkIn: new Date()});
 						updatedEmployee.save(function(err , updated){
 							if(err) res.send(err);
-							res.send(updated);
+							else{
+								res.send(updated);
+							}
 						})
 						console.log("hailu halo");	
 					}
@@ -78,8 +84,19 @@ attendenceController.employeeAttendence = function(req,res){
 			})
 		}
 	})
+}
 
-
+attendenceController.getAttendenceByDateAndId = function(req,res){
+	console.log("tested");
+	var date = req.body.date;
+	date = date + " 00:00:00.000Z";
+	req.body.date = date;
+	console.log("req . body ===>" , req.body);
+	attendenceModel.findOne({date: req.body.date , user_Id:req.body.user_Id})
+	.exec((err,foundData)=>{
+		if(err) {res.send(err);}
+		else {res.send(foundData)}
+	})
 }
 
 	module.exports = attendenceController;
