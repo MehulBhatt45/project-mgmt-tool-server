@@ -6,11 +6,11 @@ var tasksSchema = new Schema({
 	title: {type: String , required: true},
 	desc: {type: String, required: true},
 	assignTo: {type: Schema.Types.ObjectId , ref: 'User', required: true },
-	sprint: {type: Schema.Types.ObjectId ,ref :'Sprint'},
+	// sprint: {type: Schema.Types.ObjectId ,ref :'Sprint'},
 	projectId: {type: Schema.Types.ObjectId , ref: 'Project', required: true},
 	status: {type: String , default: 'to do'},
 	comment:[{ type: Schema.Types.ObjectId, ref: 'Comment'}],
-	priority:{ type: Number },
+	priority:{ type: String },
 	uniqueId:{ type: String },
 	timelog:[{
 		operation: {type: String},
