@@ -415,6 +415,16 @@ userController.getProjectMngrNotInProject = function(req, res){
 	})
 }
 
+userController.deleteUserById = function(req,res){
+
+	var userId = req.params.userId;
+	userModel.findOneAndDelete({_id:userId}).exec(function(err,user){
+		console.log("err==========>>>",err);
+		res.status(200).send(user);
+		console.log("user is========>",user);
+	})
+
+}
 
 module.exports = userController; 
 
