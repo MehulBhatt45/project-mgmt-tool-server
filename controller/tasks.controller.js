@@ -1,3 +1,4 @@
+
 var tasksModel = require('../model/tasks.model');
 var projectModel = require('../model/project.model');
 var userModel = require('../model/user.model');
@@ -107,13 +108,17 @@ tasksController.addTasks = function(req , res){
 									var color = req.body.color;;
 									var color;
 									if(priority1 == '1'){
+										prior = "Highest";
 										color = "#ff0000";
 									}else if(priority1 == '2'){
+										prior = "High";
 										color = "#ff8100";
 									}else if(priority1 == '3'){
 										color = "#ffee21";
+										prior = "Medium";
 									}else{
-										color="#0087ff"
+										color="#0087ff";
+										prior = "Low";
 									}
 									tasksModel.findOne({_id: savedTask._id})
 									.populate('assignTo')
@@ -135,7 +140,7 @@ tasksController.addTasks = function(req , res){
 										<center>
 										<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
 										<div style="margin-left:30px;padding:0;">
-										<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+color+`">`+priority1+`</span> priority task.</p>
+										<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+color+`">`+prior+`</span> priority task.</p>
 										<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
 										<table style="color:black;">
 										<tr style="height: 50px;width: 100%;">
@@ -146,7 +151,7 @@ tasksController.addTasks = function(req , res){
 										<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
 										<tr  style="height: 50px;">
 										<td><b>Priority</b></td>
-										<td style="padding-left: 50px;">`+req.body.priority+`</td></tr>
+										<td style="padding-left: 50px;">`+prior+`</td></tr>
 										</table>
 										</div>
 										</body>
@@ -177,8 +182,24 @@ tasksController.addTasks = function(req , res){
 											if(err){
 												res.status(500).send(err);		
 											}
-											console.log(savedNotification);
-											pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
+											// console.log("foundTask=========>>>>>",foundTask)
+											// console.log("foundTaskId===>",foundTask.assignTo._id);
+											var assignTo = foundTask.assignTo._id;
+											// console.log("assign",assignTo)
+											// console.log(savedNotification.id);
+											// console.log(userId);
+											notificationModel
+											.findOne({userId : assignTo})
+											.exec((err, user)=>{
+												if (err) {
+													res.status(500).send(err);
+												}else{
+											console.log("savedNotification======>>>>>",user);
+											// console.log("id-------->>>>>",user.token);
+											pushNotification.postCode('dynamic title','dynamic content',user.token);
+												}
+											})
+
 											res.status(200).send(savedTask);
 										}) 
 									})
@@ -224,14 +245,17 @@ tasksController.addTasks = function(req , res){
 				var priority1 = req.body.priority;
 				var color = req.body.color;
 				if(priority1 == '1'){
+					prior = "Highest";
 					color = "#ff0000";
 				}else if(priority1 == '2'){
+					prior = "High";
 					color = "#ff8100";
 				}else if(priority1 == '3'){
 					color = "#ffee21";
+					prior = "Medium";
 				}else{
-
-					color="#0087ff"
+					color="#0087ff";
+					prior = "Low";
 				}
 			});
 
@@ -248,7 +272,7 @@ tasksController.addTasks = function(req , res){
 			<center>
 			<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
 			<div style="margin-left:30px;padding:0;">
-			<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+req.body.color+`">`+priority1+`</span> priority task.</p>
+			<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+req.body.color+`">`+prior+`</span> priority task.</p>
 			<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
 			<table style="color:black;">
 			<tr style="height: 50px;width: 100%;">
@@ -259,7 +283,7 @@ tasksController.addTasks = function(req , res){
 			<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
 			<tr  style="height: 50px;">
 			<td><b>Priority</b></td>
-			<td style="padding-left: 50px;">`+req.body.priority+`</td></tr>
+			<td style="padding-left: 50px;">`+prior+`</td></tr>
 			</table>
 			</div>
 			</body>
@@ -450,3 +474,21 @@ tasksController.deleteTaskById = function(req  , res){
 	});
 }
 module.exports = tasksController;
+
+
+
+
+
+
+
+           //                                  notificationModel
+											// .findOne({assignTo : savedNotification.id})
+											// .exec((err, user)=>{
+											// 	if (err) {
+											// 		res.status(500).send(err);
+											// 	}else{
+											// console.log("savedNotification======>>>>>",savedNotification);
+											// console.log("id-------->>>>>",savedNotification.token);
+											// pushNotification.postCode('dynamic title','dynamic content',savedNotification.token);
+											// })
+											// res.status(200).send(savedTask);
