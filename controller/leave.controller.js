@@ -1,6 +1,7 @@
 var leaveModel = require ('../model/leave.model');
 var userModel = require('../model/user.model');
 var projectModel = require('../model/project.model');
+var notificationModel = require('../model/notification.model');
 var nodemailer = require ('nodemailer');
 const smtpTransport = require ('nodemailer-smtp-transport');
 let leaveController = {};
@@ -307,9 +308,20 @@ leaveController.updateLeaves = function(req,res){
 		console.log("Updated ==================>" , update);
 		var status = update.status;
 		var email = update.email;
+		console.log(update.id);
 		console.log("email===>",email);
 		console.log("status====>",status);
-		
+		notificationModel
+			.findOne({userId: update.id})
+			.exec((err, user)=>{
+				console.log("useer==>",user);
+				if (err) {
+					res.status(500).send(err);
+				}else{
+					console.log("sucess");
+					// pushNotification.postCode('dynamic content','dynamic data',user.token);
+				}
+			})
 
 		if(status == "approved"){
 			console.log("Leave Accepted");

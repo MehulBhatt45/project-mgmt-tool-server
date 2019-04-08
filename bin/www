@@ -25,7 +25,8 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = https.createServer(credentials, app);
+// var server = https.createServer(credentials, app);
+var server = http.createServer(app);
 // var secureServer = https.createServer(credentials, app);
 // secureServer.listen(443);
 // secureServer.on('error',onError);
