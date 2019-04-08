@@ -25,6 +25,7 @@ var transporter = nodemailer.createTransport({
 var uniqueId;
 
 tasksController.addTasks = function(req , res){
+	console.log("req.body", req.body);
 	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/");
 	console.log(uploadPath);
 	req.file('fileUpload').upload({
@@ -105,7 +106,7 @@ tasksController.addTasks = function(req , res){
 
 									var priority1 = req.body.priority;
 									var color;
-									var color;
+									// var color;
 									if(priority1 == '1'){
 										color = "#ff0000";
 									}else if(priority1 == '2'){
@@ -196,6 +197,7 @@ tasksController.addTasks = function(req , res){
 }else{
 	projectModel.find({_id: req.body.projectId})
 	.exec((err , foundProject)=>{
+		console.log("found project",foundProject);
 		foundProject = foundProject[0].uniqueId.split("-");
 		var txt = foundProject[0];
 		req.body['uniqueId'] = txt +"-" + 1;
@@ -317,8 +319,8 @@ tasksController.getTaskByProjectId = function(req , res){
 	tasksModel.find({projectId : projectId})
 	.populate('assignTo createdBy sprint')
 	.exec((err , foundTask)=>{
-		if(err) res.send("err");
-		else res.send(foundTask);
+		if(err) res.status(500).send(err);
+		else res.status(200).send(foundTask);
 	})
 }
 

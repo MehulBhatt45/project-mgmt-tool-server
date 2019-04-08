@@ -34,6 +34,7 @@ var leaveRouter = require('./routes/leave');
 var notificationRouter = require('./routes/notification');
 var sendNotificationRouter = require('./routes/sendNotification');
 var noticeRouter = require('./routes/notice');
+var sprintRouter = require('./routes/sprint');
 // var tasksRouter = require('./routes/tasks');
 var pushNotification = require('./service/push-notification.service');
 
@@ -86,6 +87,7 @@ app.use('/comment',commentRouter);
 app.use('/user', userRouter); 
 app.use('/employee',employeeRouter);
 app.use('/notice',noticeRouter);
+app.use('/sprint',sprintRouter);
 // app.use('/tasks' , tasksRouter);
 app.use('/leave',leaveRouter);
 app.post('/email/send-email', emailController.sendEmail);
