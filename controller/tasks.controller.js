@@ -104,7 +104,7 @@ tasksController.addTasks = function(req , res){
 									console.log("resp1 receive");
 
 									var priority1 = req.body.priority;
-									var color;
+									var color = req.body.color;;
 									var color;
 									if(priority1 == '1'){
 										prior = "Highest";
@@ -332,18 +332,17 @@ tasksController.addTasks = function(req , res){
 
 }
 
-
-
 tasksController.getTaskByProjectId = function(req , res){
 	console.log("req.parasm :" , req.params);
-	var projectId = req.params.taskId;
+	var projectId = req.params.id;
 	tasksModel.find({projectId : projectId})
-	.populate('assignTo createdBy sprint')
+	.populate('assignTo createdBy ')
 	.exec((err , foundTask)=>{
 		if(err) res.send("err");
 		else res.send(foundTask);
 	})
 }
+
 
 tasksController.updateTaskById = function(req , res){
 	var userId;
