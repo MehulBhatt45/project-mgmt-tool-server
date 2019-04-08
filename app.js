@@ -32,7 +32,7 @@ var commentRouter = require('./routes/comment');
 var employeeRouter = require('./routes/employee');
 var leaveRouter = require('./routes/leave');
 var notificationRouter = require('./routes/notification');
-
+var sendNotificationRouter = require('./routes/sendNotification');
 var noticeRouter = require('./routes/notice');
 // var tasksRouter = require('./routes/tasks');
 var pushNotification = require('./service/push-notification.service');
@@ -50,6 +50,7 @@ var app = express();
 // app.use(fileUpload());xc
 app.set('superSecret', 'pmt');
 // Define mongoose Component
+
 
 mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
 
@@ -89,8 +90,7 @@ app.use('/notice',noticeRouter);
 app.use('/leave',leaveRouter);
 app.post('/email/send-email', emailController.sendEmail);
 app.use('/notification',notificationRouter);
-
-
+app.use('/sendNotification',sendNotificationRouter);
 // catch 404 and forward to error handler
 
 app.use(function (req, res, next) {
@@ -98,18 +98,17 @@ app.use(function (req, res, next) {
 	res.header('Access-Control-Allow-Origin','*');
 	res.header('Access-Control-Allow-Headers','origin, X-Requested-With, Content-Type, Accept, Authorization, x-access-token');
 	if (req.method === 'OPTIONS') {
-	res.header('Access-Control-Allow-Methods','PUT,POST,PATCH,DELETE,GET');
-	return res.status(200).json({});
+		res.header('Access-Control-Allow-Methods','PUT,POST,PATCH,DELETE,GET');
+		return res.status(200).json({});
 	}
 	else{
-	next();
+		next();
 
 	}
 });
 app.use(function(req, res, next) {
 	next(createError(404));
 });
-
 // error handler
 app.use(function(err, req, res, next) {
  // set locals, only providing error in development
@@ -136,7 +135,7 @@ cron.schedule('0 0 * * *', () => {
 
 request('http://localhost:4000/notification/allUsers',function (error, response, body) {
  console.log('error:', error); // Print the error if one occurred
- //console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+ console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
 });
 
 
@@ -150,10 +149,11 @@ request('http://localhost:4000/notification/allUsers',function (error, response,
 // console.log("Secure Server listening 443")
 // });
 
-// app.listen(4000);
+// app.list`en(4000);
 
 //pushnotification calling
 
-//pushNotification.postCode('dynamic title','dynamic content','efZH5tQnd5Q:APA91bGdWbqylgR_VAd1lUr0oXXCRxLiI3kZ3ETWJa2L6ahzCxV_Hklb3TyXmkn7zG_qKFEmasNQG3EzLKE9GHIOTzRz7wXgtrlNZzPcWmaKhokhpkkBr2rET67U3pIFlsB9jzFz8sjF');
+// pushNotification.postCode('dynamic title','dynamic content','ecCQmR59kvE:APA91bH41i0zPzxoA6HizVANTUnCu_Ac5nTCj90cd_KXANWtKu_bMS49aymzGWsG2Z33KB80R4YGcj4L7-RspDLtX22tKa1Usk2Y8a4WXSHyQe2Y5YKui_D6TRsF4LM3_fnvvR3xtvjg');
 
 module.exports = app;
+

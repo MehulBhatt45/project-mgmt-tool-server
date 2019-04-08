@@ -14,11 +14,13 @@ var path = require('path');
 var fs = require('fs');
 var dir = require('node-dir');
 var _ = require('lodash');
+
 var nodemailer = require ('nodemailer');
 const smtpTransport = require ('nodemailer-smtp-transport');
 var nodemailer = require('nodemailer');
 var jwt = require('jsonwebtoken'); // Import JWT Package
 var secret = 'secret'; // Create custom secret for use in JWT
+
 
 userController.addUser = function(req,res){
 	console.log("req body ===>" , req.body);
@@ -184,6 +186,21 @@ userController.getAllUsers = function(req, res){
 	})
 }
 
+
+userController.getAllProjectManager = function(req, res){
+	console.log("all project Manager==>>");
+	userModel.find({userRole:'projectManager'})
+	.exec((err,users)=>{
+		if (err) {
+			res.status(500).send(err);
+		}else if (users){
+			res.status(200).send(users);
+		}else{
+			res.status(404).send( { msg : 'Users not found' });
+		}
+	})
+}
+
 userController.getAllUsersByProjectManager = function(req, res){
 	var uniqueArray = [];
 	projectModel
@@ -310,6 +327,7 @@ userController.getDevelpoersNotInProjectTeam = function(req, res){
 	})
 }
 
+
 userController.forgotPassword = function (req,res) {
 	console.log("forgot password");
 	userModel.findOne({ email : req.body.email } )
@@ -337,8 +355,8 @@ userController.forgotPassword = function (req,res) {
 				from: 'raoinfotechp@gmail.com',
 				to: req.body.email,
 				subject: 'Localhost Forgot Password Request',
-				text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="http://localhost:4200/#/forgotpwd/'+ user.temporarytoken,
-				html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 10 minutes.<br><br><a href="http://localhost:4200/#/forgotpwd/' + user.temporarytoken + '">http://localhost:4200/#/forgotpwd/</a>'
+				text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="https://raoinfotech-conduct.tk/#/forgotpwd/'+ user.temporarytoken,
+				html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 10 minutes.<br><br><a href="https://raoinfotech-conduct.tk/#/forgotpwd/' + user.temporarytoken + '">https://raoinfotech-conduct.tk/#/forgotpwd/</a>'
 			};
 
 			transporter.sendMail(mailOptions, function(error, info){
@@ -354,7 +372,6 @@ userController.forgotPassword = function (req,res) {
 		}
 	});
 }
-
 userController.updatePassword = function (req,res) {
 	var token = req.body.token;
 	jwt.verify(token, secret, function(err, decoded) {
@@ -376,5 +393,39 @@ userController.updatePassword = function (req,res) {
 	}); 
 }
 
+
+userController.getProjectMngrNotInProject = function(req, res){
+	console.log("getProjectMngrNotInProject");
+	projectModel
+	.findOne({_id: req.params.projectId})
+	.exec((err, project)=>{
+		if(err)
+			res.status(500).send(err)
+		else{
+			userModel
+			.find({$and: [{_id: {$nin: project.pmanagerId}},{userRole:'projectManager'}]})
+			.exec((error, developers)=>{
+				if (err) {
+					res.status(500).send(error);
+				}else{
+					res.status(200).send(developers)
+				}
+			})
+		}
+	})
+}
+
+userController.deleteUserById = function(req,res){
+
+	var userId = req.params.userId;
+	userModel.findOneAndDelete({_id:userId}).exec(function(err,user){
+		console.log("err==========>>>",err);
+		res.status(200).send(user);
+		console.log("user is========>",user);
+	})
+
+}
+
 module.exports = userController; 
+
 

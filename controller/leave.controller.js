@@ -1,5 +1,6 @@
 var leaveModel = require ('../model/leave.model');
 var userModel = require('../model/user.model');
+var projectModel = require('../model/project.model');
 var nodemailer = require ('nodemailer');
 const smtpTransport = require ('nodemailer-smtp-transport');
 let leaveController = {};
@@ -9,6 +10,8 @@ var path = require('path');
 var fs = require('fs');
 var dir = require('node-dir');
 var _ = require('lodash');
+var pushNotification = require('./../service/push-notification.service');
+
 
 
 
@@ -51,6 +54,7 @@ leaveController.applyLeave = function(req,res){
 								fileNames.push(gotFile.fd.split('/uploads/').reverse()[0]);
 							})
 						}
+						leave['attechment'] = fileNames;
 						leaveModel.findOneAndUpdate({_id:leave._id}, {$set:{attechment:fileNames}},{upsert:true, new:true} )
 						.exec((err,uploadFile)=>{
 							if(err){
@@ -68,38 +72,27 @@ leaveController.applyLeave = function(req,res){
 								border: 1px solid #d3d3d3;">
 								<center>
 								<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
 								<div style="margin-left:30px;padding:0;">
 								<p style="color:black;font-size:20px;">You have a new Leave Application from <span style="font-weight:bold;">`+req.body.name+`</span></p>
-
 								<table style="color:black;">
 								<tr style="height: 50px;">
 								<td><b>Duration</b></td>
 								<td style="padding-left: 50px;">`+req.body.leaveDuration+`</td></tr>
-
 								<tr style="height: 50px;">
 								<td><b>Duration</b></td>
 								<td style="padding-left: 50px;">`+req.body.noOfDays+`</td></tr>
-								
 								<tr style="height: 50px;width: 100%;">
 								<td><b>Leave Date</b></td>
 								<td style="padding-left: 50px;">`+req.body.startingDate+`</td></tr>
-
 								<tr style="height: 50px;width: 100%;">
 								<td><b>Leave Date</b></td>
 								<td style="padding-left: 50px;">`+req.body.endingDate+`</td></tr>
-
-
 								<tr  style="height: 50px;">
 								<td><b>Type of leave</b></td>
 								<td style="padding-left: 50px;">`+req.body.typeOfLeave+`</td></tr>
-
-
 								<tr style="height: 50px;">
 								<td><b>Reason</b></td>
 								<td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr>
-
 								</table>
 								</div>
 								</body>
@@ -132,18 +125,32 @@ leaveController.applyLeave = function(req,res){
 										console.log("Error",error);
 									} else {
 										console.log('Email sent: ' + info.response);
-										res.status(200).send(leave)
+										
 									}
 								});
+								pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
+								res.status(200).send(leave)
 							}
 						})
 					}
 				})
-
 			}
 		})
 }
 
+
+leaveController.getTeamsByPmanagerId = function(req, res){
+	var pmanagerId = req.params.pmanagerId;
+	projectModel
+	.find({pmanagerId :pmanagerId})
+	.select('projects Teams')
+	.exec((err , found)=>{
+		if( err) res.send(err);
+		else{
+			res.send(found);
+		}
+	})
+}
 leaveController.getLeaves = function(req,res){
 	leaveModel.find({status: "pending"})
 	.exec((err,resp)=>{
@@ -162,6 +169,35 @@ leaveController.getLeaves = function(req,res){
 
 leaveController.getLeavesById = function(req,res){
 	leaveModel.find({email:req.body.email})
+	.exec((err,respond)=>{
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("response============<<<<<<<<<<<<<",respond);
+			res.status(200).send(respond);
+		}
+	})
+}
+leaveController.getAllLeaves = function(req,res){
+	leaveModel.find({})
+	.exec((err,respond)=>{
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("response============<<<<<<<<<<<<<",respond);
+			res.status(200).send(respond);
+		}
+	})
+}
+
+leaveController.getByUserId = function(req,res){
+	useremail = req.params.useremail;
+	console.log("userid==========>>>>",useremail);
+	leaveModel.find({email:useremail})
 	.exec((err,respond)=>{
 		if(err){
 			console.log("error",err);
@@ -253,6 +289,17 @@ leaveController.getAllLeavesApps = function(req,res){
 	})
 }
 
+// leaveController.getAllLeavesByProjectManager = function(req,res){
+// 	leaveModel.find({})
+// 	.exec((err,listOfLeaves)=>{
+// 		if (err) 
+// 		{
+// 			console.log("error",err);
+// 			res.status(500).send(err)
+// 		}
+
+// }
+
 leaveController.updateLeaves = function(req,res){
 	console.log("req boddy =======++>" , req.body);
 	console.log("req boddy =======++>" , req.params);
@@ -277,8 +324,6 @@ leaveController.updateLeaves = function(req,res){
 			border: 1px solid #d3d3d3;">
 			<center>
 			<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
 			<div style="margin-left:30px;padding:0;">
 			<p style="color:black;font-size:20px;">Your leave is <span style="color:#28B463;font-weight:bold;">APPROVED.</span></p>
 			</div>
@@ -328,12 +373,8 @@ leaveController.updateLeaves = function(req,res){
 			border: 1px solid #d3d3d3;">
 			<center>
 			<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
 			<div style="margin-left:30px;padding:0;">
 			<p style="color:black;font-size:20px;">Your leave is <span style="color:#E74C3C;font-weight:bold;">REJECTED.</p>
-
-
 			</div>
 			</body>
 			</html>
@@ -376,7 +417,6 @@ leaveController.updateLeaves = function(req,res){
 	})
 
 }
-
 leaveController.AddComments = function(req,res){
 	leaveId = req.body.leaveId;
 	comment = req.body.comment;
@@ -395,5 +435,3 @@ leaveController.AddComments = function(req,res){
 }
 
 module.exports = leaveController;
-
-
