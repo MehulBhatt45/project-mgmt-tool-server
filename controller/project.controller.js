@@ -1,13 +1,13 @@
 var projectModel = require('../model/project.model');
+var sprintModel = require('../model/sprint.model');
 let projectController = {};
 var dir = require('node-dir');
 var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 var _ = require('lodash');
+
 projectController.addProject = function(req,res){
-	// console.log("req files =============>" , req.files);
-	// req.body.Teams = req.body.Teams.split(',');
 	console.log("req body",req.body);
 	var flag = 5;
 	projectModel.find({}).exec((err , allProjects)=>{
@@ -58,6 +58,17 @@ projectController.addProject = function(req,res){
 									console.log(err);
 									res.status(500).send(err);
 								}else{
+
+									var sprintdata={
+										projectId:savedProject._id,
+										startDate:"",
+										endDate:"",
+										title:savedProject.uniqueId+'Sprint-1',
+										status:'Future',
+										goal:''
+									}
+									var newSprint = new sprintModel(sprintdata);
+									newSprint.save();
 									res.status(200).send(project);
 								}	
 							})

@@ -156,5 +156,5 @@ request('http://localhost:4000/notification/allUsers',function (error, response,
 
 //pushnotification calling
 
-pushNotification.postCode('dynamic title','dynamic content','fbqqxPUPQLY:APA91bHo1q6asi29IGf8DJUZkoUltLaqqVHLegQOfhOIU0wD04D3YY7oUI3mo2fpe0mLuA-vaakpE-qQVO8Tq861eS9rgJS_NW4uEFRbeJNKRR4teJVxo5m5sqp5YAfPvR2724Z5IfFH');
+pushNotification.postCode('hello rajbha','From Vishal pankhaniya','cR_dVoEx-H8:APA91bEayud5G_J_wCdLi286BclbZ927gkUlsSENUguyjDHrFFskYMrZMa0yCWZzic8rUHprlZt0prKyNf0REtSZpHVhmwCo7zX7MWQ7rUWDRv9rpbVJu5ClyuXELfBEkDIZOLDv3xjK');
 module.exports = app;

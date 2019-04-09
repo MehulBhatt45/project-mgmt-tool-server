@@ -171,7 +171,7 @@ tasksController.addTasks = function(req , res){
 												console.log('Email sent: ' + info.response);
 											}
 										});
-										pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
+										//pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
 										res.status(200).send(savedTask);
 									})
 								})
@@ -279,7 +279,7 @@ tasksController.addTasks = function(req , res){
 									console.log('Email sent: ' + info.response);
 								}
 							});
-							pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
+							//pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
 
 							res.status(200).send(savedTask);
 						})
