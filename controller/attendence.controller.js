@@ -12,7 +12,7 @@ attendenceController.employeeAttendence = function(req,res){
 	var updatedEmployee;
 	var count;
 	var previousDifference = 0;
-	var difference;
+	var difference = moment(difference).format("YYYY-MM-DD");
 	var currentDate = new Date;
 	currentDate = moment(currentDate).format("YYYY-MM-DD");
 	currentDate = currentDate+"T00:00:00.000+0000";

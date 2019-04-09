@@ -34,7 +34,8 @@ var leaveRouter = require('./routes/leave');
 var notificationRouter = require('./routes/notification');
 
 var noticeRouter = require('./routes/notice');
-// var tasksRouter = require('./routes/tasks');
+// var tasksRouter = require('./routes/tasks')
+var timeLogRouter = require('./routes/timeLog');
 var pushNotification = require('./service/push-notification.service');
 
 
@@ -90,6 +91,7 @@ app.use('/notice',noticeRouter);
 app.use('/leave',leaveRouter);
 app.post('/email/send-email', emailController.sendEmail);
 app.use('/notification',notificationRouter);
+app.use('/timeLog',timeLogRouter);
 
 // catch 404 and forward to error handler
 

@@ -104,8 +104,8 @@ tasksController.addTasks = function(req , res){
 									console.log("resp1 receive");
 
 									var priority1 = req.body.priority;
-									var color;
-									var color;
+									var color = req.body.color;
+									
 									if(priority1 == '1'){
 										color = "#ff0000";
 									}else if(priority1 == '2'){
@@ -405,10 +405,11 @@ tasksController.updateTaskById = function(req , res){
 tasksController.getAllTask = function(req , res){
 	tasksModel
 	.find({})
-	.populate('projectId assignTo createdBy')
+	.populate('projectId assignTo createdBy timelog1')
 	.exec((err , allTasks)=>{
 		if(err) res.send('err');
 		else res.send(allTasks);
+		console.log('res====================>',allTasks)
 	})
 }
 tasksController.updateTaskStatusById = function(req , res){

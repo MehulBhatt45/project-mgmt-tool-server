@@ -16,7 +16,7 @@ timeLogController.addTimeLog = function(req,res){
 	var updatedTask;
 	var count;
 	var previousDifference = 0;
-	var difference;
+	var difference ;
 	var diff;
 	taskModel.find({uniqueId:req.body.uniqueId},function(err,foundTask){
 		console.log("foundemppppppppppppp",foundTask);
@@ -77,9 +77,20 @@ timeLogController.addTimeLog = function(req,res){
 					console.log("obj.count" , obj);
 					var timelog = new timeLogModel(obj);
 					console.log("timelog ===================>" , timelog);
-					timelog.save(function(err,savedTask){
-						console.log("saved");
-						res.send(savedTask);
+					timelog.save(function(err,savedTimeLog){
+						console.log("saved._id" , savedTimeLog.taskId);
+						taskModel.findOne({_id: savedTimeLog.taskId})
+						.exec((err , foundTask)=>{
+							console.log("foundTask ==>" , foundTask);
+							 foundTask.timelog1 = savedTimeLog._id;
+							 console.log("found tSSAsas ==============================>" , foundTask);
+
+							taskModel.findOneAndUpdate({_id: savedTimeLog.taskId} , foundTask, {upsert: true , new: true ,  useFindAndModify: false})
+							.exec((err , savedTask)=>{
+								console.log("savedTask =====>" , savedTask);
+								res.send(savedTask);
+							})
+						})
 					})
 				}
 			})

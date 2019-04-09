@@ -6,7 +6,7 @@ var tasksSchema = new Schema({
 	title: {type: String , required: true},
 	desc: {type: String, required: true},
 	assignTo: {type: Schema.Types.ObjectId , ref: 'User', required: true },
-	sprint: {type: Schema.Types.ObjectId ,ref :'Sprint'},
+	// sprint: {type: Schema.Types.ObjectId ,ref :'Sprint'},
 	projectId: {type: Schema.Types.ObjectId , ref: 'Project', required: true},
 	status: {type: String , default: 'to do'},
 	comment:[{ type: Schema.Types.ObjectId, ref: 'Comment'}],
@@ -18,6 +18,7 @@ var tasksSchema = new Schema({
 		operatedBy: {type: Schema.Types.ObjectId, ref: 'User'},
 		_id: false
 	}],
+	timelog1: {type: Schema.Types.ObjectId , ref: 'timeLog' , default: null},
 	createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
 	startDate:{ type: Date },
 	estimatedTime: { type: String },
