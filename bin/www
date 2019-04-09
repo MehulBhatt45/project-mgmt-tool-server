@@ -7,24 +7,25 @@ var fs = require('fs');
 var app = require('../app');
 var debug = require('debug')('server:server');
 var http = require('http');
-//var https = require('https');
+var https = require('https');
 
 // https
-// var privateKey  = fs.readFileSync('/var/www/html/project_mgmt_tool/client/ssl/server.key', 'utf8');
-// var certificate = fs.readFileSync('/var/www/html/project_mgmt_tool/client/ssl/server.crt', 'utf8');
+// var privateKey  = fs.readFileSync('/var/www/html/project-mgmt-tool-client/.well-known/acme-challenge/private.key');
+// var certificate = fs.readFileSync('/var/www/html/project-mgmt-tool-client/.well-known/acme-challenge/certificate.crt');
 // var credentials = {key: privateKey, cert: certificate};
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '4000');
+var port = normalizePort(process.env.PORT || '4001');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 
+// var server = https.createServer(credentials, app);
 var server = http.createServer(app);
 // var secureServer = https.createServer(credentials, app);
 // secureServer.listen(443);

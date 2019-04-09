@@ -2,6 +2,7 @@ var mongoose = require ('mongoose');
 var Schema = mongoose.Schema;
 
 var LeaveSchema = new Schema ({
+    id: {type:String},
 	email: {type:String},
 	name:String,
 	status: {type:String, default:'pending'},

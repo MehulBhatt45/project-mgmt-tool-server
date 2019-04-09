@@ -1,10 +1,7 @@
 var notificationModel = require('../model/notification.model');
 var sendnotificationModel = require('../model/sendNotification.model');
-
 let notificationController = {};
 var pushNotification = require('./../service/push-notification.service');
-
-
 
 
 notificationController.addNotification = function(req, res){
@@ -15,20 +12,19 @@ notificationController.addNotification = function(req, res){
 			res.status(500).send(err);
 		}else{
 			console.log("notification",SavedUser);
-			
 			var obj = {
 				"id": SavedUser.sendTo._id,
-				"title": "You have new notification",
-				"desc": "New notification"
+				"title": SavedUser.subject,
+				"desc": SavedUser.content
 			}
-			console.log("saved",obj);
+			console.log("saved object===>",obj);
 			notificationModel
 			.findOne({userId: SavedUser.sendTo})
 			.exec((err, user)=>{
 				if (err) {
 					res.status(500).send(err);
 				}else{
-					pushNotification.postCode('dynamic title','dynamic content',user.token);
+					pushNotification.postCode(obj,user.token);
 				}
 			})
 			res.status(200).send(SavedUser);
@@ -81,21 +77,6 @@ notificationController.addNotification = function(req, res){
 		})
 	}
 
-	notificationController.getUserById = function(req, res){
-		userId = req.params.userId;
-		notificationModel.findOne({userId:userId})
-		.exec((err,users)=>{
-			if (err) {
-				res.status(500).send(err);
-			}else if (users){
-				res.status(200).send(users);
-			}else{
-				res.status(404).send( { msg : 'Users not found' });
-			}	
-		})
-	}
-
-
 notificationController.getUserById = function(req, res){
 	userId = req.params.userId;
 	notificationModel.findOne({userId:userId})
@@ -126,6 +107,7 @@ notificationController.getNotificationOfPmanager = function(req,res){
 		if (err) {
 			res.status(500).send(err);
 		}else if (users){
+			console.log(users);
 			res.status(200).send(users);
 		}else{
 			res.status(404).send( { msg : 'Users not found' });
@@ -133,6 +115,18 @@ notificationController.getNotificationOfPmanager = function(req,res){
 	})
 }
 
+// notificationModel.getNotificationById = function(req,res){
+// 	userId = req.params._id;
+//  notificationModel.find({userId : userId})
+//  .exec((err,user)=>{
+//  	if (err) {
+//  		res.status(500).send(err);
+//  	}else{
+//  		console.log("userrr=>>>",user);
+//  		res.status(200).send(user);
+//  	}
+//  })
+// }
 
 
 	module.exports = notificationController; 

@@ -3,7 +3,7 @@ var http = require('http');
 
 var obj = {};
 obj.postCode = function (title,body,user) {
-	console.log("sending notification");
+	console.log("sending notification", user);
 
 	var post_data={
 
@@ -11,7 +11,7 @@ obj.postCode = function (title,body,user) {
 			"title": title ,
 			"body": body
 		},
-		"registration_ids" :[user]
+		"registration_ids" :user
 	}
 	post_data = JSON.stringify(post_data);
 	//console.log("post data",post_data);
@@ -35,7 +35,7 @@ obj.postCode = function (title,body,user) {
   	//console.log('Headers: ' + JSON.stringify(res.headers));
   	res.setEncoding('utf8');
   	res.on('data', function (chunk) {
-  		//console.log('Response: ' + chunk);
+  		console.log('Response: ' + chunk);
   	});
   });
 

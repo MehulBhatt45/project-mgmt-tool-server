@@ -3,12 +3,11 @@ var Schema = mongoose.Schema;
 
 var SendnotificationSchema = new Schema({
 	
-	// userId: {type:Schema.Types.ObjectId, ref: 'User'},
-	// token: {type:String},
 	subject:{type:String},
 	content: {type:String},
-	sendTo: {type: Schema.Types.ObjectId , ref: 'User', required: true },
-	id:{type:Schema.Types.ObjectId}
+	sendTo: [{type: Schema.Types.ObjectId , ref: 'User'}],
+	id:{type:Schema.Types.ObjectId},
+	projectId: {type: Schema.Types.ObjectId , ref: 'Project'},
 	
 })
 

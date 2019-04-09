@@ -32,7 +32,7 @@ var commentRouter = require('./routes/comment');
 var employeeRouter = require('./routes/employee');
 var leaveRouter = require('./routes/leave');
 var notificationRouter = require('./routes/notification');
-
+var sendNotificationRouter = require('./routes/sendNotification');
 var noticeRouter = require('./routes/notice');
 // var tasksRouter = require('./routes/tasks')
 var timeLogRouter = require('./routes/timeLog');
@@ -93,6 +93,8 @@ app.post('/email/send-email', emailController.sendEmail);
 app.use('/notification',notificationRouter);
 app.use('/timeLog',timeLogRouter);
 
+app.use('/sendNotification',sendNotificationRouter);
+
 // catch 404 and forward to error handler
 
 app.use(function (req, res, next) {
@@ -125,7 +127,7 @@ res.render('error');
 
 cron.schedule('0 0 * * *', () => {
 	console.log('running a task every minute');
-	request('http://localhost:4000/notice/updatenotice',function (error, response, body) {
+	request('http://localhost:4001/notice/updatenotice',function (error, response, body) {
  console.log('error:', error); // Print the error if one occurred
  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
  console.log('body:', body); // Print the HTML for the Google homepage.
@@ -135,7 +137,7 @@ cron.schedule('0 0 * * *', () => {
 
 //API Calling for all User to notify
 
-request('http://localhost:4000/notification/allUsers',function (error, response, body) {
+request('http://localhost:4001/notification/allUsers',function (error, response, body) {
  console.log('error:', error); // Print the error if one occurred
  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
 });
