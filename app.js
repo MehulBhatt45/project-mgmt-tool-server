@@ -123,7 +123,7 @@ res.render('error');
 
 cron.schedule('0 0 * * *', () => {
 	console.log('running a task every minute');
-	request('http://localhost:4000/notice/updatenotice',function (error, response, body) {
+	request('http://localhost:4001/notice/updatenotice',function (error, response, body) {
  console.log('error:', error); // Print the error if one occurred
  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
  console.log('body:', body); // Print the HTML for the Google homepage.
@@ -133,7 +133,7 @@ cron.schedule('0 0 * * *', () => {
 
 //API Calling for all User to notify
 
-request('http://localhost:4000/notification/allUsers',function (error, response, body) {
+request('http://localhost:4001/notification/allUsers',function (error, response, body) {
  console.log('error:', error); // Print the error if one occurred
  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
 });

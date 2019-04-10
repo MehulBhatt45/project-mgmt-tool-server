@@ -220,6 +220,21 @@ projectController.getDeveloperOfProject = function(req , res){
 	})
 }
 
+projectController.getManagerOfProject = function(req , res){
+	console.log("projectId ========>" , req.params.projectId);
+	var projectId = req.params.projectId;
+	projectModel
+	.findOne({_id: projectId})
+	.select('pmanagerId')
+	.populate('pmanagerId')
+	.exec((err , foundManager)=>{
+		if(err) res.send(err)
+			else res.status(200).send(foundManager);
+	})
+}
+
+
+
 projectController.getTaskOfProject = function(req , res){
 	console.log("projectId ========>" , req.params.projectId);
 	var projectId = req.params.projectId;
