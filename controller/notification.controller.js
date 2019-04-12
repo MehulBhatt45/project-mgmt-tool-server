@@ -49,8 +49,8 @@ notificationController.addNotification = function(req, res){
 				var notification = new notificationModel(req.body);
 				notification.save(function(err,SavedUser){
 					if (err) res.status(500).send(err);
-					res.status(200).send(SavedUser);
 				})
+					res.status(200).send(SavedUser);
 			}	
 		})	
 	}

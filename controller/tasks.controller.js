@@ -2,6 +2,7 @@ var tasksModel = require('../model/tasks.model');
 var projectModel = require('../model/project.model');
 var userModel = require('../model/user.model');
 var notificationModel = require('../model/notification.model');
+var sendnotificationModel = require('../model/sendNotification.model');
 var _ = require('lodash');
 let tasksController = {};
 var dir = require('node-dir');
@@ -25,6 +26,7 @@ var transporter = nodemailer.createTransport({
 var uniqueId;
 
 tasksController.addTasks = function(req , res){
+	
 	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/");
 	console.log(uploadPath);
 	req.file('fileUpload').upload({
@@ -54,6 +56,7 @@ tasksController.addTasks = function(req , res){
 			}
 			tasksModel
 			.find({projectId : req.body.projectId})
+			.populate('createdBy ')
 			.sort({"_id" : -1})
 			.limit(1)
 			.exec((err , foundTask)=>{
@@ -61,7 +64,8 @@ tasksController.addTasks = function(req , res){
 					console.log(err);
 					res.status(500).send(err);
 				}else if(foundTask && foundTask.length == 1){
-					console.log("found Task ====>" , foundTask);
+					console.log("found Task =================================>" , foundTask);
+					console.log("pmanager=============>", foundTask.createdBy);
 					console.log("errTask ====>" , err);
 					foundTask = foundTask[0].uniqueId.split("-");
 					var count = +foundTask[1]+ +1;
@@ -120,10 +124,13 @@ tasksController.addTasks = function(req , res){
 										prior = "Low";
 									}
 									tasksModel.findOne({_id: savedTask._id})
-									.populate('assignTo')
+									.populate('assignTo createdBy projectId')
 									.exec((err,foundTask)=>{
 										console.log(' found email send===>',foundTask);
+										console.log("cretedby======>",foundTask.createdBy.name);
+										console.log("project title=============>",foundTask.projectId.title);
 										console.log("final----->>>",foundTask.assignTo.email);
+										console.log("priority================================>",foundTask.priority);
 										var email = foundTask.assignTo.email;
 										console.log("email===>>>>>",email);
 
@@ -179,40 +186,39 @@ tasksController.addTasks = function(req , res){
 											}
 										});
 										var obj = {
-											"id": savedTask.assignTo._id,
-											"title": "You have new task",
-											"desc": "New task has been assigned to you by Project Manager"
-										}
-										var notification = new notificationModel(obj);
+											"subject" :" You have been assigned a new task",
+											"content" : "A new task in <strong>" +foundTask.projectId.title + " </strong> is been created by <strong>" +foundTask.createdBy.name + " </strong> and assigned to you.",
+											"sendTo" : foundTask.assignTo._id,
+											"type" : "task",
+											"priority" : foundTask.priority,
+										} 
+										console.log("obj==================>",obj);
+										var notification = new sendnotificationModel(obj);
 										notification.save(function(err,savedNotification){
 											if(err){
 												res.status(500).send(err);		
 											}
-											// console.log("foundTask=========>>>>>",foundTask)
-											// console.log("foundTaskId===>",foundTask.assignTo._id);
 											var assignTo = foundTask.assignTo._id;
-											// console.log("assign",assignTo)
-											// console.log(savedNotification.id);
-											// console.log(userId);
 											notificationModel
 											.findOne({userId : assignTo})
 											.exec((err, user)=>{
 												if (err) {
 													res.status(500).send(err);
 												}else{
-											console.log("savedNotification======>>>>>",user);
-											// console.log("id-------->>>>>",user.token);
-											pushNotification.postCode('dynamic title','dynamic content',user.token);
+
+													console.log("savedNotification======>>>>>",user);
+													pushNotification.postCode(obj.subject,obj.content,[user.token]);
+													res.status(200).send(savedTask);
 												}
 											})
 
-											res.status(200).send(savedTask);
+											
 										}) 
 									})
 								})
-							}
-						})
-					})
+}
+})
+})
 }else{
 	projectModel.find({_id: req.body.projectId})
 	.exec((err , foundProject)=>{
@@ -320,16 +326,42 @@ tasksController.addTasks = function(req , res){
 
 				}
 			});
-			pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
+			var obj = {
+				"subject" :" You have been assigned anew task",
+				"content" : "A new task in " +foundTask.projectId.title + " project is been created by " +foundTask.createdBy.name + " and assigned to you.",
+				"sendTo" : foundTask.assignTo._id,
+				"type" : "task",
+				"priority" : foundTask.priority,
+			} 
+			console.log("obj==================>",obj);
+			var notification = new sendnotificationModel(obj);
+			notification.save(function(err,savedNotification){
+				if(err){
+					res.status(500).send(err);		
+				}
+				var assignTo = foundTask.assignTo._id;
+				notificationModel
+				.findOne({userId : assignTo})
+				.exec((err, user)=>{
+					if (err) {
+						res.status(500).send(err);
+					}else{
 
-			res.status(200).send(savedTask);
+						console.log("savedNotification======>>>>>",user);
+						pushNotification.postCode('dynamic title','dynamic content',[user.token]);
+						res.status(200).send(savedTask);
+					}
+				})
+
+			}) 
 		})
 	})
-}
-})
-}
-})
 
+}
+})
+}
+})
+// })
 }
 
 tasksController.getTaskByProjectId = function(req , res){
@@ -494,14 +526,4 @@ module.exports = tasksController;
 
 
 
-           //                                  notificationModel
-											// .findOne({assignTo : savedNotification.id})
-											// .exec((err, user)=>{
-											// 	if (err) {
-											// 		res.status(500).send(err);
-											// 	}else{
-											// console.log("savedNotification======>>>>>",savedNotification);
-											// console.log("id-------->>>>>",savedNotification.token);
-											// pushNotification.postCode('dynamic title','dynamic content',savedNotification.token);
-											// })
-											// res.status(200).send(savedTask);
+        
