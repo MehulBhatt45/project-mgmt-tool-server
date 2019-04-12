@@ -68,14 +68,7 @@ leaveController.applyLeave = function(req,res){
 										projects.push(project[i].pmanagerId);
 									}
 									console.log("pmanagerId array======>",projects);
-									// for(i=0;i<projects.length;i++){
-									// notificationModel
-									// .find({userId: projects})
-									// .exec((errr, user)=>{
-									// 	if (errr) {
-									// 		res.status(500).send(errr);
-									// 	}else{
-											// console.log("USER=============>",user);
+									
 											if(duration == "0.5" || "1"){
 												var obj = {
 													"subject" :"Your Team member has applied for leave .",
@@ -117,20 +110,9 @@ leaveController.applyLeave = function(req,res){
 														pushNotification.postCode(obj.subject,obj.content,req.session.userarray);
 													}
 												})
-												// console.log("LENGTH=========>",object.length);
-												// req.session.user = object;
-												// req.session.userarray = [];
-												// for(i=0;i<object.length;i++){
-												// 	console.log("push");
-												// 	req.session.userarray.push(object[i].token);
-												// }
-
-												// console.log("token array======>",req.session.userarray);
-												// pushNotification.postCode(obj.subject,obj.content,req.session.userarray);
+												
 											})
-										// }
-									// })
-								// }
+										
 							})
 								
 								var output = `<!doctype html>
@@ -200,7 +182,6 @@ leaveController.applyLeave = function(req,res){
 										
 									}
 								});
-								// pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
 								res.status(200).send(leave)
 							}
 						})
@@ -358,17 +339,6 @@ leaveController.getAllLeavesApps = function(req,res){
 		}
 	})
 }
-
-// leaveController.getAllLeavesByProjectManager = function(req,res){
-// 	leaveModel.find({})
-// 	.exec((err,listOfLeaves)=>{
-// 		if (err) 
-// 		{
-// 			console.log("error",err);
-// 			res.status(500).send(err)
-// 		}
-
-// }
 
 leaveController.updateLeaves = function(req,res){
 	
@@ -577,8 +547,6 @@ leaveController.updateLeaves = function(req,res){
 								res.status(500).send(err);
 							}else{
 								console.log("admin===========>",user);
-
-					// console.log("obj============>",obj);
 					pushNotification.postCode(obj2.subject,obj2.content,[user.token]);
 				}
 			})
@@ -688,22 +656,6 @@ leaveController.AddComments = function(req,res){
 		}
 		else{
 			console.log("id==============>",comments.id)
-			// notificationModel
-			// .findOne({userId: comments.id})
-			// .exec((err, user)=>{
-			// 	console.log("useer==>",user);
-			// 	if (err) {
-			// 		res.status(500).send(err);
-			// 	}else{
-			// 		var obj = {
-			// 			"id": 'SavedUser.sendTo._id',
-			// 			"title": 'SavedUser.subject',
-			// 			"desc": 'SavedUser.content'
-			// 			}
-			// 		console.log("obj=======>",obj);
-			// 		pushNotification.postCode('Comment By Admin','comment on your leave',[user.token]);
-			// 	}
-			// })
 			res.status(200).send(comments);
 		}
 	})

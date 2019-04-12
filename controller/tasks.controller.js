@@ -26,11 +26,7 @@ var transporter = nodemailer.createTransport({
 var uniqueId;
 
 tasksController.addTasks = function(req , res){
-<<<<<<< HEAD
 	
-=======
-	console.log("req.body", req.body);
->>>>>>> cb1670c99623b826c05ed2d331bb0cc99550f228
 	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/");
 	console.log(uploadPath);
 	req.file('fileUpload').upload({
@@ -369,17 +365,13 @@ tasksController.addTasks = function(req , res){
 }
 
 tasksController.getTaskByProjectId = function(req , res){
-	console.log("req.parasm =================================================>:" , req.params);
-	var projectId = req.params.taskId;
+	console.log("req.parasm :" , req.params);
+	var projectId = req.params.id;
 	tasksModel.find({projectId : projectId})
 	.populate('assignTo createdBy ')
 	.exec((err , foundTask)=>{
-		if(err) {
-			res.status(500).send(err);
-		}else{
-			console.log(foundTask);
-			res.status(200).send(foundTask);
-		}
+		if(err) res.send("err");
+		else res.send(foundTask);
 	})
 }
 
