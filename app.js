@@ -36,6 +36,7 @@ var sendNotificationRouter = require('./routes/sendNotification');
 var noticeRouter = require('./routes/notice');
 // var tasksRouter = require('./routes/tasks');
 var pushNotification = require('./service/push-notification.service');
+var attendenceRouter = require('./routes/attendence');
 
 
 
@@ -52,7 +53,7 @@ app.set('superSecret', 'pmt');
 // Define mongoose Component
 
 
-mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
+mongoose.connect('mongodb://206.189.231.135:27017/projectMngtTool', {useNewUrlParser: true})
 
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
@@ -91,6 +92,7 @@ app.use('/leave',leaveRouter);
 app.post('/email/send-email', emailController.sendEmail);
 app.use('/notification',notificationRouter);
 app.use('/sendNotification',sendNotificationRouter);
+app.use('/attendence',attendenceRouter);
 // catch 404 and forward to error handler
 
 app.use(function (req, res, next) {
