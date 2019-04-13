@@ -14,16 +14,17 @@ var fs = require('fs');
 var dir = require('node-dir');
 var _ = require('lodash');
 var pushNotification = require('./../service/push-notification.service');
-
+var mongoose = require('mongoose');
 
 leaveController.applyLeave = function(req,res){
+	console.log("nthi mdtu ke mde che", req.body);
 	var leave = new leaveModel(req.body);
-	console.log("nthi mdtu ke mde che", leave);
 	var duration = leave.leaveDuration;
 	leave.save(function(err,leave){
 		if(err) {
 			res.status(500).send(err)
 		}else{	
+			console.log("APPLY LEAVE++++++===================>", leave);
 				var uploadPath = path.join(__dirname, "../uploads/"+leave._id+"/");
 				console.log("upload path=======<",uploadPath);
 				req.file('attechment').upload({
@@ -59,7 +60,7 @@ leaveController.applyLeave = function(req,res){
 								res.status(500).send(err);
 							}else{
 								projectModel
-								.find({Teams : leave.id})
+								.find({Teams : mongoose.Types.ObjectId(leave.id)})
 								.exec((err,project)=>{
 									console.log("projects=========>",project);
 									projects = [];
@@ -107,7 +108,7 @@ leaveController.applyLeave = function(req,res){
 															console.log("arrayyyy===>");
 															console.log("token array======>",req.session.userarray);
 														}
-														pushNotification.postCode(obj.subject,obj.content,req.session.userarray);
+														pushNotification.postCode(obj.subject,obj.type,req.session.userarray);
 													}
 												})
 												
@@ -404,7 +405,7 @@ leaveController.updateLeaves = function(req,res){
 							}else{
 								console.log("admin===========>",user);
 
-								pushNotification.postCode(obj2.subject,obj2.content,[user.token]);
+								pushNotification.postCode(obj2.subject,obj2.type,[user.token]);
 							}
 						})
 
@@ -443,7 +444,7 @@ leaveController.updateLeaves = function(req,res){
 						res.status(500).send(err);
 					}else{
 						console.log("useer==>",user);
-					pushNotification.postCode(obj1.subject,obj1.content,[user.token]);
+					pushNotification.postCode(obj1.subject,obj1.type,[user.token]);
 				}
 			})
 				console.log("Leave Accepted");
@@ -547,7 +548,7 @@ leaveController.updateLeaves = function(req,res){
 								res.status(500).send(err);
 							}else{
 								console.log("admin===========>",user);
-					pushNotification.postCode(obj2.subject,obj2.content,[user.token]);
+					pushNotification.postCode(obj2.subject,obj2.type,[user.token]);
 				}
 			})
 
@@ -582,7 +583,7 @@ leaveController.updateLeaves = function(req,res){
 					}else{
 
 						console.log("sucess");
-						pushNotification.postCode(obj1.subject,obj1.content,[user.token]);
+						pushNotification.postCode(obj1.subject,obj1.type,[user.token]);
 					}
 				})
 			})
