@@ -34,8 +34,12 @@ var leaveRouter = require('./routes/leave');
 var notificationRouter = require('./routes/notification');
 var sendNotificationRouter = require('./routes/sendNotification');
 var noticeRouter = require('./routes/notice');
+
 // var tasksRouter = require('./routes/tasks')
 var timeLogRouter = require('./routes/timeLog');
+
+var sprintRouter = require('./routes/sprint');
+
 var pushNotification = require('./service/push-notification.service');
 var attendenceRouter = require('./routes/attendence');
 
@@ -54,7 +58,8 @@ app.set('superSecret', 'pmt');
 // Define mongoose Component
 
 
-mongoose.connect('mongodb://206.189.231.135:27017/projectMngtTool', {useNewUrlParser: true})
+mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
+
 
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
@@ -95,6 +100,8 @@ app.use('/notification',notificationRouter);
 app.use('/timeLog',timeLogRouter);
 
 app.use('/sendNotification',sendNotificationRouter);
+
+app.use('/sprint',sprintRouter);
 app.use('/attendence',attendenceRouter);
 
 // catch 404 and forward to error handler
@@ -159,7 +166,6 @@ request('http://localhost:4001/notification/allUsers',function (error, response,
 
 //pushnotification calling
 
-// pushNotification.postCode('dynamic title','dynamic content','ecCQmR59kvE:APA91bH41i0zPzxoA6HizVANTUnCu_Ac5nTCj90cd_KXANWtKu_bMS49aymzGWsG2Z33KB80R4YGcj4L7-RspDLtX22tKa1Usk2Y8a4WXSHyQe2Y5YKui_D6TRsF4LM3_fnvvR3xtvjg');
+
 
 module.exports = app;
-

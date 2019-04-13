@@ -5,9 +5,11 @@ var tasksSchema = new Schema({
 	type: {type: String },
 	title: {type: String , required: true},
 	desc: {type: String, required: true},
-	assignTo: {type: Schema.Types.ObjectId , ref: 'User', required: true },
-	// sprint: {type: Schema.Types.ObjectId ,ref :'Sprint'},
+	assignTo: {type: Schema.Types.ObjectId , ref: 'User', required: true},
+	sprint: {type: Schema.Types.ObjectId ,ref :'Sprint', required:true},
 	projectId: {type: Schema.Types.ObjectId , ref: 'Project', required: true},
+	// projectTitle: {type: Schema.Types.ObjectId , ref: 'Project', required: true},
+	// pmanagerName: {type: Schema.Types.ObjectId , ref: 'User', default : null},
 	status: {type: String , default: 'to do'},
 	comment:[{ type: Schema.Types.ObjectId, ref: 'Comment'}],
 	priority:{ type: String },
@@ -27,6 +29,7 @@ var tasksSchema = new Schema({
 	dueDate:{ type: String, default: null },
 	images: [{type: String, default: []}]
 },{timestamps: true});
+
 
 // let TasksCounter = 1;
 
@@ -55,5 +58,6 @@ tasksSchema.pre('save' , function(next) {
 // 	// this.populate('createdBy');
 // 	// this.populate('timelog1');
 // });
+
 
 module.exports = mongoose.model('Taskss', tasksSchema);

@@ -1,13 +1,13 @@
 var projectModel = require('../model/project.model');
+var sprintModel = require('../model/sprint.model');
 let projectController = {};
 var dir = require('node-dir');
 var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 var _ = require('lodash');
+
 projectController.addProject = function(req,res){
-	// console.log("req files =============>" , req.files);
-	// req.body.Teams = req.body.Teams.split(',');
 	console.log("req body",req.body);
 	var flag = 5;
 	projectModel.find({}).exec((err , allProjects)=>{
@@ -58,6 +58,17 @@ projectController.addProject = function(req,res){
 									console.log(err);
 									res.status(500).send(err);
 								}else{
+
+									var sprintdata={
+										projectId:savedProject._id,
+										startDate:"",
+										endDate:"",
+										title:savedProject.uniqueId+'Sprint-1',
+										status:'Future',
+										goal:''
+									}
+									var newSprint = new sprintModel(sprintdata);
+									newSprint.save();
 									res.status(200).send(project);
 								}	
 							})
@@ -125,8 +136,9 @@ projectController.deleteProjectById = function(req,res){
 	var projectId = req.params.projectId;
 	projectModel.findOneAndDelete({_id:projectId}).exec(function(err,projects){
 		console.log("err==========>>>",err);
-		res.status(200).send(projects);
+
 		console.log("saved console 4",projects);
+		res.status(200).send(projects);
 	})
 
 }
@@ -137,8 +149,9 @@ projectController.updateProjectById = function(req,res){
 
 	projectModel.findOneAndUpdate({_id:projectId},{$set:req.body},{upsert:true},function(err,projects){
 		console.log("err==========>>>",err);
-		res.status(200).send(projects);
+			console.log("team id===========>",projects.Teams);
 		console.log("saved console 5",projects);
+		res.status(200).send(projects);
 	})
 
 }
