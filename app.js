@@ -34,6 +34,7 @@ var leaveRouter = require('./routes/leave');
 var notificationRouter = require('./routes/notification');
 var sendNotificationRouter = require('./routes/sendNotification');
 var noticeRouter = require('./routes/notice');
+var attendenceRouter = require('./routes/attendence');
 // var tasksRouter = require('./routes/tasks');
 var pushNotification = require('./service/push-notification.service');
 var attendenceRouter = require('./routes/attendence');
