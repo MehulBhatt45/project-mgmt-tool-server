@@ -136,8 +136,9 @@ projectController.deleteProjectById = function(req,res){
 	var projectId = req.params.projectId;
 	projectModel.findOneAndDelete({_id:projectId}).exec(function(err,projects){
 		console.log("err==========>>>",err);
-		res.status(200).send(projects);
+
 		console.log("saved console 4",projects);
+		res.status(200).send(projects);
 	})
 
 }
@@ -148,8 +149,9 @@ projectController.updateProjectById = function(req,res){
 
 	projectModel.findOneAndUpdate({_id:projectId},{$set:req.body},{upsert:true},function(err,projects){
 		console.log("err==========>>>",err);
-		res.status(200).send(projects);
+			console.log("team id===========>",projects.Teams);
 		console.log("saved console 5",projects);
+		res.status(200).send(projects);
 	})
 
 }
