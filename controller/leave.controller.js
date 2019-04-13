@@ -379,42 +379,59 @@ leaveController.updateLeaves = function(req,res){
 							projects.push(user[i].userId);
 						}
 						console.log("pmanagerId array======>",projects);
-						if(duration == "1" || duration == "0.5"){
-							var obj2 = {
-								"subject" : "approved leave", 
-								"content" : "<strong>" +update.name+ "</strong> has applied for leave on " +req.body.startingDate+ " and it's approved.",
-								"sendTo" : projects,
-								"type" : "leaveAccepted",
-							}
-						}else{
-							var obj2 = {
-								"subject" : "approved leave", 
-								"content" : "<strong>" +update.name+ "</strong> has applied for leave on " +req.body.startingDate+ " to " + req.body.endingDate+ " and it's approved.",
-								"sendTo" : projects,
-								"type" : "leaveAccepted",
-							}
-						}
-					}
-					var notification = new sendnotificationModel(obj2);
-					notification.save(function(err,SavedUser){
-						notificationModel
-						.findOne({userId: projects})
-						.exec((err, user)=>{
-							if (err) {
-								res.status(500).send(err);
+						userModel
+						.find({_id : projects})
+						.exec((err,users)=>{
+							if(err){
+								console.log("ERROR====>",err);
 							}else{
-								console.log("admin===========>",user);
+								console.log("userRole========>",users);
+								userrole = [];
+								for(i=0;i<users.length;i++){
+									userrole.push(users[i].userRole)
+									console.log("projectManager=======>",userrole);
+								}
+								if(userrole == 'projectManager'){
+									if( duration == "1" || duration == "0.5"){
+										var obj2 = {
+											"subject" : "approved leave", 
+											"content" : "<strong>" +update.name+ "</strong> has applied for leave on " +req.body.startingDate+ " and it's approved.",
+											"sendTo" : projects,
+											"type" : "leaveAccepted",
+										}
+									}else{
+										var obj2 = {
+											"subject" : "approved leave", 
+											"content" : "<strong>" +update.name+ "</strong> has applied for leave on " +req.body.startingDate+ " to " + req.body.endingDate+ " and it's approved.",
+											"sendTo" : projects,
+											"type" : "leaveAccepted",
+										}
+									}
+									var notification = new sendnotificationModel(obj2);
+									notification.save(function(err,SavedUser){
+										notificationModel
+										.findOne({userId: projects})
+										.exec((err, user)=>{
+											if (err) {
+												res.status(500).send(err);
+											}else{
+												console.log("admin===========>",user);
 
-								pushNotification.postCode(obj2.subject,obj2.type,[user.token]);
+												pushNotification.postCode(obj2.subject,obj2.content,[user.token]);
+											}
+
+										})
+
+									})
+								}
 							}
 						})
-
-					})
+					}
+					
 				})
 			})
+			
 			if(duration == "0.5" || duration == "1"){
-				console.log("First===========>");
-
 				var	obj1 = {
 					"subject" :"Congratulations! Your leave has been approved.",
 					"content" : "Hello <span style='color:red;'>"+update.name+"</span>, your leave application for " +req.body.startingDate+ " is <strong> approved </strong>.", 
@@ -423,9 +440,6 @@ leaveController.updateLeaves = function(req,res){
 				}
 				console.log("obj=======>",obj1);
 			}else{
-
-				console.log("second================>");
-
 				var	obj1 = {
 					"subject" :"Congratulations! Your leave has been approved.",
 					"content" : "Hello <span style='color:red;'>"+update.name+"</span>, your leave application form " +req.body.startingDate+ " to "+ req.body.endingDate+ " is <strong> approved </strong>.", 

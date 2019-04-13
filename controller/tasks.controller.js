@@ -64,7 +64,10 @@ tasksController.addTasks = function(req , res){
 					console.log(err);
 					res.status(500).send(err);
 				}else if(foundTask && foundTask.length == 1){
+					var projectId = foundTask[0].projectId;
+					console.log("FINAL PROJECT ID====>",projectId);
 					console.log("found Task =================================>" , foundTask);
+					console.log("pID====>",foundTask[0].projectId);
 					console.log("pmanager=============>", foundTask.createdBy);
 					console.log("errTask ====>" , err);
 					foundTask = foundTask[0].uniqueId.split("-");
@@ -191,6 +194,7 @@ tasksController.addTasks = function(req , res){
 											"sendTo" : foundTask.assignTo._id,
 											"type" : "task",
 											"priority" : foundTask.priority,
+											"projectId" : projectId,
 										} 
 										console.log("obj==================>",obj);
 										var notification = new sendnotificationModel(obj);
