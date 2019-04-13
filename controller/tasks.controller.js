@@ -213,7 +213,6 @@ tasksController.addTasks = function(req , res){
 										}) 
 									})
 								})
-
 }
 })
 })
@@ -349,10 +348,15 @@ tasksController.addTasks = function(req , res){
 	})
 
 }
+})
+}
+})
+// })
+}
 
 tasksController.getTaskByProjectId = function(req , res){
 	console.log("req.parasm :" , req.params);
-	var projectId = req.params.id;
+	var projectId = req.params.taskId;
 	tasksModel.find({projectId : projectId})
 	.populate('assignTo createdBy sprint')
 	.exec((err , foundTask)=>{
@@ -445,7 +449,7 @@ tasksController.updateTaskById = function(req , res){
 tasksController.getAllTask = function(req , res){
 	tasksModel
 	.find({})
-	.populate('projectId assignTo createdBy')
+	.populate('projectId assignTo createdBy sprint')
 	.exec((err , allTasks)=>{
 		if(err) res.send('err');
 		else res.send(allTasks);
@@ -505,4 +509,3 @@ tasksController.deleteTaskById = function(req  , res){
 	});
 }
 module.exports = tasksController;
-

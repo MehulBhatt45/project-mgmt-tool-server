@@ -34,12 +34,7 @@ var leaveRouter = require('./routes/leave');
 var notificationRouter = require('./routes/notification');
 var sendNotificationRouter = require('./routes/sendNotification');
 var noticeRouter = require('./routes/notice');
-<<<<<<< HEAD
 var sprintRouter = require('./routes/sprint');
-=======
-var attendenceRouter = require('./routes/attendence');
->>>>>>> 71dbc69940baed0094d8deba1a639d3effd09880
-// var tasksRouter = require('./routes/tasks');
 var pushNotification = require('./service/push-notification.service');
 var attendenceRouter = require('./routes/attendence');
 
