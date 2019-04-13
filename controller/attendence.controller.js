@@ -17,7 +17,7 @@ attendenceController.employeeAttendence = function(req,res){
 	currentDate = moment(currentDate).format("YYYY-MM-DD");
 	currentDate = currentDate+"T00:00:00.000+0000";
 	console.log("Current Date =============>" , currentDate);
-	userModel.find({email:req.body.email},function(err,foundEmp){
+	userModel.find({_id:req.body._id},function(err,foundEmp){
 		console.log("foundemppppppppppppp",foundEmp);
 		if(err){
 			console.log("You are not registerd")

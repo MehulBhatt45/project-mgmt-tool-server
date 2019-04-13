@@ -203,11 +203,11 @@ tasksController.addTasks = function(req , res){
 												if (err) {
 													res.status(500).send(err);
 												}else{
-											console.log("savedNotification======>>>>>",user);
+													console.log("savedNotification======>>>>>",user);
 											// console.log("id-------->>>>>",user.token);
 											pushNotification.postCode('dynamic title','dynamic content',user.token);
-												}
-											})
+										}
+									})
 
 											res.status(200).send(savedTask);
 										}) 
@@ -215,7 +215,7 @@ tasksController.addTasks = function(req , res){
 								})
 							}
 						})
-					})
+})
 }else{
 	projectModel.find({_id: req.body.projectId})
 	.exec((err , foundProject)=>{
@@ -339,7 +339,7 @@ tasksController.getTaskByProjectId = function(req , res){
 	console.log("req.parasm =================================================>:" , req.params);
 	var projectId = req.params.taskId;
 	tasksModel.find({projectId : projectId})
-	.populate('assignTo createdBy ')
+	.populate('assignTo createdBy timelog1')
 	.exec((err , foundTask)=>{
 		if(err) {
 			res.status(500).send(err);
@@ -462,7 +462,8 @@ tasksController.updateTaskStatusById = function(req , res){
 			}
 			else res.status(404).send("Not Found");
 		})
-	}else{
+	}
+	else{
 		res.status(403).send("Bad Request");
 	}
 }
