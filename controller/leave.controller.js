@@ -73,7 +73,7 @@ leaveController.applyLeave = function(req,res){
 											if(duration == "0.5" || "1"){
 												var obj = {
 													"subject" :"Your Team member has applied for leave .",
-													"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for leave on " +leave.startingDate+ ".",
+													"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for leave on " +req.body.startingDate+ ".",
 													"sendTo" : projects,
 													"type" : "leave",
 
@@ -81,7 +81,7 @@ leaveController.applyLeave = function(req,res){
 											}else{
 												var obj = {
 													"subject" :"Your Team member has applied for leave .",
-													"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for leave on " +leave.startingDate+ "to" +leave.endingDate+ ".",
+													"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for leave on " +req.body.startingDate+ "to" +req.body.endingDate+ ".",
 													"sendTo" : projects,
 													"type" : "leave",
 
@@ -342,7 +342,6 @@ leaveController.getAllLeavesApps = function(req,res){
 }
 
 leaveController.updateLeaves = function(req,res){
-	
 	console.log("req boddy =======++>" , req.body);
 	console.log("req boddy1 =======++>" , req.params);
 	console.log("final date=============>",req.body.startingDate);
@@ -391,7 +390,7 @@ leaveController.updateLeaves = function(req,res){
 									userrole.push(users[i].userRole)
 									console.log("projectManager=======>",userrole);
 								}
-								if(userrole == 'projectManager'){
+								// if(userrole == 'projectManager'){
 									if( duration == "1" || duration == "0.5"){
 										var obj2 = {
 											"subject" : "approved leave", 
@@ -423,7 +422,7 @@ leaveController.updateLeaves = function(req,res){
 										})
 
 									})
-								}
+								// }
 							}
 						})
 					}
