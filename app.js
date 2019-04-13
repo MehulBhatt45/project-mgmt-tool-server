@@ -32,9 +32,9 @@ var commentRouter = require('./routes/comment');
 var employeeRouter = require('./routes/employee');
 var leaveRouter = require('./routes/leave');
 var notificationRouter = require('./routes/notification');
-var sprintRouter = require('./routes/sprint');
-
+var sendNotificationRouter = require('./routes/sendNotification');
 var noticeRouter = require('./routes/notice');
+var sprintRouter = require('./routes/sprint');
 // var tasksRouter = require('./routes/tasks');
 var pushNotification = require('./service/push-notification.service');
 
@@ -52,7 +52,9 @@ var app = express();
 app.set('superSecret', 'pmt');
 // Define mongoose Component
 
+
 mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
+
 
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
@@ -90,8 +92,8 @@ app.use('/notice',noticeRouter);
 app.use('/leave',leaveRouter);
 app.post('/email/send-email', emailController.sendEmail);
 app.use('/notification',notificationRouter);
+app.use('/sendNotification',sendNotificationRouter);
 app.use('/sprint',sprintRouter);
-
 
 // catch 404 and forward to error handler
 
@@ -100,18 +102,17 @@ app.use(function (req, res, next) {
 	res.header('Access-Control-Allow-Origin','*');
 	res.header('Access-Control-Allow-Headers','origin, X-Requested-With, Content-Type, Accept, Authorization, x-access-token');
 	if (req.method === 'OPTIONS') {
-	res.header('Access-Control-Allow-Methods','PUT,POST,PATCH,DELETE,GET');
-	return res.status(200).json({});
+		res.header('Access-Control-Allow-Methods','PUT,POST,PATCH,DELETE,GET');
+		return res.status(200).json({});
 	}
 	else{
-	next();
+		next();
 
 	}
 });
 app.use(function(req, res, next) {
 	next(createError(404));
 });
-
 // error handler
 app.use(function(err, req, res, next) {
  // set locals, only providing error in development
@@ -126,7 +127,7 @@ res.render('error');
 
 cron.schedule('0 0 * * *', () => {
 	console.log('running a task every minute');
-	request('http://localhost:4000/notice/updatenotice',function (error, response, body) {
+	request('http://localhost:4001/notice/updatenotice',function (error, response, body) {
  console.log('error:', error); // Print the error if one occurred
  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
  console.log('body:', body); // Print the HTML for the Google homepage.
@@ -136,9 +137,9 @@ cron.schedule('0 0 * * *', () => {
 
 //API Calling for all User to notify
 
-request('http://localhost:4000/notification/allUsers',function (error, response, body) {
+request('http://localhost:4001/notification/allUsers',function (error, response, body) {
  console.log('error:', error); // Print the error if one occurred
- //console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+ console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
 });
 
 
@@ -152,9 +153,10 @@ request('http://localhost:4000/notification/allUsers',function (error, response,
 // console.log("Secure Server listening 443")
 // });
 
-// app.listen(4000);
+// app.list`en(4000);
 
 //pushnotification calling
 
-pushNotification.postCode('hello rajbha','From Vishal pankhaniya','cR_dVoEx-H8:APA91bEayud5G_J_wCdLi286BclbZ927gkUlsSENUguyjDHrFFskYMrZMa0yCWZzic8rUHprlZt0prKyNf0REtSZpHVhmwCo7zX7MWQ7rUWDRv9rpbVJu5ClyuXELfBEkDIZOLDv3xjK');
+
+
 module.exports = app;

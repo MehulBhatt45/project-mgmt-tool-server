@@ -230,4 +230,32 @@ projectController.getDeveloperOfProject = function(req , res){
 			else res.status(200).send(foundTeam);
 	})
 }
+
+projectController.getTaskOfProject = function(req , res){
+	console.log("projectId ========>" , req.params.projectId);
+	var projectId = req.params.projectId;
+	projectModel
+	.findOne({_id: projectId})
+	.select('taskId IssueId BugId tasks')
+	.exec((err , foundTeam)=>{
+		if(err) res.send(err)
+			else res.status(200).send(foundTeam);
+	})
+}
+
+
+
+projectController.getProjectByPmanagerId = function(req, res){
+	var pmanagerId = req.params.pmanagerId;
+	projectModel
+	.find({pmanagerId :pmanagerId})
+	.select('projects Teams')
+	.exec((err , found)=>{
+		if( err) res.send(err);
+		else{
+			res.send(found);
+		}
+	})
+}
+
 module.exports = projectController;

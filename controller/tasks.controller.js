@@ -1,6 +1,7 @@
 var tasksModel = require('../model/tasks.model');
 var projectModel = require('../model/project.model');
 var userModel = require('../model/user.model');
+var notificationModel = require('../model/notification.model');
 var _ = require('lodash');
 let tasksController = {};
 var dir = require('node-dir');
@@ -9,20 +10,22 @@ var path = require('path');
 var fs = require('fs');
 var nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
+
 var pushNotification = require('./../service/push-notification.service');
 var transporter = nodemailer.createTransport({
 	host: "smtp.gmail.com",
 	port: 465,
 	secure: true,
 	service: 'gmail',
-
 	auth: {
 		user: 'tnrtesting2394@gmail.com',
 		pass: 'raoinfotech09'
 	}
 });
+var uniqueId;
 
 tasksController.addTasks = function(req , res){
+	console.log("req.body", req.body);
 	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/");
 	console.log(uploadPath);
 	req.file('fileUpload').upload({
@@ -100,17 +103,22 @@ tasksController.addTasks = function(req , res){
 									foundedUser.tasks.push(savedTask._id);
 									foundedUser.save();
 									console.log("resp1 receive");
+
 									var priority1 = req.body.priority;
-									var color;
+									var color = req.body.color;;
 									var color;
 									if(priority1 == '1'){
+										prior = "Highest";
 										color = "#ff0000";
 									}else if(priority1 == '2'){
+										prior = "High";
 										color = "#ff8100";
 									}else if(priority1 == '3'){
 										color = "#ffee21";
+										prior = "Medium";
 									}else{
-										color="#0087ff"
+										color="#0087ff";
+										prior = "Low";
 									}
 									tasksModel.findOne({_id: savedTask._id})
 									.populate('assignTo')
@@ -131,26 +139,19 @@ tasksController.addTasks = function(req , res){
 										border: 1px solid #d3d3d3;">
 										<center>
 										<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
 										<div style="margin-left:30px;padding:0;">
-										<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+color+`">`+priority1+`</span> priority task.</p>
+										<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+color+`">`+prior+`</span> priority task.</p>
 										<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
 										<table style="color:black;">
 										<tr style="height: 50px;width: 100%;">
 										<td><b>Title</b></td>
 										<td style="padding-left: 50px;">`+req.body.title+`</td></tr>
-
 										<tr style="height: 50px;">
 										<td><b>Description</b></td>
 										<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
-
-
 										<tr  style="height: 50px;">
 										<td><b>Priority</b></td>
-										<td style="padding-left: 50px;">`+req.body.priority+`</td></tr>
-
-
+										<td style="padding-left: 50px;">`+prior+`</td></tr>
 										</table>
 										</div>
 										</body>
@@ -171,135 +172,168 @@ tasksController.addTasks = function(req , res){
 												console.log('Email sent: ' + info.response);
 											}
 										});
-										//pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
-										res.status(200).send(savedTask);
+										var obj = {
+											"id": savedTask.assignTo._id,
+											"title": "You have new task",
+											"desc": "New task has been assigned to you by Project Manager"
+										}
+										var notification = new notificationModel(obj);
+										notification.save(function(err,savedNotification){
+											if(err){
+												res.status(500).send(err);		
+											}
+											// console.log("foundTask=========>>>>>",foundTask)
+											// console.log("foundTaskId===>",foundTask.assignTo._id);
+											var assignTo = foundTask.assignTo._id;
+											// console.log("assign",assignTo)
+											// console.log(savedNotification.id);
+											// console.log(userId);
+											notificationModel
+											.findOne({userId : assignTo})
+											.exec((err, user)=>{
+												if (err) {
+													res.status(500).send(err);
+												}else{
+													console.log("savedNotification======>>>>>",user);
+											// console.log("id-------->>>>>",user.token);
+											pushNotification.postCode('dynamic title','dynamic content',user.token);
+										}
+									})
+
+											res.status(200).send(savedTask);
+										}) 
 									})
 								})
 							}
 						})
-					})
-				}else{
-					projectModel.find({_id: req.body.projectId})
-					.exec((err , foundProject)=>{
-						foundProject = foundProject[0].uniqueId.split("-");
-						var txt = foundProject[0];
-						req.body['uniqueId'] = txt +"-" + 1;
-						req.body['startDate'] = Date.now();
-						console.log("first task of the project =====>" , req.body);
-						var saveTask = new tasksModel(req.body);
-						saveTask['images']=fileNames;
-						console.log(saveTask);
-						saveTask.save().then((savedTask)=>{
-							console.log("savd Tsk ===> " , savedTask);
-							projectModel.findOne({_id: savedTask.projectId})
-							.exec((err , resp)=>{
-								resp.tasks.push(savedTask._id);
-								var flag = 5;
-								var final = 1
-								var q = JSON.stringify(savedTask.assignTo);
-								console.log("type of ==>", typeof q);
-								for(var i = 0;i< resp.Teams.length ; i++){
-									var p = JSON.stringify(resp.Teams[i]);
-									flag = p.localeCompare(q);
-									console.log("flag ===>" , flag);
-									if(flag == 0){
-										final = 0;
-									}
-								}
-								console.log("final ===>" , final);
-								if(final == 1){
-									resp.Teams.push(savedTask.assignTo);
-									console.log("resp received");
-								}
-								resp.save();	
-								console.log("final task======>" , savedTask);
-								var priority1 = req.body.priority;
-								var color;
-								if(priority1 == '1'){
-									color = "#ff0000";
-								}else if(priority1 == '2'){
-									color = "#ff8100";
-								}else if(priority1 == '3'){
-									color = "#ffee21";
-								}else{
-									color="#0087ff"
-								}
-							});
-
-							var output = `<!doctype html>
-							<html>
-							<head>
-							<title> title111</title>
-							</head>
-							<body>
-							<div style="width:75%;margin:0 auto;border-radius: 6px;
-							box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-							border: 1px solid #d3d3d3;">
-							<center>
-							<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
-							<div style="margin-left:30px;padding:0;">
-							<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+color+`">`+priority1+`</span> priority task.</p>
-							<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
-							<table style="color:black;">
-							<tr style="height: 50px;width: 100%;">
-							<td><b>Title</b></td>
-							<td style="padding-left: 50px;">`+req.body.title+`</td></tr>
-
-							<tr style="height: 50px;">
-							<td><b>Description</b></td>
-							<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
-
-
-							<tr  style="height: 50px;">
-							<td><b>Priority</b></td>
-							<td style="padding-left: 50px;">`+req.body.priority+`</td></tr>
-
-
-							</table>
-							</div>
-							</body>
-							</html>
-							`;
-
-
-							var mailOptions = {
-								from: 'tnrtesting2394@gmail.com',
-								to: email,
-								subject: 'Testing Email',
-								text: 'Hi, this is a testing email from node server',
-								html: output
-							};
-
-							transporter.sendMail(mailOptions, function(error, info){
-								if (error) {
-									console.log("Error",error);
-								} else {
-									console.log('Email sent: ' + info.response);
-								}
-							});
-							//pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
-
-							res.status(200).send(savedTask);
-						})
-					})
+})
+}else{
+	projectModel.find({_id: req.body.projectId})
+	.exec((err , foundProject)=>{
+		foundProject = foundProject[0].uniqueId.split("-");
+		var txt = foundProject[0];
+		req.body['uniqueId'] = txt +"-" + 1;
+		req.body['startDate'] = Date.now();
+		console.log("first task of the project =====>" , req.body);
+		var saveTask = new tasksModel(req.body);
+		saveTask['images']=fileNames;
+		console.log(saveTask);
+		saveTask.save().then((savedTask)=>{
+			console.log("savd Tsk ===> " , savedTask);
+			projectModel.findOne({_id: savedTask.projectId})
+			.exec((err , resp)=>{
+				resp.tasks.push(savedTask._id);
+				var flag = 5;
+				var final = 1
+				var q = JSON.stringify(savedTask.assignTo);
+				console.log("type of ==>", typeof q);
+				for(var i = 0;i< resp.Teams.length ; i++){
+					var p = JSON.stringify(resp.Teams[i]);
+					flag = p.localeCompare(q);
+					console.log("flag ===>" , flag);
+					if(flag == 0){
+						final = 0;
+					}
 				}
-			})
-		}
+				console.log("final ===>" , final);
+				if(final == 1){
+					resp.Teams.push(savedTask.assignTo);
+					console.log("resp received");
+				}
+				resp.save();	
+				console.log("final task======>" , savedTask);
+				var priority1 = req.body.priority;
+				var color = req.body.color;
+				if(priority1 == '1'){
+					prior = "Highest";
+					color = "#ff0000";
+				}else if(priority1 == '2'){
+					prior = "High";
+					color = "#ff8100";
+				}else if(priority1 == '3'){
+					color = "#ffee21";
+					prior = "Medium";
+				}else{
+					color="#0087ff";
+					prior = "Low";
+				}
+			});
+
+
+			var output = `<!doctype html>
+			<html>
+			<head>
+			<title> title111</title>
+			</head>
+			<body>
+			<div style="width:75%;margin:0 auto;border-radius: 6px;
+			box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+			border: 1px solid #d3d3d3;">
+			<center>
+			<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+			<div style="margin-left:30px;padding:0;">
+			<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+req.body.color+`">`+prior+`</span> priority task.</p>
+			<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
+			<table style="color:black;">
+			<tr style="height: 50px;width: 100%;">
+			<td><b>Title</b></td>
+			<td style="padding-left: 50px;">`+req.body.title+`</td></tr>
+			<tr style="height: 50px;">
+			<td><b>Description</b></td>
+			<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
+			<tr  style="height: 50px;">
+			<td><b>Priority</b></td>
+			<td style="padding-left: 50px;">`+prior+`</td></tr>
+			</table>
+			</div>
+			</body>
+			</html>
+			`;
+
+
+			var mailOptions = {
+				from: 'tnrtesting2394@gmail.com',
+				to: email,
+				subject: 'Testing Email',
+				text: 'Hi, this is a testing email from node server',
+				html: output
+			};
+
+			transporter.sendMail(mailOptions, function(error, info){
+				if (error) {
+					console.log("Error",error);
+				} else {
+					console.log('Email sent: ' + info.response);
+
+				}
+			});
+			pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
+
+			res.status(200).send(savedTask);
+		})
 	})
+}
+})
+}
+})
+
 }
 
 tasksController.getTaskByProjectId = function(req , res){
-	console.log("req.parasm :" , req.params);
+	console.log("req.parasm =================================================>:" , req.params);
 	var projectId = req.params.taskId;
 	tasksModel.find({projectId : projectId})
 	.populate('assignTo createdBy sprint')
 	.exec((err , foundTask)=>{
-		if(err) res.send("err");
-		else res.send(foundTask);
+		if(err) {
+			res.status(500).send(err);
+		}else{
+			console.log(foundTask);
+			res.status(200).send(foundTask);
+		}
 	})
 }
+
 
 tasksController.updateTaskById = function(req , res){
 	var userId;
@@ -331,8 +365,10 @@ tasksController.updateTaskById = function(req , res){
 		}else{
 			console.log(files);
 			tasksModel.findOne({_id: taskId}, function(err , task){
+
 				var fileNames=req.body.images;
 			// fileNames.push(req.body.images);
+
 			if(files.length>0){
 				_.forEach(files, (gotFile)=>{
 					fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
@@ -369,7 +405,6 @@ tasksController.updateTaskById = function(req , res){
 						.exec((err , user)=>{
 							user.tasks.push(updatedData._id);
 							user.save();	
-
 							console.log("final task======>" , updatedData);
 							res.status(200).send(updatedData);	
 						})

@@ -1,4 +1,5 @@
 var commentModel = require('./../model/comment.model');
+var notificationModel = require('../model/notification.model');
 var taskModel = require('../model/tasks.model')
 var userModel = require('./../model/user.model');
 var dir = require('node-dir');
@@ -6,6 +7,8 @@ var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 var commentController = {};
+var pushNotification = require('./../service/push-notification.service');
+
 var _ = require('lodash');
 commentController.addComment = function(req,res){
 	console.log(req.body);
@@ -39,15 +42,27 @@ commentController.addComment = function(req,res){
 			}
 			comment['images']=fileNames;
 			comment.save(function(err, comment){
-				console.log(comment);
+				console.log("comment=====>",comment);
 				if (err) {
 					res.status(500).send(err);
 				}
+				console.log("commentid===>",comment.taskId)
 				taskModel
 				.findOne({ _id : comment.taskId})
 				.exec((error, task)=>{
+					console.log("task=======>",task);
+					var obj = {
+						"id": "SavedUser.sendTo",
+						"title": "SavedUser.subject",
+						"desc": "SavedUser.content",
+					}
+					console.log("saved object===>",obj);
+					notificationModel
+					.find({userId: comment.userId})
 					task.comment.push(comment._id);
 					task.save();
+				    pushNotification.postCode('SavedUser.subject','SavedUser.content',req.session.userarray);
+
 					res.status(200).send(comment);
 				})
 			})
