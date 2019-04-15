@@ -34,7 +34,12 @@ var leaveRouter = require('./routes/leave');
 var notificationRouter = require('./routes/notification');
 var sendNotificationRouter = require('./routes/sendNotification');
 var noticeRouter = require('./routes/notice');
+
+// var tasksRouter = require('./routes/tasks')
+var timeLogRouter = require('./routes/timeLog');
+
 var sprintRouter = require('./routes/sprint');
+
 var pushNotification = require('./service/push-notification.service');
 var attendenceRouter = require('./routes/attendence');
 
@@ -92,9 +97,13 @@ app.use('/notice',noticeRouter);
 app.use('/leave',leaveRouter);
 app.post('/email/send-email', emailController.sendEmail);
 app.use('/notification',notificationRouter);
+app.use('/timeLog',timeLogRouter);
+
 app.use('/sendNotification',sendNotificationRouter);
+
 app.use('/sprint',sprintRouter);
 app.use('/attendence',attendenceRouter);
+
 // catch 404 and forward to error handler
 
 app.use(function (req, res, next) {

@@ -111,8 +111,10 @@ tasksController.addTasks = function(req , res){
 									console.log("resp1 receive");
 
 									var priority1 = req.body.priority;
-									var color = req.body.color;;
+
+									var color = req.body.color;
 									var color;
+
 									if(priority1 == '1'){
 										prior = "Highest";
 										color = "#ff0000";
@@ -204,17 +206,20 @@ tasksController.addTasks = function(req , res){
 												}else{
 
 													console.log("savedNotification======>>>>>",user);
-													pushNotification.postCode(obj.subject,obj.type,[user.token]);
-													res.status(200).send(savedTask);
-												}
-											})
+											// console.log("id-------->>>>>",user.token);
+											pushNotification.postCode('dynamic title','dynamic content',user.token);
+										}
+									})
+
 
 											
 										}) 
 									})
 								})
-}
-})
+
+							}
+						})
+
 })
 }else{
 	projectModel.find({_id: req.body.projectId})
@@ -358,7 +363,9 @@ tasksController.getTaskByProjectId = function(req , res){
 	console.log("req.parasm :" , req.params);
 	var projectId = req.params.taskId;
 	tasksModel.find({projectId : projectId})
-	.populate('assignTo createdBy sprint')
+
+	.populate('assignTo createdBy timelog1 sprint')
+
 	.exec((err , foundTask)=>{
 		if(err) res.send("err");
 		else res.send(foundTask);
@@ -449,10 +456,13 @@ tasksController.updateTaskById = function(req , res){
 tasksController.getAllTask = function(req , res){
 	tasksModel
 	.find({})
-	.populate('projectId assignTo createdBy sprint')
+
+	.populate('projectId assignTo createdBy timelog1 sprint')
+
 	.exec((err , allTasks)=>{
 		if(err) res.send('err');
 		else res.send(allTasks);
+		console.log('res====================>',allTasks)
 	})
 }
 tasksController.updateTaskStatusById = function(req , res){
@@ -476,7 +486,8 @@ tasksController.updateTaskStatusById = function(req , res){
 			}
 			else res.status(404).send("Not Found");
 		})
-	}else{
+	}
+	else{
 		res.status(403).send("Bad Request");
 	}
 }
