@@ -18,6 +18,7 @@ attendenceController.employeeAttendence = function(req,res){
 	currentDate = currentDate+"T00:00:00.000+0000";
 	console.log("Current Date =============>" , currentDate);
 	userModel.findOne({_id:req.body.userId},function(err,foundEmp){
+
 		console.log("foundemppppppppppppp",foundEmp);
 		if(err){
 			console.log("You are not registerd")

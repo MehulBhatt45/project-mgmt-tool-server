@@ -2,8 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var TimeLogSchema = new Schema({
-	count: Number,
-	difference: Number,
+	count: {type:Number, default:0},
+	difference: {type:Date, default: null},
 	log: [{
 		_id:false,
 		startTime:Date,
@@ -12,4 +12,4 @@ var TimeLogSchema = new Schema({
 	taskId:{type:Schema.Types.ObjectId, ref:'Taskss'},
 },{timestamps: true});
 
-module.exports = mongoose.model('timeLog',TimeLogSchema);
+module.exports = mongoose.model('timeLog',TimeLogSchema);	

@@ -16,74 +16,111 @@ timeLogController.addTimeLog = function(req,res){
 	var updatedTask;
 	var count;
 	var previousDifference = 0;
-	var difference;
+	var difference = 0 ;
 	var diff;
-	taskModel.find({uniqueId:req.body.uniqueId},function(err,foundTask){
-		console.log("foundemppppppppppppp",foundTask);
-		if(err){
-			console.log("task not found")
-		}
-		if(foundTask){
-			console.log("found task ============+>" , foundTask);
-			currentTask = foundTask[0]._id;
-			console.log('curruntTask',currentTask);
-			console.log(new Date().toLocaleTimeString());
-			timeLogModel.findOne({taskId:currentTask},function(err , updatedTask){
-				console.log("updated task ====================>" , updatedTask);
-				if(updatedTask != null){
-					count = updatedTask.log.length - 1;
-					console.log("value of count in updatedtask != null" , count);
-					if(updatedTask.log[count].endTime == null){
-						console.log("worked ========+>");
-						updatedTask.log[count].endTime = new Date();
-						console.log('endtimeeeeeeeeeeeee===========>',updatedTask.log[count].endTime);
-						previousDifference = updatedTask.log[count].endTime.getTime() - updatedTask.log[count].startTime.getTime(); 
-						console.log('previousDifference',previousDifference);
-						updatedTask.difference = +previousDifference + +updatedTask.difference;
-						// diff = updatedTask.difference.getTime();
-						console.log('updatedTask.difference================>',updatedTask.difference);
-						// console.log('updatedTask.difference',diff);
-						updatedTask.save(function(err, upSt){
-							if (err) res.send(err);
-							console.log("updatedTask != null");
-							res.send(upSt);
-						})
-					}
-					else{
-						updatedTask.log.push({startTime: new Date()});
-						updatedTask.save(function(err , updated){
-							if(err) res.send(err);
-							res.send(updated);
-						})
-						console.log("hailu halo");	
+	var obj = {
+		"count":req.body.timelog1.count
+	}
+	var newCount;
+	var abc;
+	console.log(" obj ==========================>",obj);
+	var counter = new timeLogModel(obj);
+	
+	counter.save(function(err,count){
+		console.log('count============>',count);
+		newCount = count;
+		console.log('newCount===============>',newCount.count);
+		abc = newCount.count;
+		console.log('abc===========================>',abc)
+		taskModel.find({uniqueId:req.body.uniqueId},function(err,foundTask){
+			console.log("foundemppppppppppppp",foundTask);
+			if(err){
+				console.log("task not found")
+			}
+			if(foundTask){
+				console.log("found task ============+>" , foundTask);
+				currentTask = foundTask[0]._id;
+				console.log('curruntTask',currentTask);
+				console.log(new Date().toLocaleTimeString());
+				timeLogModel.findOne({taskId:currentTask},function(err , updatedTask){	
+					console.log("updated task ====================>" , updatedTask);	
+					// console.log("updated task difference ====================>" , updatedTask.difference);
+					if(updatedTask != null){
+						count = updatedTask.log.length - 1;
+						console.log("value of count in updatedtask != null" , count);
+						if(updatedTask.log[count].startTime == null){
+							updatedTask.log[count].startTime = new Date();
+							updatedTask.count= abc;
+							updatedTask.save(function(err , updated){
+								if(err) res.send(err);
+								res.send(updated);
+								console.log('updated==============>',updated);
+							})
+						}else if(updatedTask.log[count].endTime == null){
+							console.log("worked ========+>");
+							updatedTask.log[count].endTime = new Date();
+							console.log('endtimeeeeeeeeeeeee===========>',updatedTask.log[count].endTime);
+							previousDifference = updatedTask.log[count].endTime - updatedTask.log[count].startTime; 
+							console.log('previousDifference',previousDifference);
+							updatedTask.difference = +previousDifference + +updatedTask.difference;
+							updatedTask.count = abc;
+							console.log('updatedTask.counter============>',updatedTask.count);
+							console.log('updatedTask.difference difffff================>',updatedTask.difference);
+							updatedTask.save(function(err, upSt){
+								if (err) res.send(err);
+								console.log("updatedTask != null");
+								console.log('upSt======================<',upSt);
+								res.send(upSt);
+							})
+						}else{
+							updatedTask.log.push({startTime: new Date()});
+							updatedTask.count= abc;
+							updatedTask.save(function(err , updated){
+								if(err) res.send(err);
+								res.send(updated);
+								console.log('updated==============>',updated);
+							})
+						}
+
 					}
 
-				}
-
-				else{	
-					console.log( "updatedTask == null")
-					console.log(new Date().toLocaleTimeString());
-					console.log("else");
-					var date = new Date();
-					var obj = {
+					else{	
+						console.log( "updatedTask == null")
+						console.log(new Date().toLocaleTimeString());
+						console.log("else");
+						var date = new Date();
+						var obj = {
+							
+							taskId: currentTask,
+							log: [{
+								startTime: new Date(),
+							}]
+						}
 						
-						taskId: currentTask,
-						log: [{
-							startTime: new Date(),
-						}]
+						console.log("obj ================>" , obj);
+						console.log("obj.count" , obj);
+						var timelog = new timeLogModel(obj);
+						console.log("timelog ===================>" , timelog);
+						timelog.save(function(err,savedTimeLog){
+							console.log("saved._id" , savedTimeLog.taskId);
+							taskModel.findOne({_id: savedTimeLog.taskId})
+							.exec((err , foundTask)=>{
+								console.log("foundTask ==>" , foundTask);
+								 foundTask.timelog1 = savedTimeLog._id;
+								 console.log("found tSSAsas ==============================>" , foundTask);
+
+								taskModel.findOneAndUpdate({_id: savedTimeLog.taskId} , foundTask, {upsert: true , new: true ,  useFindAndModify: false})
+								.exec((err , savedTask)=>{
+									console.log("savedTask =====>" , savedTask);
+									res.send(savedTask);
+								})
+							})
+						})
 					}
-					
-					console.log("obj ================>" , obj);
-					console.log("obj.count" , obj);
-					var timelog = new timeLogModel(obj);
-					console.log("timelog ===================>" , timelog);
-					timelog.save(function(err,savedTask){
-						console.log("saved");
-						res.send(savedTask);
-					})
-				}
-			})
-		}
+				})
+			}
+		})
+
 	})
 
 }

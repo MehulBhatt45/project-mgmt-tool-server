@@ -111,8 +111,10 @@ tasksController.addTasks = function(req , res){
 									console.log("resp1 receive");
 
 									var priority1 = req.body.priority;
-									var color = req.body.color;;
+
+									var color = req.body.color;
 									var color;
+
 									if(priority1 == '1'){
 										prior = "Highest";
 										color = "#ff0000";
@@ -130,7 +132,7 @@ tasksController.addTasks = function(req , res){
 									.populate('assignTo createdBy projectId')
 									.exec((err,foundTask)=>{
 										console.log(' found email send===>',foundTask);
-										console.log("cretedby======>",foundTask.createdBy.name);
+										// console.log("cretedby======>",foundTask.createdBy.name);
 										console.log("project title=============>",foundTask.projectId.title);
 										console.log("final----->>>",foundTask.assignTo.email);
 										console.log("priority================================>",foundTask.priority);
@@ -148,8 +150,6 @@ tasksController.addTasks = function(req , res){
 										border: 1px solid #d3d3d3;">
 										<center>
 										<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
 										<div style="margin-left:30px;padding:0;">
 										<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+color+`">`+prior+`</span> priority task.</p>
 										<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
@@ -157,17 +157,12 @@ tasksController.addTasks = function(req , res){
 										<tr style="height: 50px;width: 100%;">
 										<td><b>Title</b></td>
 										<td style="padding-left: 50px;">`+req.body.title+`</td></tr>
-
 										<tr style="height: 50px;">
 										<td><b>Description</b></td>
 										<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
-
-
 										<tr  style="height: 50px;">
 										<td><b>Priority</b></td>
 										<td style="padding-left: 50px;">`+prior+`</td></tr>
-
-
 										</table>
 										</div>
 										</body>
@@ -211,17 +206,21 @@ tasksController.addTasks = function(req , res){
 												}else{
 
 													console.log("savedNotification======>>>>>",user);
-													pushNotification.postCode(obj.subject,obj.type,[user.token]);
-													res.status(200).send(savedTask);
-												}
-											})
+											// console.log("id-------->>>>>",user.token);
+											pushNotification.postCode('dynamic title','dynamic content',[user.token]);
+											res.status(200).send(savedTask);
+										}
+									})
+
 
 											
 										}) 
 									})
 								})
-}
-})
+
+							}
+						})
+
 })
 }else{
 	projectModel.find({_id: req.body.projectId})
@@ -287,8 +286,6 @@ tasksController.addTasks = function(req , res){
 			border: 1px solid #d3d3d3;">
 			<center>
 			<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
 			<div style="margin-left:30px;padding:0;">
 			<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+req.body.color+`">`+prior+`</span> priority task.</p>
 			<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
@@ -296,17 +293,12 @@ tasksController.addTasks = function(req , res){
 			<tr style="height: 50px;width: 100%;">
 			<td><b>Title</b></td>
 			<td style="padding-left: 50px;">`+req.body.title+`</td></tr>
-
 			<tr style="height: 50px;">
 			<td><b>Description</b></td>
 			<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
-
-
 			<tr  style="height: 50px;">
 			<td><b>Priority</b></td>
 			<td style="padding-left: 50px;">`+prior+`</td></tr>
-
-
 			</table>
 			</div>
 			</body>
@@ -370,9 +362,11 @@ tasksController.addTasks = function(req , res){
 
 tasksController.getTaskByProjectId = function(req , res){
 	console.log("req.parasm :" , req.params);
-	var projectId = req.params.id;
+	var projectId = req.params.taskId;
 	tasksModel.find({projectId : projectId})
-	.populate('assignTo createdBy ')
+
+	.populate('assignTo createdBy timelog1 sprint')
+
 	.exec((err , foundTask)=>{
 		if(err) res.send("err");
 		else res.send(foundTask);
@@ -463,10 +457,13 @@ tasksController.updateTaskById = function(req , res){
 tasksController.getAllTask = function(req , res){
 	tasksModel
 	.find({})
-	.populate('projectId assignTo createdBy')
+
+	.populate('projectId assignTo createdBy timelog1 sprint')
+
 	.exec((err , allTasks)=>{
 		if(err) res.send('err');
 		else res.send(allTasks);
+		console.log('res====================>',allTasks)
 	})
 }
 tasksController.updateTaskStatusById = function(req , res){
@@ -490,7 +487,8 @@ tasksController.updateTaskStatusById = function(req , res){
 			}
 			else res.status(404).send("Not Found");
 		})
-	}else{
+	}
+	else{
 		res.status(403).send("Bad Request");
 	}
 }
@@ -523,11 +521,3 @@ tasksController.deleteTaskById = function(req  , res){
 	});
 }
 module.exports = tasksController;
-
-
-
-
-
-
-
-        
