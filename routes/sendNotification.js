@@ -3,6 +3,6 @@ var router = express.Router();
 var sendnotificationController = require('../controller/sendNotification.controller');
 
 router.post('/addNotification',sendnotificationController.addNotification);
-router.get('/get-notificationById/:id',sendnotificationController.getNotificationByUserId);
+router.get('/get-notification-By-Id/:id',sendnotificationController.getNotificationByUserId);
 
 module.exports = router;

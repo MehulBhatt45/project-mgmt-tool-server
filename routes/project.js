@@ -16,7 +16,7 @@ router.post('/delete-file', projectController.deleteFile);
 router.get('/get-developer-of-project/:projectId' , projectController.getDeveloperOfProject);
 router.get('/get-project-by-pmanagerId/:pmanagerId' , projectController.getProjectByPmanagerId);
 router.get('/get-task-of-project/:projectId',projectController.getTaskOfProject);
-router.get('/get-pmanager-of-project/projectId',projectController.getManagerOfProject);
+
 
 
 module.exports = router;

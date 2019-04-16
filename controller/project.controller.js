@@ -135,7 +135,7 @@ projectController.updateProjectById = function(req,res){
 
 	var projectId = req.params.projectId;
 
-	projectModel.findOneAndUpdate({_id:projectId},{$set:req.body},{upsert:true},function(err,projects){
+	projectModel.findOneAndUpdate({_id:projectId},{$set:req.body},{upsert:true , new:true},function(err,projects){
 		console.log("err==========>>>",err);
 		res.status(200).send(projects);
 		console.log("saved console 5",projects);
@@ -219,20 +219,6 @@ projectController.getDeveloperOfProject = function(req , res){
 			else res.status(200).send(foundTeam);
 	})
 }
-
-projectController.getManagerOfProject = function(req , res){
-	console.log("projectId ========>" , req.params.projectId);
-	var projectId = req.params.projectId;
-	projectModel
-	.findOne({_id: projectId})
-	.select('pmanagerId')
-	.populate('pmanagerId')
-	.exec((err , foundManager)=>{
-		if(err) res.send(err)
-			else res.status(200).send(foundManager);
-	})
-}
-
 
 
 projectController.getTaskOfProject = function(req , res){
