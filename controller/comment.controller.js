@@ -2,14 +2,15 @@ var commentModel = require('./../model/comment.model');
 var notificationModel = require('../model/notification.model');
 var taskModel = require('../model/tasks.model')
 var userModel = require('./../model/user.model');
+var sendnotificationModel = require('../model/sendNotification.model');
 var dir = require('node-dir');
 var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 var commentController = {};
 var pushNotification = require('./../service/push-notification.service');
-
 var _ = require('lodash');
+
 commentController.addComment = function(req,res){
 	console.log(req.body);
 	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/"+req.body.taskId+"/comment/");
@@ -42,28 +43,42 @@ commentController.addComment = function(req,res){
 			}
 			comment['images']=fileNames;
 			comment.save(function(err, comment){
-				console.log("comment=====>",comment);
+
 				if (err) {
 					res.status(500).send(err);
 				}
-				console.log("commentid===>",comment.taskId)
+				
 				taskModel
 				.findOne({ _id : comment.taskId})
 				.exec((error, task)=>{
-					console.log("task=======>",task);
+					console.log("task===========>",task);
+					console.log("type=====>",task.type);
+					userModel
+					.find({_id : comment.userId})
+					.exec((err, user)=>{
+						var name = [];
+						for(i=0;i<user.length;i++){
+							name.push(user[i].name);
+						}
+				console.log("name=========>",name);
 					var obj = {
-						"id": "SavedUser.sendTo",
-						"title": "SavedUser.subject",
-						"desc": "SavedUser.content",
+						"subject": "commented on your task",
+						"content": name[0]+" commented on " + task.uniqueId+" "+ task.type+ ".",
+						"sendTo" : task.assignTo,
+						"type": "comment",
 					}
+				
 					console.log("saved object===>",obj);
+					var notification = new sendnotificationModel(obj);
+					notification.save(function(err,SavedUser){
 					notificationModel
-					.find({userId: comment.userId})
-					task.comment.push(comment._id);
-					task.save();
-				    pushNotification.postCode('SavedUser.subject','SavedUser.content',req.session.userarray);
-
+					.find({userId: task.assignTo})
+					.exec((err,user)=>{
+				    pushNotification.postCode(obj.subject,obj.type,[user[0].token]);
+						})
+					})
 					res.status(200).send(comment);
+					})
 				})
 			})
 		}
@@ -95,7 +110,6 @@ commentController.getCommentByUserId = function(req,res){
 	})
 }
 
-
 commentController.getCommentByCommentId = function(req,res){
 	commentModel.findOne({_id: req.params.id},function(err,comment){
 		if (err) {
@@ -104,7 +118,6 @@ commentController.getCommentByCommentId = function(req,res){
 		res.status(200).send(comment);
 	})
 }
-
 
 commentController.deleteCommentByUserId = function(req,res){
 	console.log("req params ==========>",req.body, req.params);
@@ -139,7 +152,6 @@ commentController.getCommentByUserId = function(req,res){
 		}
 	})
 }
-
 
 commentController.getCommentByCommentId = function(req,res){
 	commentModel.findOne({_id: req.params.id},function(err,comment){

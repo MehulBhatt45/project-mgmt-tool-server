@@ -150,50 +150,6 @@ attendenceController.AllemployeeAttendenceByDate = function(req , res){
 	})
 }
 
-// attendenceController.AllemployeeAbsentByDate = function(req , res){
-// 	req.body.date = moment(req.body.date).format("YYYY-MM-DD");
-// 	req.body.date = req.body.date+"T00:00:00.000+0000";
-// 	console.log("date ============>" , req.body.date);
-// 	var p = 0;
-// 	var totalTime = 0;
-// 	var milliSeconds ;
-// 	var user = [];
-// 	attendenceModel.find({date: req.body.date})
-// 	.populate('user_Id')
-// 	.exec(function(err , foundStudent){
-// 		console.log("found Student =================>", foundStudent);
-// 		// console.log("found Student =================>",foundStudent[].user_Id);
-// 		for(var i=0; i<foundStudent.length; i++){
-
-// 			milliSeconds = foundStudent[i].difference;
-// 			console.log("milliSeconds============>" , milliSeconds);
-// 			var  s = milliSeconds/1000;
-// 			var secs = s % 60;
-// 			s = (s - secs) / 60;
-// 			var mins = s % 60;
-// 			var hrs = (s - mins) / 60;
-// 			secs = Math.trunc( secs );
-// 			mins = Math.trunc( mins );
-// 			hrs = Math.trunc( hrs );
-// 			var obj = {
-
-// 				UserName : foundStudent[i].user_Id.name,
-// 				// in_out: [{
-// 				// 	checkIn: new Date(),
-// 				// 	// checkOut:new Date(),
-
-// 				// }],
-// 				Hours : hrs,
-// 				Minutes : mins,
-// 				Seconds: secs
-// 			}
-// 			console.log("obj-----------------------",obj);
-// 			user.push(obj);
-// 			//student[i]= obj;
-// 		}
-// 		res.send(user);
-// 	})
-// }
 
 
 module.exports = attendenceController;

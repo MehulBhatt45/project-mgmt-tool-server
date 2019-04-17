@@ -111,21 +111,58 @@ noticeController.updateNotice = function(req,res){
 }
 
 noticeController.updateNoticeById = function(req,res){
-
 	var noticeId = req.params.noticeId;
 	console.log("notice Id to update=>>>>>",noticeId);
 
 	noticeModel
-	.findOneAndUpdate({_id:noticeId},req.body,{ upsert: true, new: true })
-	.exec((err , notice)=>{
-		if (err) {
-			console.log(err);
+	.findOneAndUpdate({_id:noticeId},req.body,{ upsert: true, new: true },function(err,newNotice){
+
+		if(err){
 			res.status(500).send(err);
+
 		}else{
-			res.status(200).send(notice);
-		}	
+			var uploadPath = path.join(__dirname, "../uploads/notice/"+newNotice._id+"/");
+			console.log(uploadPath);
+			req.file('uploadfile').upload({
+				maxBytes: 500000000,
+				dirname: uploadPath,
+				saveAs: function (__newFileStream, next) {
+					dir.files(uploadPath, function(err, files) {
+						if (err){
+							mkdir(uploadPath, 0775);
+							return next(undefined, __newFileStream.filename);
+						}else {
+							return next(undefined, __newFileStream.filename);
+						}
+					});
+				}
+			}, function(err, files){
+				if (err) {
+					console.log(err);
+					res.status(500).send(err);
+				}else{
+					console.log(files);
+					var fileNames=[];
+					if(files.length>0){
+						_.forEach(files, (gotFile)=>{
+							fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
+						})
+					}
+					noticeModel
+					.findOneAndUpdate({_id: newNotice._id}, {$set: {images: fileNames}}, { upsert: true, new: true })
+					.exec((err , notice)=>{
+						if (err) {
+							console.log(err);
+							res.status(500).send(err);
+						}else{
+							res.status(200).send(notice);
+						}	
+					})
+				}
+			})
+		}
+
 	})
-	
 }
 
 noticeController.deleteNoticeById = function(req,res){
