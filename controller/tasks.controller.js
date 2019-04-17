@@ -133,7 +133,7 @@ tasksController.addTasks = function(req , res){
 									.populate('assignTo createdBy projectId')
 									.exec((err,foundTask)=>{
 										console.log(' found email send===>',foundTask);
-										console.log("cretedby======>",foundTask.createdBy.name);
+										// console.log("cretedby======>",foundTask.createdBy.name);
 										console.log("project title=============>",foundTask.projectId.title);
 										console.log("final----->>>",foundTask.assignTo.email);
 										console.log("priority================================>",foundTask.priority);
@@ -207,9 +207,9 @@ tasksController.addTasks = function(req , res){
 												}else{
 
 													console.log("savedNotification======>>>>>",user);
-											// console.log("id-------->>>>>",user.token);
-											pushNotification.postCode('dynamic title','dynamic content',user.token);
-											res.status(200).send(saveTask);
+											pushNotification.postCode('dynamic title','dynamic content',[user.token]);
+											res.status(200).send(savedTask);
+
 										}
 									})
 
