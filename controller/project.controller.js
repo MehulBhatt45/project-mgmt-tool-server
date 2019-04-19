@@ -161,7 +161,7 @@ projectController.updateProjectById = function(req,res){
 	console.log("projectId====>",projectId);
 	projectModel.findOneAndUpdate({_id:projectId},{$set:req.body},{upsert:true},function(err,projects){
 		console.log("saved console 5",projects);
-		console.log("old TEAM====================================================>",projects.Teams);
+		console.log("old TEAM=================================================>",projects.Teams);
 		var teamLength = projects.Teams.length;
 		console.log("teamLength",teamLength);
 		userDetails = [];
