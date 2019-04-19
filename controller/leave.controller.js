@@ -69,22 +69,34 @@ leaveController.applyLeave = function(req,res){
 									}
 									console.log("pmanagerId array======>",projects);
 									
-											if(duration == "0.5" || "1"){
+											if(duration == "0.5" || duration == "1"){
 												var obj = {
 													"subject" :"Your Team member has applied for leave .",
 													"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for leave on " +leave.startingDate+ ".",
 													"sendTo" : projects,
 													"type" : "leave",
-
 												} 
+												// var obj1 = {
+												// 	"subject" :"Your Team member has applied for leave .",
+												// 	"content" : "Team member of" +leave.name+ "</strong> has applied for leave on " +leave.startingDate+ ".",
+												// 	"sendTo" : projects,
+												// 	"type" : "leave",
+												// } 
+												// Team member of (project name) (if more than one project) and (another project name) applied for leave from (From date) to (To date) or applied leave from (single day leave date).
 											}else{
 												var obj = {
 													"subject" :"Your Team member has applied for leave .",
 													"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for leave on " +leave.startingDate+ "to" +leave.endingDate+ ".",
 													"sendTo" : projects,
 													"type" : "leave",
-
 												} 
+												// var obj1 = {
+												// 	"subject" :"Your Team member has applied for leave .",
+												// 	"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for leave on " +leave.startingDate+ "to" +leave.endingDate+ ".",
+												// 	"sendTo" : projects,
+												// 	"type" : "leave",
+
+												// } 
 											}
 											console.log("obj==================>",obj);
 											var notification = new sendnotificationModel(obj);
@@ -104,10 +116,9 @@ leaveController.applyLeave = function(req,res){
 														console.log("length===>",user.length);
 														for(i=0;i<user.length;i++){
 															req.session.userarray.push(req.session.user[i].token);
-															console.log("arrayyyy===>");
 															console.log("token array======>",req.session.userarray);
 														}
-														pushNotification.postCode(obj.subject,obj.content,req.session.userarray);
+														pushNotification.postCode(obj.subject,obj.type,req.session.userarray);
 													}
 												})
 												
