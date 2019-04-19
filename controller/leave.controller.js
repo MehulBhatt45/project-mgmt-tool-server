@@ -14,16 +14,17 @@ var fs = require('fs');
 var dir = require('node-dir');
 var _ = require('lodash');
 var pushNotification = require('./../service/push-notification.service');
-
+var mongoose = require('mongoose');
 
 leaveController.applyLeave = function(req,res){
+	console.log("nthi mdtu ke mde che", req.body);
 	var leave = new leaveModel(req.body);
-	console.log("nthi mdtu ke mde che", leave);
 	var duration = leave.leaveDuration;
 	leave.save(function(err,leave){
 		if(err) {
 			res.status(500).send(err)
 		}else{	
+			console.log("APPLY LEAVE++++++===================>", leave);
 				var uploadPath = path.join(__dirname, "../uploads/"+leave._id+"/");
 				console.log("upload path=======<",uploadPath);
 				req.file('attechment').upload({
@@ -59,9 +60,10 @@ leaveController.applyLeave = function(req,res){
 								res.status(500).send(err);
 							}else{
 								projectModel
-								.find({Teams : leave.id})
+								.find({Teams : mongoose.Types.ObjectId(leave.id)})
 								.exec((err,project)=>{
 									console.log("projects=========>",project);
+									console.log("uniqueId==============================>",project.uniqueId)
 									projects = [];
 									for(i=0;i<project.length;i++){
 										console.log("push");
@@ -72,32 +74,71 @@ leaveController.applyLeave = function(req,res){
 											if(duration == "0.5" || duration == "1"){
 												var obj = {
 													"subject" :"Your Team member has applied for leave .",
-													"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for leave on " +leave.startingDate+ ".",
+													"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for leave on " +req.body.startingDate+ ".",
 													"sendTo" : projects,
 													"type" : "leave",
 												} 
-												// var obj1 = {
-												// 	"subject" :"Your Team member has applied for leave .",
-												// 	"content" : "Team member of" +leave.name+ "</strong> has applied for leave on " +leave.startingDate+ ".",
-												// 	"sendTo" : projects,
-												// 	"type" : "leave",
-												// } 
-												// Team member of (project name) (if more than one project) and (another project name) applied for leave from (From date) to (To date) or applied leave from (single day leave date).
+
 											}else{
 												var obj = {
-													"subject" :"Your Team member has applied for leave .",
-													"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for leave on " +leave.startingDate+ "to" +leave.endingDate+ ".",
+													"subject" :"Leave Application",
+													"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for leave on " +req.body.startingDate+ "to" +req.body.endingDate+ ".",
 													"sendTo" : projects,
 													"type" : "leave",
-												} 
-												// var obj1 = {
-												// 	"subject" :"Your Team member has applied for leave .",
-												// 	"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for leave on " +leave.startingDate+ "to" +leave.endingDate+ ".",
-												// 	"sendTo" : projects,
-												// 	"type" : "leave",
 
-												// } 
+												} 
+												 
 											}
+
+											
+											var admin = 'admin';
+									
+										userModel
+										.findOne({userRole : admin})
+										.exec((err, user)=>{
+											if (err) {
+												res.status(500).send(err);
+											}else{
+												console.log("admin===========>",user);
+												notificationModel
+												.find({userId : user._id})
+												.exec((err,admin)=>{
+													if (err){
+														res.status(500).send(err)
+													}else{
+														if(duration == "0.5" || "1"){
+															var obj1 = {
+													"subject" :"Your Team member has applied for leave .",
+													"content" : leave.name+"Team member of " +project[0].uniqueId+ "(project name) has applied for leave on " +req.body.startingDate+ ".",
+													"sendTo" : user._id,
+													"type" : "leave",
+												} 
+											}else{
+												var obj1 = {
+													"subject" :"Leave Application",
+													"content" :  leave.name+"Team member of " +project[0].uniqueId+ "(project name) has applied for leave on " +req.body.endingDate+ "to" +req.body.endingDate+ ".",
+													"sendTo" : user._id,
+													"type" : "leave",
+												}
+											}
+												console.log("obj1==============================>",obj1);
+											var notification = new sendnotificationModel(obj1);
+											notification.save(function(err,SavedUser){
+
+											})
+														console.log("token====>",admin);
+													console.log("admin tokjen===>",admin[0].token)
+
+												pushNotification.postCode(obj1.subject,obj1.type,[admin[0].token]);
+													}
+												})
+											}
+
+										})
+
+									// })
+
+
 											console.log("obj==================>",obj);
 											var notification = new sendnotificationModel(obj);
 											notification.save(function(err,savedNotification){
@@ -352,7 +393,6 @@ leaveController.getAllLeavesApps = function(req,res){
 }
 
 leaveController.updateLeaves = function(req,res){
-	
 	console.log("req boddy =======++>" , req.body);
 	console.log("req boddy1 =======++>" , req.params);
 	console.log("final date=============>",req.body.startingDate);
@@ -401,7 +441,7 @@ leaveController.updateLeaves = function(req,res){
 									userrole.push(users[i].userRole)
 									console.log("projectManager=======>",userrole);
 								}
-								if(userrole == 'projectManager'){
+								// if(userrole == 'projectManager'){
 									if( duration == "1" || duration == "0.5"){
 										var obj2 = {
 											"subject" : "approved leave", 
@@ -433,8 +473,7 @@ leaveController.updateLeaves = function(req,res){
 										})
 
 									})
-								}
-
+								// }
 							}
 						})
 					}
@@ -469,7 +508,7 @@ leaveController.updateLeaves = function(req,res){
 						res.status(500).send(err);
 					}else{
 						console.log("useer==>",user);
-					pushNotification.postCode(obj1.subject,obj1.content,[user.token]);
+					pushNotification.postCode(obj1.subject,obj1.type,[user.token]);
 				}
 			})
 				console.log("Leave Accepted");
@@ -573,7 +612,7 @@ leaveController.updateLeaves = function(req,res){
 								res.status(500).send(err);
 							}else{
 								console.log("admin===========>",user);
-					pushNotification.postCode(obj2.subject,obj2.content,[user.token]);
+					pushNotification.postCode(obj2.subject,obj2.type,[user.token]);
 				}
 			})
 
@@ -608,7 +647,7 @@ leaveController.updateLeaves = function(req,res){
 					}else{
 
 						console.log("sucess");
-						pushNotification.postCode(obj1.subject,obj1.content,[user.token]);
+						pushNotification.postCode(obj1.subject,obj1.type,[user.token]);
 					}
 				})
 			})

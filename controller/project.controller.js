@@ -2,6 +2,7 @@ var projectModel = require('../model/project.model');
 var notificationModel = require('../model/notification.model'); 
 var sendnotificationModel = require('../model/sendNotification.model');
 var userModel = require('../model/user.model');
+var sprintModel = require('../model/sprint.model');
 let projectController = {};
 var dir = require('node-dir');
 var mkdir = require('mkdirp');
@@ -11,9 +12,8 @@ var _ = require('lodash');
 var async = require("async");
 var pushNotification = require('./../service/push-notification.service');
 
+
 projectController.addProject = function(req,res){
-	// console.log("req files =============>" , req.files);
-	// req.body.Teams = req.body.Teams.split(',');
 	console.log("req body",req.body);
 	var flag = 5;
 	projectModel.find({}).exec((err , allProjects)=>{
@@ -64,6 +64,17 @@ projectController.addProject = function(req,res){
 									console.log(err);
 									res.status(500).send(err);
 								}else{
+
+									var sprintdata={
+										projectId:savedProject._id,
+										startDate:"",
+										endDate:"",
+										title:savedProject.uniqueId+'Sprint-1',
+										status:'Future',
+										goal:''
+									}
+									var newSprint = new sprintModel(sprintdata);
+									newSprint.save();
 									res.status(200).send(project);
 								}	
 							})
