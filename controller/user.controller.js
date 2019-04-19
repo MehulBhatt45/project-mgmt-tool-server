@@ -228,6 +228,7 @@ userController.getAllUsersByProjectManager = function(req, res){
 	})
 }
 
+
 userController.logIn = function(req,res){
 	console.log("req.method" , req.body);
 	if(req.method == 'POST' && req.body.email && req.body.password){
@@ -252,11 +253,11 @@ userController.logIn = function(req,res){
 						return res.status(200).send({data:user,
 							token: token});
 					}else{
-						return res.status(403).send( { errMsg : 'Password Incorrect' });	
+						return res.status(400).send( { errMsg : 'Password Incorrect' });	
 					}
 				});
 			}else{
-				return res.status(403).send( { errMsg : 'User not found' });
+				return res.status(403).send( { errMsg : 'User Email is wrong' });
 			}
 		});
 	}else{
@@ -266,7 +267,7 @@ userController.logIn = function(req,res){
 
 
 userController.changeProfileByUserId = function(req,res){
-	console.log("userId is==============>");
+	console.log("userId is==============>", req.file('profilePhoto'));
 	var userId = req.params.id
 	var uploadPath = path.join(__dirname, "../uploads/"+userId+"/");
 	console.log("IN UPDATE PROFILE=============>",uploadPath);
@@ -346,13 +347,13 @@ userController.forgotPassword = function (req,res) {
 				service: 'gmail',
 
 				auth: {
-					user: 'raoinfotechp@gmail.com',
-					pass: 'raoinfotech@123'
+					user: 'tnrtesting2394@gmail.com',
+					pass: 'raoinfotech09'
 				}
 			});
 
 			var mailOptions = {
-				from: 'raoinfotechp@gmail.com',
+				from: 'tnrtesting2394@gmail.com',
 				to: req.body.email,
 				subject: 'Localhost Forgot Password Request',
 				text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="https://raoinfotech-conduct.tk/#/forgotpwd/'+ user.temporarytoken,

@@ -6,9 +6,9 @@ var NoticeSchema = new Schema({
 	desc: {type:String , required:true},
 	images:[{type: String}],
     published:{type:Boolean},
-    expireon:{type:Date},
+    expireon:{type:String},
     createdBy: { type: Schema.Types.ObjectId, ref: 'User'},
-},{timestamps: true});
+},);
 
 
 module.exports = mongoose.model('Notice',NoticeSchema);

@@ -7,7 +7,8 @@ var SprintSchema = new Schema({
 	projectId:{ type: Schema.Types.ObjectId, ref: 'Project', required: true },	
 	startDate:{type:Date},
 	endDate:{type:Date},
-	duration: {type:String},
+	duration: {type:Number},
+	status:{type:String , default:'Future'},
 },{timestamps: true});
 
 

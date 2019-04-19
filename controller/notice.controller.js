@@ -68,8 +68,8 @@ noticeController.updateNoticeById = function(req,res){
 
 		}else{
 			var uploadPath = path.join(__dirname, "../uploads/notice/"+newNotice._id+"/");
-			console.log("pathhhhhh==>",uploadPath);
-			req.file('image').upload({
+			console.log(uploadPath);
+			req.file('images').upload({
 				maxBytes: 500000000,
 				dirname: uploadPath,
 				saveAs: function (__newFileStream, next) {
@@ -110,7 +110,6 @@ noticeController.updateNoticeById = function(req,res){
 
 	})
 }
-
 noticeController.getAllNotice = function(req,res){
 
 	noticeModel.find({}).exec(function(err,Notices){
@@ -120,7 +119,6 @@ noticeController.getAllNotice = function(req,res){
 		}
 	})
 }
-
 
 noticeController.getNoticeById = function(req,res){
 
@@ -163,8 +161,6 @@ noticeController.updateNotice = function(req,res){
 		}
 	})
 }
-
-
 
 noticeController.deleteNoticeById = function(req,res){
 
