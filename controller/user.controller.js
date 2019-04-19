@@ -91,7 +91,7 @@ userController.getSingleUser = function(req, res){
 		if(err){
 			res.status(500).send(err);
 		}
-		console.log(getuser)
+		console.log(getuser);
 		res.status(200).send(getuser);
 	})
 }

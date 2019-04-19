@@ -4,8 +4,6 @@ var sprintController = {};
 
 sprintController.addSprint = function (req,res) {
 
-	req.body.duration = 0;
-
 	var sprint = new sprintModel(req.body);
 
 	sprint.save(function(err,sprint){
@@ -114,7 +112,7 @@ sprintController.startSprint = function(req,res){
 	}
 	console.log(startdata);
 
-	sprintModel.findOneAndUpdate({_id:req.body.sprintId},{$set:startdata },function(err,updateSprint){
+	sprintModel.findOneAndUpdate({_id:req.body._id},{$set:startdata },function(err,updateSprint){
 		if(err){
 			res.status(500).send(err);
 		}

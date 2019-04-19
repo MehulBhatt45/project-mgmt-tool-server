@@ -1,3 +1,4 @@
+
 var tasksModel = require('../model/tasks.model');
 var projectModel = require('../model/project.model');
 var userModel = require('../model/user.model');
@@ -132,7 +133,7 @@ tasksController.addTasks = function(req , res){
 									.populate('assignTo createdBy projectId')
 									.exec((err,foundTask)=>{
 										console.log(' found email send===>',foundTask);
-										console.log("cretedby======>",foundTask.createdBy.name);
+										// console.log("cretedby======>",foundTask.createdBy.name);
 										console.log("project title=============>",foundTask.projectId.title);
 										console.log("final----->>>",foundTask.assignTo.email);
 										console.log("priority================================>",foundTask.priority);
@@ -190,9 +191,13 @@ tasksController.addTasks = function(req , res){
 											"type" : "task",
 											"priority" : foundTask.priority,
 											"projectId" : projectId,
+											"createdAt":foundTask.createdAt,
 										} 
 										console.log("obj==================>",obj);
+										const timePeriod = obj.createdAt;	
+										console.log("timeeeeeeeeeeeeeeeeeeeeeeeeeee",timePeriod);
 										var notification = new sendnotificationModel(obj);
+										console.log("kaik notification mdi jaje==========<<>>>>>>>>>>>",notification);
 										notification.save(function(err,savedNotification){
 											if(err){
 												res.status(500).send(err);		
@@ -204,12 +209,13 @@ tasksController.addTasks = function(req , res){
 												if (err) {
 													res.status(500).send(err);
 												}else{
-
 													console.log("savedNotification======>>>>>",user);
-											// console.log("id-------->>>>>",user.token);
-											pushNotification.postCode('dynamic title','dynamic content',user.token);
-										}
-									})
+													pushNotification.postCode(obj.subject,obj.type,[user.token]);
+
+													res.status(200).send(savedTask);
+
+												}
+											})
 
 
 											
@@ -217,8 +223,8 @@ tasksController.addTasks = function(req , res){
 									})
 								})
 
-							}
-						})
+}
+})
 
 })
 }else{
@@ -327,9 +333,11 @@ tasksController.addTasks = function(req , res){
 				"sendTo" : foundTask.assignTo._id,
 				"type" : "task",
 				"priority" : foundTask.priority,
+				"createdAt":foundTask.createdAt,
 			} 
 			console.log("obj==================>",obj);
 			var notification = new sendnotificationModel(obj);
+			console.log("notificationnnnnnnnnnnnnnnnnnnnn=========>",notification);
 			notification.save(function(err,savedNotification){
 				if(err){
 					res.status(500).send(err);		
@@ -520,3 +528,4 @@ tasksController.deleteTaskById = function(req  , res){
 	});
 }
 module.exports = tasksController;
+
