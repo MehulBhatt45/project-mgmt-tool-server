@@ -123,7 +123,7 @@ noticeController.updateNoticeById = function(req,res){
 		}else{
 			var uploadPath = path.join(__dirname, "../uploads/notice/"+newNotice._id+"/");
 			console.log(uploadPath);
-			req.file('uploadfile').upload({
+			req.file('images').upload({
 				maxBytes: 500000000,
 				dirname: uploadPath,
 				saveAs: function (__newFileStream, next) {

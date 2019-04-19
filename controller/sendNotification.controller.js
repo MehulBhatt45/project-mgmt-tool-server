@@ -76,7 +76,7 @@ sendnotificationController.addNotification = function(req, res){
 sendnotificationController.getNotificationByUserId = function(req,res){
 	var sendTo = req.params.id;
 	sendnotificationModel.find({sendTo : sendTo})
-	.populate('sendTo , projectId, createdAt')
+	.populate('sendTo , projectId')
 	.exec((err,user)=>{
 		if (err) {
 			res.status(500).send(err);
