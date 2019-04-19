@@ -212,9 +212,9 @@ tasksController.addTasks = function(req , res){
 												if (err) {
 													res.status(500).send(err);
 												}else{
-
 													console.log("savedNotification======>>>>>",user);
-													pushNotification.postCode('dynamic title','dynamic content',[user.token]);
+													pushNotification.postCode(obj.subject,obj.type,[user.token]);
+
 													res.status(200).send(savedTask);
 
 												}
@@ -506,7 +506,7 @@ tasksController.updateTaskStatusCompleted = function(req , res){
 	console.log("hey it works");
 	var taskId = req.body._id;
 	console.log("req . body of complete ======>" , req.body);
-	if(req.body.status==='complete'){
+	if(req.body.status ==='complete'){
 		tasksModel.findOne({_id: taskId}).exec((err, task)=>{
 			if (err) res.status(500).send(err);
 			else if(task){
@@ -532,20 +532,3 @@ tasksController.deleteTaskById = function(req  , res){
 }
 module.exports = tasksController;
 
-
-
-
-
-
-
-           //                                  notificationModel
-											// .findOne({assignTo : savedNotification.id})
-											// .exec((err, user)=>{
-											// 	if (err) {
-											// 		res.status(500).send(err);
-											// 	}else{
-											// console.log("savedNotification======>>>>>",savedNotification);
-											// console.log("id-------->>>>>",savedNotification.token);
-											// pushNotification.postCode('dynamic title','dynamic content',savedNotification.token);
-											// })
-											// res.status(200).send(savedTask);
