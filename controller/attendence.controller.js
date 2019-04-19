@@ -120,7 +120,8 @@ attendenceController.AllemployeeAttendenceByDate = function(req , res){
 	.exec(function(err , foundStudent){
 		console.log("found Student =================>", foundStudent);
 		// console.log("found Student =================>",foundStudent[].user_Id);
-		for(var i=0; i<foundStudent.length; i++){
+		const studentLength = foundStudent.length;
+		for(var i = 0; i < studentLength; i++) {
 
 			milliSeconds = foundStudent[i].difference;
 			console.log("milliSeconds============>" , milliSeconds);

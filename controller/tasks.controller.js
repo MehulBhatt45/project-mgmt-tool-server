@@ -191,9 +191,13 @@ tasksController.addTasks = function(req , res){
 											"type" : "task",
 											"priority" : foundTask.priority,
 											"projectId" : projectId,
+											"createdAt":foundTask.createdAt,
 										} 
 										console.log("obj==================>",obj);
+										const timePeriod = obj.createdAt;	
+										console.log("timeeeeeeeeeeeeeeeeeeeeeeeeeee",timePeriod);
 										var notification = new sendnotificationModel(obj);
+										console.log("kaik notification mdi jaje==========<<>>>>>>>>>>>",notification);
 										notification.save(function(err,savedNotification){
 											if(err){
 												res.status(500).send(err);		
@@ -207,11 +211,11 @@ tasksController.addTasks = function(req , res){
 												}else{
 
 													console.log("savedNotification======>>>>>",user);
-											pushNotification.postCode('dynamic title','dynamic content',[user.token]);
-											res.status(200).send(savedTask);
+													pushNotification.postCode('dynamic title','dynamic content',[user.token]);
+													res.status(200).send(savedTask);
 
-										}
-									})
+												}
+											})
 
 
 											
@@ -329,9 +333,11 @@ tasksController.addTasks = function(req , res){
 				"sendTo" : foundTask.assignTo._id,
 				"type" : "task",
 				"priority" : foundTask.priority,
+				"createdAt":foundTask.createdAt,
 			} 
 			console.log("obj==================>",obj);
 			var notification = new sendnotificationModel(obj);
+			console.log("notificationnnnnnnnnnnnnnnnnnnnn=========>",notification);
 			notification.save(function(err,savedNotification){
 				if(err){
 					res.status(500).send(err);		
