@@ -207,7 +207,8 @@ tasksController.addTasks = function(req , res){
 
 													console.log("savedNotification======>>>>>",user);
 											// console.log("id-------->>>>>",user.token);
-											pushNotification.postCode('dynamic title','dynamic content',user.token);
+											pushNotification.postCode('dynamic title','dynamic content',[user.token]);
+											res.status(200).send(savedTask);
 										}
 									})
 

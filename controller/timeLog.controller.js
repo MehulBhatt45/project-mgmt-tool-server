@@ -67,6 +67,7 @@ timeLogController.addTimeLog = function(req,res){
 							console.log('updatedTask.counter============>',updatedTask.count);
 							console.log('updatedTask.difference difffff================>',updatedTask.difference);
 							updatedTask.save(function(err, upSt){
+								// timeLogModel.findOneAndUpdate({_id:updatedTask._id},)
 								if (err) res.send(err);
 								console.log("updatedTask != null");
 								console.log('upSt======================<',upSt);
