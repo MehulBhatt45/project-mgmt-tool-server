@@ -1,4 +1,7 @@
 var projectModel = require('../model/project.model');
+var notificationModel = require('../model/notification.model'); 
+var sendnotificationModel = require('../model/sendNotification.model');
+var userModel = require('../model/user.model');
 var sprintModel = require('../model/sprint.model');
 let projectController = {};
 var dir = require('node-dir');
@@ -6,6 +9,9 @@ var mkdir = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 var _ = require('lodash');
+var async = require("async");
+var pushNotification = require('./../service/push-notification.service');
+
 
 projectController.addProject = function(req,res){
 	console.log("req body",req.body);
@@ -140,20 +146,87 @@ projectController.deleteProjectById = function(req,res){
 		console.log("saved console 4",projects);
 		res.status(200).send(projects);
 	})
-
 }
 
 projectController.updateProjectById = function(req,res){
-
+	console.log("REQQQQQQ===========>",req.body);
+	console.log("New Team===================================>",req.body.Teams)
+	// console.log("DELETE=========================================>",req.body.delete);
+	console.log("teamLength==========>",req.body.Teams.length);
+	var updatedTeam = req.body.Teams.length;
 	var projectId = req.params.projectId;
-
+	var deleteTeam = req.body.delete;
+	var addTeam = req.body.add;
+	console.log("deleteTeam===>",deleteTeam);
+	console.log("projectId====>",projectId);
 	projectModel.findOneAndUpdate({_id:projectId},{$set:req.body},{upsert:true},function(err,projects){
-		console.log("err==========>>>",err);
-			console.log("team id===========>",projects.Teams);
 		console.log("saved console 5",projects);
+		console.log("old TEAM=================================================>",projects.Teams);
+		var teamLength = projects.Teams.length;
+		console.log("teamLength",teamLength);
+		userDetails = [];
+		userModel
+		.find({_id : deleteTeam[0]},function(err,foundUser){
+			console.log("name==============>",foundUser[0].name);
+			async.forEach(foundUser, function (item, callback){ 
+    		console.log("item------>",item)
+    		userDetails.push(item);
+    		console.log("team========>",userDetails);
+    		console.log("name=========================>",userDetails[0].name);
+    		callback(); 
+    	});  
+		userModel
+		.find({_id : addTeam})
+		.exec((err,add)=>{
+
+		if(teamLength != updatedTeam){
+			if(teamLength > updatedTeam){
+				console.log("deleteTeam member");
+				var obj = {
+					"subject" :"Team member terminated.",
+					"content" : "For the notes, "+userDetails[0].name+ " is terminated from "+req.body. uniqueId+ " team as "+userDetails[0].userRole+ ".",
+					// "content" : "Team member terminated from <strong>"+req.body.uniqueId + "</strong> team.",
+					"sendTo" : req.body.Teams,
+					"type" : "other",
+				} 
+			}else if(teamLength < updatedTeam){
+				console.log("add Team member");
+				var obj = {
+					"subject" :"New team member added.",
+					"content" : "For the notes, "+add[0].name+ " is added in "+req.body. uniqueId+ " team as "+add[0].userRole+ ".",
+					// "content" : "New Team member added in "+req.body. uniqueId+ " team.",
+					"sendTo" : req.body.Teams,
+					"type" : "other",
+				} 
+			}
+			var notification = new sendnotificationModel(obj);
+			notification.save(function(err,savedNotification){
+				if(err){
+			res.status(500).send(err);		
+		}
+		console.log("TEAM============>",req.body.Teams);
+		var Teams = req.body.Teams;
+		team = [];
+	notificationModel
+    .find({userId : Teams}, function(err, foundUser){
+    	console.log("TOKEN==================>",foundUser);
+    	req.session.user = foundUser;
+    	req.session.userarray = [];
+    	async.forEach(foundUser, function (item, callback){ 
+    		console.log("item------>",item)
+    		team.push(item.token);
+    		console.log("team========>",team);
+    		callback(); 
+    	});  
+    	pushNotification.postCode(obj.subject,obj.type,team);
+    })
+})
+		}
+	})
+		// })
+	})
 		res.status(200).send(projects);
 	})
-
 }
 
 projectController.getAllProjectOrderByTitle = function(req,res){
@@ -164,7 +237,6 @@ projectController.getAllProjectOrderByTitle = function(req,res){
 		res.send(project);
 		console.log(project);
 	})
-
 }
 
 projectController.uploadFilesToFolder = function(req, res){
@@ -233,6 +305,7 @@ projectController.getDeveloperOfProject = function(req , res){
 	})
 }
 
+
 projectController.getTaskOfProject = function(req , res){
 	console.log("projectId ========>" , req.params.projectId);
 	var projectId = req.params.projectId;
@@ -244,8 +317,6 @@ projectController.getTaskOfProject = function(req , res){
 			else res.status(200).send(foundTeam);
 	})
 }
-
-
 
 projectController.getProjectByPmanagerId = function(req, res){
 	var pmanagerId = req.params.pmanagerId;

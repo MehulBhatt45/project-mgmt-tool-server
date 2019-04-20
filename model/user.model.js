@@ -5,7 +5,10 @@ var Schema = mongoose.Schema;
 var UserSchema = new Schema({
     name: String,
     userRole: {type:String, default: 'user'},
-    email: {type:String},
+    email: {
+        type: String,
+        match: [/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, `Please fill valid email address`],
+    },
     password: String,
     joiningDate: Date,
     phone: String,
@@ -14,8 +17,9 @@ var UserSchema = new Schema({
     CV: String,
     projects:[{type:Schema.Types.ObjectId, ref: 'Project'}],
     tasks: [{type: Schema.Types.ObjectId , ref: 'Tasks'}],
- 
+    
 },{timestamps: true});
+
 
 
 UserSchema.pre('save', function(next) {
@@ -40,5 +44,6 @@ UserSchema.methods.comparePassword = function(userPassword, password, cb) {
         cb(null, isMatch);
     });
 };
+
 
 module.exports = mongoose.model('User',UserSchema);

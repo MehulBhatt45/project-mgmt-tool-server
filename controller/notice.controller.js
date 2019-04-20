@@ -56,60 +56,6 @@ noticeController.addNotice = function(req,res){
 	});
 }
 
-
-noticeController.getAllNotice = function(req,res){
-
-	noticeModel.find({}).exec(function(err,Notices){
-		if (err) res.status(500).send(err);
-		else{
-			res.status(200).send(Notices);
-		}
-	})
-}
-
-
-noticeController.getNoticeById = function(req,res){
-
-	noticeId = req.params.noticeId;
-
-	noticeModel.findOne({_id:noticeId}).exec(function(err,Notices){
-		if (err) res.status(500).send(err);
-		else{
-			res.status(200).send(Notices);
-		}
-	})
-}
-
-noticeController.updateNotice = function(req,res){
-
-	noticeModel.find({}).exec(function(err,notices){
-		if(err) res.status(500).send(err);
-		else{
-			var q = new Date();
-			var m = q.getMonth();
-			var d = q.getDay();
-			var y = q.getFullYear();
-			var date = new Date();
-			console.log("notice length",notices.length);
-
-			for(i=0;i<notices.length;i++)
-			{
-
-				console.log(notices[i].expireon);
-				console.log(date);
-				if (notices[i].expireon>date){
-				}
-				else{
-					notices[i].published = false;
-					notices[i].save();
-				}
-
-
-			}
-		}
-	})
-}
-
 noticeController.updateNoticeById = function(req,res){
 	var noticeId = req.params.noticeId;
 	console.log("notice Id to update=>>>>>",noticeId);
@@ -162,6 +108,57 @@ noticeController.updateNoticeById = function(req,res){
 			})
 		}
 
+	})
+}
+noticeController.getAllNotice = function(req,res){
+
+	noticeModel.find({}).exec(function(err,Notices){
+		if (err) res.status(500).send(err);
+		else{
+			res.status(200).send(Notices);
+		}
+	})
+}
+
+noticeController.getNoticeById = function(req,res){
+
+	noticeId = req.params.noticeId;
+
+	noticeModel.findOne({_id:noticeId}).exec(function(err,Notices){
+		if (err) res.status(500).send(err);
+		else{
+			res.status(200).send(Notices);
+		}
+	})
+}
+
+noticeController.updateNotice = function(req,res){
+
+	noticeModel.find({}).exec(function(err,notices){
+		if(err) res.status(500).send(err);
+		else{
+			var q = new Date();
+			var m = q.getMonth();
+			var d = q.getDay();
+			var y = q.getFullYear();
+			var date = new Date();
+			console.log("notice length",notices.length);
+
+			for(i=0;i<notices.length;i++)
+			{
+
+				console.log(notices[i].expireon);
+				console.log(date);
+				if (notices[i].expireon>date){
+				}
+				else{
+					notices[i].published = false;
+					notices[i].save();
+				}
+
+
+			}
+		}
 	})
 }
 

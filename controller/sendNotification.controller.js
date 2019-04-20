@@ -5,7 +5,6 @@ var userModel = require('../model/user.model');
 let sendnotificationController = {};
 var pushNotification = require('./../service/push-notification.service');
 
-
 sendnotificationController.addNotification = function(req, res){
 	var temp =  req.body.sendTo;
 	console.log("send to ===>" , temp);
@@ -71,7 +70,6 @@ sendnotificationController.addNotification = function(req, res){
 		}
 	})
 }
-
 
 sendnotificationController.getNotificationByUserId = function(req,res){
 	var sendTo = req.params.id;
