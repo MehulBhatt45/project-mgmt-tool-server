@@ -144,11 +144,48 @@ attendenceController.AllemployeeAttendenceByDate = function(req , res){
 			}
 			console.log("obj-----------------------",obj);
 			user.push(obj);
-			//student[i]= obj;
 		}
 		res.send(user);
 	})
 }
+
+// attendenceController.getAttendenceInInterval = function(req , res){
+// 	req.body.fromDate = moment(req.body.fromDate).format("YYYY-MM-DD");
+// 	fromDate = req.body.fromDate+"T00:00:00.000Z";
+// 	req.body.toDate = moment(req.body.toDate).format("YYYY-MM-DD");
+// 	toDate = req.body.toDate+"T00:00:00.000Z";
+// 	var j;
+// 	var k = 0;
+// 	count = 0;
+// 	var nextDate;
+// 	var allItems = [];
+// 	var items = {
+// 		date: "",
+// 		records: []
+// 	}
+
+// 	console.log("From Date ========>" , fromDate);
+// 	console.log("to Date ========>" , toDate);
+// 	attendenceModel.find({date : { $gte: fromDate, $lte: toDate }})
+// 	.populate('user_Id')
+// 	.exec(function(err , foundUser){
+// 		console.log("foundUser=================>",foundUser);
+		
+// 		console.log("Found User Length ===============>" , foundUser.length);
+// 		items.date = foundUser[0].date;
+// 		allItems[count] = items;
+// 		count++
+// 		var currentDate = foundUser[0].date;
+		
+// 	res.send(allItems);
+// 	for(i = 0; i<allItems.length; i++){
+// 		console.log("hiii");
+// 	}
+		
+// 		res.send(allItems);
+// 	})
+// }
+
 
 
 
