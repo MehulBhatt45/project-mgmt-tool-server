@@ -11,11 +11,14 @@ var https = require('https');
 
 
 // https
+
 // var privateKey  = fs.readFileSync('/var/www/html/Project-managment/.well-known/acme-challenge/private.key');
 // var certificate = fs.readFileSync('/var/www/html/Project-managment/.well-known/acme-challenge/certificate.crt');
+
 // var privateKey  = fs.readFileSync('/var/www/html/project-mgmt-tool-client/.well-known/acme-challenge/private.key');
 // var certificate = fs.readFileSync('/var/www/html/project-mgmt-tool-client/.well-known/acme-challenge/certificate.crt');
 // var credentials = {key: privateKey, cert: certificate};
+
 
 /**
  * Get port from environment and store in Express.
@@ -28,7 +31,9 @@ app.set('port', port);
  * Create HTTP server.
  */
 
+
 // var server = https.createServer(credentials, app);
+
 var server = http.createServer(app);
 // var secureServer = https.createServer(credentials, app);
 // secureServer.listen(443);
