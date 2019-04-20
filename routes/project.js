@@ -18,5 +18,4 @@ router.get('/get-project-by-pmanagerId/:pmanagerId' , projectController.getProje
 router.get('/get-task-of-project/:projectId',projectController.getTaskOfProject);
 
 
-
 module.exports = router;
