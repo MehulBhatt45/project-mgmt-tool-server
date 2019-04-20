@@ -305,6 +305,7 @@ projectController.getDeveloperOfProject = function(req , res){
 	})
 }
 
+
 projectController.getTaskOfProject = function(req , res){
 	console.log("projectId ========>" , req.params.projectId);
 	var projectId = req.params.projectId;

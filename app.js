@@ -61,7 +61,6 @@ app.set('superSecret', 'pmt');
 
 mongoose.connect('mongodb://localhost:27017/projectMngtTool', {useNewUrlParser: true})
 
-
 .then(() => console.log("Connected"))
 .catch(err => console.log(err));
 
@@ -91,7 +90,7 @@ app.use('/bug',bugRouter);
 app.use('/issue',issueRouter);
 app.use('/reque',requeRouter);
 app.use('/comment',commentRouter);
-app.use('/user', userRouter); 
+app.use('/user', userRouter); 	
 app.use('/employee',employeeRouter);
 app.use('/notice',noticeRouter);
 // app.use('/tasks' , tasksRouter);

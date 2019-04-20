@@ -503,7 +503,7 @@ tasksController.updateTaskStatusCompleted = function(req , res){
 	console.log("hey it works");
 	var taskId = req.body._id;
 	console.log("req . body of complete ======>" , req.body);
-	if(req.body.status==='complete'){
+	if(req.body.status ==='complete'){
 		tasksModel.findOne({_id: taskId}).exec((err, task)=>{
 			if (err) res.status(500).send(err);
 			else if(task){
