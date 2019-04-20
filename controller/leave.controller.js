@@ -70,12 +70,14 @@ leaveController.applyLeave = function(req,res){
 									projects.push(project[i].pmanagerId);
 								}
 								console.log("pmanagerId array======>",projects);
+								var object = [].concat.apply([],projects);
+								console.log("OBJECT++++++++++++>",object);
 								
 								if(duration == "0.5" || duration == "1"){
 									var obj = {
 										"subject" :"Your Team member has applied for leave .",
 										"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " + req.body.leaveDuration+ " day leave (" +req.body.startingDate+ ")",
-										"sendTo" : projects,
+										"sendTo" : object,
 										"type" : "leave",
 									} 
 									
@@ -83,13 +85,18 @@ leaveController.applyLeave = function(req,res){
 									var obj = {
 										"subject" :"Your Team member has applied for leave .",
 										"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " +req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
-										"sendTo" : projects,
+										"sendTo" : object,
 										"type" : "leave",
 									} 
 								}
 								console.log("obj==================>",obj);
-								var notification1 = new sendnotificationModel(obj);
-								notification1.save(function(err,savedNotification){
+								var notification = new sendnotificationModel(obj);
+								notification.save(function(err,SavedUser){
+									if(err){
+										console.log(err);
+									// 	// res.status(500).send(err);
+									}else{
+									console.log("saveData=========================------->",SavedUser);
 									var object = [].concat.apply([],projects);
 									console.log("USERRRRR========>",object);
 									notificationModel
@@ -111,6 +118,7 @@ leaveController.applyLeave = function(req,res){
 											pushNotification.postCode(obj.subject,obj.type,req.session.userarray);
 										}
 									})
+									}
 									
 								})
 								
@@ -147,7 +155,7 @@ leaveController.applyLeave = function(req,res){
 												console.log("obj1==============================>",obj1);
 												var notification = new sendnotificationModel(obj1);
 												notification.save(function(err,SavedUser){
-
+													console.log("SAVEDUSER----------------------->",SavedUser);
 												})
 												console.log("token====>",admin);
 												console.log("admin tokjen===>",admin[0].token)
