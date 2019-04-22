@@ -10,7 +10,13 @@ var SendnotificationSchema = new Schema({
 	projectId: {type: Schema.Types.ObjectId , ref: 'Project',default : null},
 	type : {type : String, default : 'other'},
 	priority : {type: String,default: null},
-	
+	seenFlag : {type : Boolean, default : false, required : true}
 })
 
 module.exports = mongoose.model('sendnotification', SendnotificationSchema);	
+
+// seenFlag: {
+//       type: 'boolean',
+//       defaultsTo: false,
+//       required: true,
+//     }
