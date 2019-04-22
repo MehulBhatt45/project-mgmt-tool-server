@@ -2,14 +2,6 @@ var timeLogModel = require('../model/timeLog.model');
 var taskModel = require('../model/tasks.model');
 let timeLogController = {};
 
-
-
-
-
-
-
-
-
 timeLogController.addTimeLog = function(req,res){
 	console.log("rewq . body ==>" , req.body);
 	var currentTask;

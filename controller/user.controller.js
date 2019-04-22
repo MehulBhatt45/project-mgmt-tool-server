@@ -91,7 +91,7 @@ userController.getSingleUser = function(req, res){
 		if(err){
 			res.status(500).send(err);
 		}
-		console.log(getuser)
+		console.log(getuser);
 		res.status(200).send(getuser);
 	})
 }
@@ -228,6 +228,7 @@ userController.getAllUsersByProjectManager = function(req, res){
 	})
 }
 
+
 userController.logIn = function(req,res){
 	console.log("req.method" , req.body);
 	if(req.method == 'POST' && req.body.email && req.body.password){
@@ -252,11 +253,11 @@ userController.logIn = function(req,res){
 						return res.status(200).send({data:user,
 							token: token});
 					}else{
-						return res.status(403).send( { errMsg : 'Password Incorrect' });	
+						return res.status(400).send( { errMsg : 'Password Incorrect' });	
 					}
 				});
 			}else{
-				return res.status(403).send( { errMsg : 'User not found' });
+				return res.status(403).send( { errMsg : 'User Email is wrong' });
 			}
 		});
 	}else{
