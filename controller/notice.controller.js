@@ -59,6 +59,7 @@ noticeController.addNotice = function(req,res){
 noticeController.updateNoticeById = function(req,res){
 	var noticeId = req.params.noticeId;
 	console.log("notice Id to update=>>>>>",noticeId);
+	req.body.images = req.body.images?req.body.images.split(','):req.body.images[0];
 
 	noticeModel
 	.findOneAndUpdate({_id:noticeId},req.body,{ upsert: true, new: true },function(err,newNotice){
@@ -88,12 +89,13 @@ noticeController.updateNoticeById = function(req,res){
 					res.status(500).send(err);
 				}else{
 					console.log(files);
-					var fileNames=[];
+					var fileNames=req.body.images;
 					if(files.length>0){
 						_.forEach(files, (gotFile)=>{
 							fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
 						})
 					}
+					req.body['images'] = fileNames;
 					noticeModel
 					.findOneAndUpdate({_id: newNotice._id}, {$set: {images: fileNames}}, { upsert: true, new: true })
 					.exec((err , notice)=>{
