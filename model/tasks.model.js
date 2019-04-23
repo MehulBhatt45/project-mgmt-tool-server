@@ -6,7 +6,7 @@ var tasksSchema = new Schema({
 	title: {type: String , required: true},
 	desc: {type: String, required: true},
 	assignTo: {type: Schema.Types.ObjectId , ref: 'User', required: true},
-	// sprint: {type: Schema.Types.ObjectId ,ref :'Sprint', required:true},
+	sprint: {type: Schema.Types.ObjectId ,ref :'Sprint', required:true},
 	projectId: {type: Schema.Types.ObjectId , ref: 'Project', required: true},
 	// projectTitle: {type: Schema.Types.ObjectId , ref: 'Project', required: true},
 	// pmanagerName: {type: Schema.Types.ObjectId , ref: 'User', default : null},

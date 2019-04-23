@@ -351,7 +351,7 @@ projectController.updateProjectById = function(req,res){
 			projectModel
 			.findOne({_id: projectId})
 			.select('Teams')
-			.populate('Teams')
+			.populate('Teams tasks')
 			.exec((err , foundTeam)=>{
 				if(err) res.send(err)
 					else res.status(200).send(foundTeam);
