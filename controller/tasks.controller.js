@@ -194,7 +194,10 @@ tasksController.addTasks = function(req , res){
 											"createdAt":foundTask.createdAt,
 										} 
 										console.log("obj==================>",obj);
-										const timePeriod = obj.createdAt;	
+										const timePeriod = obj.createdAt;
+										if (obj.createdAt==5 ) {
+											r
+										}	
 										console.log("timeeeeeeeeeeeeeeeeeeeeeeeeeee",timePeriod);
 										var notification = new sendnotificationModel(obj);
 										console.log("kaik notification mdi jaje==========<<>>>>>>>>>>>",notification);
@@ -210,7 +213,7 @@ tasksController.addTasks = function(req , res){
 													res.status(500).send(err);
 												}else{
 													console.log("savedNotification======>>>>>",user);
-													pushNotification.postCode(obj.subject,obj.type,[user.token]);
+											pushNotification.postCode(obj.subject,obj.type,[user.token]);
 
 													res.status(200).send(savedTask);
 
@@ -409,7 +412,7 @@ tasksController.updateTaskById = function(req , res){
 			console.log(err);
 			res.status(500).send(err);
 		}else{
-			console.log(files);
+			console.log("files of updated task", files);
 			tasksModel.findOne({_id: taskId}, function(err , task){
 
 				var fileNames=req.body.images;
