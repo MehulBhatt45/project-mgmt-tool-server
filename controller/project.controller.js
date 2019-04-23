@@ -150,8 +150,9 @@ projectController.deleteProjectById = function(req,res){
 
 projectController.updateProjectById = function(req,res){
 	console.log("REQQQQQQ===========>",req.body);
+	// console.log("reqqqqqqqfile=================>",req.file);
 	console.log("New Team===================================>",req.body.Teams)
-	// console.log("DELETE=========================================>",req.body.delete);
+	console.log("DELETE=========================================>",req.body.delete);
 	console.log("teamLength==========>",req.body.Teams.length);
 	var updatedTeam = req.body.Teams.length;
 	var projectId = req.params.projectId;
@@ -159,32 +160,79 @@ projectController.updateProjectById = function(req,res){
 	var addTeam = req.body.add;
 	console.log("deleteTeam===>",deleteTeam);
 	console.log("projectId====>",projectId);
-	projectModel.findOneAndUpdate({_id:projectId},{$set:req.body},{upsert:true},function(err,projects){
-		console.log("saved console 5",projects);
-		console.log("old TEAM=================================================>",projects.Teams);
-		var teamLength = projects.Teams.length;
+	// projectModel.findOneAndUpdate({_id:projectId},{$set:req.body},{upsert:true},function(err,projects){
+		// if(err){
+		// 	res.status(500).send(err);
+		// }else{
+			var uploadPath = path.join(__dirname, "../uploads/"+projectId+"/avatar/");
+			console.log("IN UPDATE PROFILE=============>",uploadPath);
+			req.file('avatar').upload({
+				maxBytes: 50000000000000,
+				dirname: uploadPath,
+				saveAs: function (__newFileStream, next) {
+					dir.files(uploadPath, function(err, files) {
+						if (err){
+							mkdir(uploadPath, 0775);
+							return next(undefined, __newFileStream.filename);
+						}else {
+							return next(undefined, __newFileStream.filename);
+						}
+					});
+				}
+			}, function(err, files){
+				if (err) {
+					console.log(err);
+					res.status(500).send(err);
+				}else{
+					console.log(files);
+					console.log("files==========>",files)
+					var profile = req.body.avatar;
+					console.log('profile================>',profile);
+					if(files.length>0){
+						profile = files[0].fd.split('/uploads/').reverse()[0];
+					}
+					req.body['avatar'] = profile;
+					console.log("req. body =====+>" , req.body);
+			// getuser['profilePhoto'] = profile;
+			projectModel.findOneAndUpdate({_id: projectId}, {$set: req.body}, {upsert:true ,new: true},function(error,user){
+				if (error){ 
+					console.log("=====================================",error)
+					res.status(500).send(error);
+				}else{
+					console.log(user);
+					// res.status(200).send(user);
+				// }
+			// })
+		// }
+
+	// })
+
+
+	console.log("saved console 5",user);	
+		// console.log("old TEAM=================================================>",user.user);
+		var teamLength = user.Teams.length;
 		console.log("teamLength",teamLength);
 		userDetails = [];
 		userModel
 		.find({_id : deleteTeam[0]},function(err,foundUser){
-			console.log("name==============>",foundUser[0].name);
+			// console.log("name==============>",foundUser[0].name);
 			async.forEach(foundUser, function (item, callback){ 
-    		console.log("item------>",item)
-    		userDetails.push(item);
-    		console.log("team========>",userDetails);
-    		console.log("name=========================>",userDetails[0].name);
-    		callback(); 
-    	});  
-		userModel
-		.find({_id : addTeam})
-		.exec((err,add)=>{
+				console.log("item------>",item)
+				userDetails.push(item);
+				console.log("team========>",userDetails);
+				console.log("name=========================>",userDetails[0].name);
+				callback(); 
+			});  
+			userModel
+			.find({_id : addTeam})
+			.exec((err,add)=>{
 
-		if(teamLength != updatedTeam){
-			if(teamLength > updatedTeam){
-				console.log("deleteTeam member");
-				var obj = {
-					"subject" :"Team member terminated.",
-					"content" : "For the notes, "+userDetails[0].name+ " is terminated from "+req.body. uniqueId+ " team as "+userDetails[0].userRole+ ".",
+				if(teamLength != updatedTeam){
+					if(teamLength > updatedTeam){
+						console.log("deleteTeam member");
+						var obj = {
+							"subject" :"Team member terminated.",
+							"content" : "For the notes, "+userDetails[0].name+ " is terminated from "+req.body. uniqueId+ " team as "+userDetails[0].userRole+ ".",
 					// "content" : "Team member terminated from <strong>"+req.body.uniqueId + "</strong> team.",
 					"sendTo" : req.body.Teams,
 					"type" : "other",
@@ -202,134 +250,181 @@ projectController.updateProjectById = function(req,res){
 			var notification = new sendnotificationModel(obj);
 			notification.save(function(err,savedNotification){
 				if(err){
-			res.status(500).send(err);		
-		}
-		console.log("TEAM============>",req.body.Teams);
-		var Teams = req.body.Teams;
-		team = [];
-	notificationModel
-    .find({userId : Teams}, function(err, foundUser){
-    	console.log("TOKEN==================>",foundUser);
-    	req.session.user = foundUser;
-    	req.session.userarray = [];
-    	async.forEach(foundUser, function (item, callback){ 
-    		console.log("item------>",item)
-    		team.push(item.token);
-    		console.log("team========>",team);
-    		callback(); 
-    	});  
-    	pushNotification.postCode(obj.subject,obj.type,team);
-    })
-})
+					res.status(500).send(err);		
+				}
+				console.log("TEAM============>",req.body.Teams);
+				var Teams = req.body.Teams;
+				team = [];
+				notificationModel
+				.find({userId : Teams}, function(err, foundUser){
+					console.log("TOKEN==================>",foundUser);
+					req.session.user = foundUser;
+					req.session.userarray = [];
+					async.forEach(foundUser, function (item, callback){ 
+						console.log("item------>",item)
+						team.push(item.token);
+						console.log("team========>",team);
+						callback(); 
+					});  
+					pushNotification.postCode(obj.subject,obj.type,team);
+				})
+			})
 		}
 	})
 		// })
 	})
-		res.status(200).send(projects);
-	})
+		res.status(200).send(user);
+	}
+	
+})
+}
+})
 }
 
-projectController.getAllProjectOrderByTitle = function(req,res){
-	projectModel.find({})
-	.sort({'title': -1})
-	.exec(function(err,project){
-		console.log("err==========>>>",err);
-		res.send(project);
-		console.log(project);
-	})
-}
 
-projectController.uploadFilesToFolder = function(req, res){
-	console.log(req.body);
-	var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/sharedFile");
-	console.log(uploadPath);
-	req.file('fileUpload').upload({
-		maxBytes: 50000000,
-		dirname: uploadPath,
-		saveAs: function (__newFileStream, next) {
-			dir.files(uploadPath, function(err, files) {
-				console.log(err, files)
+		projectController.getAllProjectOrderByTitle = function(req,res){
+			projectModel.find({})
+			.sort({'title': -1})
+			.exec(function(err,project){
+				console.log("err==========>>>",err);
+				res.send(project);
+				console.log(project);
+			})
+		}
+
+		projectController.uploadFilesToFolder = function(req, res){
+			console.log(req.body);
+			var uploadPath = path.join(__dirname, "../uploads/"+req.body.projectId+"/sharedFile");
+			console.log(uploadPath);
+			req.file('fileUpload').upload({
+				maxBytes: 50000000,
+				dirname: uploadPath,
+				saveAs: function (__newFileStream, next) {
+					dir.files(uploadPath, function(err, files) {
+						console.log(err, files)
+						if (err){
+							mkdir(uploadPath, 0775);
+							return next(undefined, __newFileStream.filename);
+						}else {
+							return next(undefined, __newFileStream.filename);
+						}
+					});
+				}
+			}, function(err, files){
+				if (err) {
+					console.log(err);
+					res.status(500).send(err);
+				}else{
+					console.log(files)
+					res.status(200).send("files uploaded successfully");
+				}
+			})
+		}
+
+		projectController.getAllFiles = function(req, res){
+			console.log(req.body)
+			dir.files(path.join(__dirname, "../uploads/"+req.body.projectId+"/sharedFile"), function(err, files) {
 				if (err){
-					mkdir(uploadPath, 0775);
-					return next(undefined, __newFileStream.filename);
+					console.log(err);
+					res.status(500).send(err);
 				}else {
-					return next(undefined, __newFileStream.filename);
+					console.log(files);
+					res.status(200).send(files);
 				}
 			});
 		}
-	}, function(err, files){
-		if (err) {
-			console.log(err);
-			res.status(500).send(err);
-		}else{
-			console.log(files)
-			res.status(200).send("files uploaded successfully");
+
+		projectController.deleteFile = function(req, res){
+			var file = req.body.file;
+			var fileLocation = path.join(__dirname,"../uploads/"+req.body.projectId, file);
+			console.log(fileLocation);
+			fs.unlink(fileLocation, (err)=>{
+				if (err) {
+					res.status(500).send("file not deleted");
+				}
+				res.status(200).send("file deleted");
+			}); 
 		}
-	})
-}
-
-projectController.getAllFiles = function(req, res){
-	console.log(req.body)
-	dir.files(path.join(__dirname, "../uploads/"+req.body.projectId+"/sharedFile"), function(err, files) {
-		if (err){
-			console.log(err);
-			res.status(500).send(err);
-		}else {
-			console.log(files);
-			res.status(200).send(files);
+		projectController.getDeveloperOfProject = function(req , res){
+			console.log("projectId ========>" , req.params.projectId);
+			var projectId = req.params.projectId;
+			projectModel
+			.findOne({_id: projectId})
+			.select('Teams')
+			.populate('Teams')
+			.exec((err , foundTeam)=>{
+				if(err) res.send(err)
+					else res.status(200).send(foundTeam);
+			})
 		}
-	});
-}
 
-projectController.deleteFile = function(req, res){
-	var file = req.body.file;
-	var fileLocation = path.join(__dirname,"../uploads/"+req.body.projectId, file);
-	console.log(fileLocation);
-	fs.unlink(fileLocation, (err)=>{
-		if (err) {
-			res.status(500).send("file not deleted");
+
+		projectController.getTaskOfProject = function(req , res){
+			console.log("projectId ========>" , req.params.projectId);
+			var projectId = req.params.projectId;
+			projectModel
+			.findOne({_id: projectId})
+			.select('taskId IssueId BugId tasks')
+			.exec((err , foundTeam)=>{
+				if(err) res.send(err)
+					else res.status(200).send(foundTeam);
+			})
 		}
-		res.status(200).send("file deleted");
-	}); 
-}
-projectController.getDeveloperOfProject = function(req , res){
-	console.log("projectId ========>" , req.params.projectId);
-	var projectId = req.params.projectId;
-	projectModel
-	.findOne({_id: projectId})
-	.select('Teams')
-	.populate('Teams')
-	.exec((err , foundTeam)=>{
-		if(err) res.send(err)
-			else res.status(200).send(foundTeam);
-	})
-}
 
-
-projectController.getTaskOfProject = function(req , res){
-	console.log("projectId ========>" , req.params.projectId);
-	var projectId = req.params.projectId;
-	projectModel
-	.findOne({_id: projectId})
-	.select('taskId IssueId BugId tasks')
-	.exec((err , foundTeam)=>{
-		if(err) res.send(err)
-			else res.status(200).send(foundTeam);
-	})
-}
-
-projectController.getProjectByPmanagerId = function(req, res){
-	var pmanagerId = req.params.pmanagerId;
-	projectModel
-	.find({pmanagerId :pmanagerId})
-	.select('projects Teams')
-	.exec((err , found)=>{
-		if( err) res.send(err);
-		else{
-			res.send(found);
+		projectController.getProjectByPmanagerId = function(req, res){
+			var pmanagerId = req.params.pmanagerId;
+			projectModel
+			.find({pmanagerId :pmanagerId})
+			.select('projects Teams')
+			.exec((err , found)=>{
+				if( err) res.send(err);
+				else{
+					res.send(found);
+				}
+			})
 		}
+
+
+
+		projectController.changeAvatarByProjectId = function(req,res){
+			console.log("userId is==============>", req.file('avatar'));
+			var projectId = req.params.id
+			var uploadPath = path.join(__dirname, "../uploads/"+projectId+"/avatar/");
+			console.log("IN UPDATE PROFILE=============>",uploadPath);
+			req.file('avatar').upload({
+				maxBytes: 50000000000000,
+				dirname: uploadPath,
+				saveAs: function (__newFileStream, next) {
+					dir.files(uploadPath, function(err, files) {
+						if (err){
+							mkdir(uploadPath, 0775);
+							return next(undefined, __newFileStream.filename);
+						}else {
+							return next(undefined, __newFileStream.filename);
+						}
+					});
+				}
+			}, function(err, files){
+				if (err) {
+					console.log(err);
+					res.status(500).send(err);
+				}else{
+					console.log(files);
+					console.log("files==========>",files)
+
+					var profile = files[0].fd.split('/uploads/').reverse()[0];
+			// getuser['profilePhoto'] = profile;
+			projectModel.findOneAndUpdate({_id: projectId}, {$set: {avatar:profile }}, {upsert:true, new:true}).exec((error,user)=>{
+				if (error){ 
+					res.status(500).send(error);
+				}else{
+					console.log(user);
+					res.status(200).send(user);
+				}
+			})
+		}
+
 	})
-}
+		}
 
-
-module.exports = projectController;
+		module.exports = projectController;

@@ -213,7 +213,7 @@ tasksController.addTasks = function(req , res){
 													res.status(500).send(err);
 												}else{
 													console.log("savedNotification======>>>>>",user);
-													pushNotification.postCode(obj.subject,obj.type,[user.token]);
+											pushNotification.postCode(obj.subject,obj.type,[user.token]);
 
 													res.status(200).send(savedTask);
 
