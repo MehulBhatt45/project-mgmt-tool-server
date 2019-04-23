@@ -76,7 +76,7 @@ leaveController.applyLeave = function(req,res){
 								if(duration == "0.5" || duration == "1"){
 									var obj = {
 										"subject" :"Your Team member has applied for leave .",
-										"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " + req.body.leaveDuration+ " day leave (" +req.body.startingDate+ ")",
+										"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " + req.body.leaveDuration+ " day leave on (" +req.body.startingDate+ ")",
 										"sendTo" : object,
 										"type" : "leave",
 									} 
@@ -84,7 +84,7 @@ leaveController.applyLeave = function(req,res){
 								}else{
 									var obj = {
 										"subject" :"Your Team member has applied for leave .",
-										"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " +req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
+										"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " +req.body.leaveDuration+ " days leaves on (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
 										"sendTo" : object,
 										"type" : "leave",
 									} 

@@ -412,7 +412,7 @@ tasksController.updateTaskById = function(req , res){
 			console.log(err);
 			res.status(500).send(err);
 		}else{
-			console.log(files);
+			console.log("files of updated task", files);
 			tasksModel.findOne({_id: taskId}, function(err , task){
 
 				var fileNames=req.body.images;
