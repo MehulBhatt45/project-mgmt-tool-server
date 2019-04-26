@@ -31,7 +31,7 @@ noticeController.addNotice = function(req,res){
 			}, function(err, files){
 				if (err) {
 					console.log(err);
-					res.status(500).send(err);
+					res.status(415).send(err);
 				}else{
 					console.log(files);
 					var fileNames=[];
@@ -45,7 +45,7 @@ noticeController.addNotice = function(req,res){
 					.exec((err , notice)=>{
 						if (err) {
 							console.log(err);
-							res.status(500).send(err);
+							res.status(404).send(err);
 						}else{
 							res.status(200).send(notice);
 						}	
@@ -85,7 +85,7 @@ noticeController.updateNoticeById = function(req,res){
 			}, function(err, files){
 				if (err) {
 					console.log(err);
-					res.status(500).send(err);
+					res.status(415).send(err);
 				}else{
 					console.log(files);
 					var fileNames=[];
@@ -99,7 +99,7 @@ noticeController.updateNoticeById = function(req,res){
 					.exec((err , notice)=>{
 						if (err) {
 							console.log(err);
-							res.status(500).send(err);
+							res.status(404).send(err);
 						}else{
 							res.status(200).send(notice);
 						}	
@@ -204,7 +204,7 @@ noticeController.changePhotoById = function(req,res){
 			// getuser['profilePhoto'] = profile;
 			noticeModel.findOneAndUpdate({_id: noticeId}, {$set: {images:profile }}, {upsert:true, new:true}).exec((error,user)=>{
 				if (error){ 
-					res.status(500).send(error);
+					res.status(404).send(error);
 				}else{
 					console.log(user);
 					res.status(200).send(user);

@@ -29,7 +29,7 @@ userController.addUser = function(req,res){
 		if (err) {
 			res.status(500).send(err);
 		}else if (founduser){
-			res.status(400).send('user already exists! ');
+			res.status(409).send('user already exists! ');
 		}else{
 			var User = new userModel(req.body);
 			User.save((err, newUser)=>{
@@ -72,8 +72,8 @@ userController.addUser = function(req,res){
 						}
 						newUser['CV'] = cv;
 						newUser['profilePhoto'] = profile;
-						userModel.findOneAndUpdate({_id: newUser._id}, {$set: {CV:cv, profilePhoto:profile }}, {upsert:true, new:true}).exec((error,user)=>{
-							if (error) res.status(500).send(error);
+						userModel.findOneAndUpdate({_id: newUser._id}, {$set: {CV:cv, profilePhoto:profile }}, {upsert:true, new:true}, ).exec((error,user)=>{
+							if (error) res.status(415).send(error);
 							res.status(200).send(user);
 						})
 					}
@@ -113,7 +113,7 @@ userController.resetPassword = function(req,res){
 					res.status(200).send(user);
 				}
 				else{
-					return res.status(403).send( { errMsg : 'password incorrect' });	
+					return res.status(412).send( { errMsg : 'password does not match' });	
 				}
 			});
 		}else{
@@ -160,7 +160,7 @@ userController.updateUserById = function(req,res){
 					getuser['CV'] = cv;
 					userModel.findOneAndUpdate({_id: userId}, {$set: {CV:cv }}, {upsert:true, new:true}).exec((error,user)=>{
 						if (error){ 
-							res.status(500).send(error);
+							res.status(415).send(error);
 						}else{
 							console.log(user);
 							res.status(200).send(user);
@@ -172,20 +172,19 @@ userController.updateUserById = function(req,res){
 		}
 	})
 }
-
 userController.getAllUsers = function(req, res){
 	userModel.find({})
 	.exec((err,users)=>{
 		if (err) {
 			res.status(500).send(err);
-		}else if (users){
+		}
+		else if (users){
 			res.status(200).send(users);
 		}else{
-			res.status(404).send( { msg : 'Users not found' });
+			res.status(400).send( { msg : 'Users not found' });
 		}
 	})
 }
-
 
 userController.getAllProjectManager = function(req, res){
 	console.log("all project Manager==>>");
@@ -196,7 +195,7 @@ userController.getAllProjectManager = function(req, res){
 		}else if (users){
 			res.status(200).send(users);
 		}else{
-			res.status(404).send( { msg : 'Users not found' });
+			res.status(404).send( { msg : 'User not found' });
 		}
 	})
 }
@@ -241,7 +240,7 @@ userController.logIn = function(req,res){
 			}else if(user){
 				user.comparePassword(req.body.password, user.password,(error, isMatch)=>{
 					if (error){
-						return res.status(403).send( { errMsg : 'User not found' });
+						return res.status(500).send( { errMsg : ' error'});
 					}else if(isMatch){
 						var role = user.userRole;
 						(user.userRole==='user')?req.session.user = user:req.session.projectManager = user;
@@ -253,11 +252,11 @@ userController.logIn = function(req,res){
 						return res.status(200).send({data:user,
 							token: token});
 					}else{
-						return res.status(400).send( { errMsg : 'Password Incorrect' });	
+						return res.status(412).send( { errMsg : 'Wrong password. Try again or click Forgot password to reset it.' });	
 					}
 				});
 			}else{
-				return res.status(403).send( { errMsg : 'User Email is wrong' });
+				return res.status(404).send( { errMsg : 'Could not find your username' });
 			}
 		});
 	}else{
@@ -296,7 +295,7 @@ userController.changeProfileByUserId = function(req,res){
 			// getuser['profilePhoto'] = profile;
 			userModel.findOneAndUpdate({_id: userId}, {$set: {profilePhoto:profile }}, {upsert:true, new:true}).exec((error,user)=>{
 				if (error){ 
-					res.status(500).send(error);
+					res.status(415).send(error);
 				}else{
 					console.log(user);
 					res.status(200).send(user);
@@ -319,7 +318,7 @@ userController.getDevelpoersNotInProjectTeam = function(req, res){
 			.find({_id: {$nin: project.Teams}})
 			.exec((error, developers)=>{
 				if (err) {
-					res.status(500).send(error);
+					res.status(404).send(error);
 				}else{
 					res.status(200).send(developers)
 				}
@@ -356,20 +355,20 @@ userController.forgotPassword = function (req,res) {
 				from: 'tnrtesting2394@gmail.com',
 				to: req.body.email,
 				subject: 'Localhost Forgot Password Request',
-				text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="https://raoinfotech-conduct.tk/#/forgotpwd/'+ user.temporarytoken,
-				html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 10 minutes.<br><br><a href="https://raoinfotech-conduct.tk/#/forgotpwd/' + user.temporarytoken + '">https://raoinfotech-conduct.tk/#/forgotpwd/</a>'
+				text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="http://localhost:4200/#/forgotpwd/'+ user.temporarytoken,
+				html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 10 minutes.<br><br><a href="http://localhost:4200/#/forgotpwd/' + user.temporarytoken + '">http://localhost:4200/#/forgotpwd/</a>'
 			};
 
 			transporter.sendMail(mailOptions, function(error, info){
 				if (error) {
-					console.log("Error",error);
+					return res.status(400).send( { errMsg : 'Bad request' });
 				} else {
 					console.log('Email sent: ' + info.response);
 					res.status(200).send(user);
 				}
 			});
 		}else{
-			return res.status(403).send( { errMsg : 'User not found' });
+			return res.status(404).send( { errMsg : 'Could not find your username' });
 		}
 	});
 }
@@ -383,12 +382,12 @@ userController.updatePassword = function (req,res) {
 			}else if(user){
 				user.password = req.body.password;
 				user.save(function(error, changedUser) {
-					if (error) res.status(500).send(error);
+					if (error) res.status(408).send({ errMsg : "Not authorised" });
 					res.status(200).send({ msg:"password changed" });
 				});
 			}
 			else{
-				res.status(403).send({ errMsg : "Not authorised" });
+				res.status(401).send({ errMsg : "Not authorised" });
 			}
 		});
 	}); 
@@ -407,7 +406,7 @@ userController.getProjectMngrNotInProject = function(req, res){
 			.find({$and: [{_id: {$nin: project.pmanagerId}},{userRole:'projectManager'}]})
 			.exec((error, developers)=>{
 				if (err) {
-					res.status(500).send(error);
+					res.status(404).send(error);
 				}else{
 					res.status(200).send(developers)
 				}

@@ -46,7 +46,7 @@ tasksController.addTasks = function(req , res){
 	}, function(err, files){
 		if (err) {
 			console.log(err);
-			res.status(500).send(err);
+			res.status(415).send(err);
 		}else{
 			console.log(files)
 			var fileNames=[];
@@ -63,7 +63,7 @@ tasksController.addTasks = function(req , res){
 			.exec((err , foundTask)=>{
 				if(err){
 					console.log(err);
-					res.status(500).send(err);
+					res.status(404).send(err);
 				}else if(foundTask && foundTask.length == 1){
 					var projectId = foundTask[0].projectId;
 					console.log("FINAL PROJECT ID====>",projectId);
@@ -207,7 +207,7 @@ tasksController.addTasks = function(req , res){
 											.findOne({userId : assignTo})
 											.exec((err, user)=>{
 												if (err) {
-													res.status(500).send(err);
+													res.status(400).send(err);
 												}else{
 													console.log("savedNotification======>>>>>",user);
 													pushNotification.postCode(obj.subject,obj.type,[user.token]);
@@ -340,14 +340,14 @@ tasksController.addTasks = function(req , res){
 			console.log("notificationnnnnnnnnnnnnnnnnnnnn=========>",notification);
 			notification.save(function(err,savedNotification){
 				if(err){
-					res.status(500).send(err);		
+					res.status(406).send(err);		
 				}
 				var assignTo = foundTask.assignTo._id;
 				notificationModel
 				.findOne({userId : assignTo})
 				.exec((err, user)=>{
 					if (err) {
-						res.status(500).send(err);
+						res.status(404).send(err);
 					}else{
 
 						console.log("savedNotification======>>>>>",user);
@@ -407,7 +407,7 @@ tasksController.updateTaskById = function(req , res){
 	}, function(err, files){
 		if (err) {
 			console.log(err);
-			res.status(500).send(err);
+			res.status(415).send(err);
 		}else{
 			console.log(files);
 			tasksModel.findOne({_id: taskId}, function(err , task){

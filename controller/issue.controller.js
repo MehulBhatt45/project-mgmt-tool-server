@@ -74,7 +74,7 @@ issueController.updateIssueById = function(req,res){
 		else if(Updatedissue) {
 			projectModel.findOne({_id: Updatedissue.projectId})
 			.exec((err, resp)=>{
-				if (err) res.status(500).send(err);
+				if (err) res.status(404).send(err);
 				if(!_.includes(resp.Teams, Updatedissue.assignTo))
 					resp.Teams.push(Updatedissue.assignTo);
 				resp.save();
@@ -107,7 +107,7 @@ issueController.updateIssueStatusById = function(req,res){
 			else res.status(404).send("Not Found");
 		})
 	}else{
-		res.status(403).send("Bad Request");
+		res.status(400).send("Bad Request");
 	}
 }
 
@@ -126,7 +126,7 @@ issueController.updateIssueStatusToComplete = function(req,res){
 			else res.status(404).send("Not Found");
 		})
 	}else{
-		res.status(403).send("Bad Request");
+		res.status(400).send("Bad Request");
 	}
 }
 

@@ -167,7 +167,7 @@ projectController.updateProjectById = function(req,res){
 		userDetails = [];
 		userModel
 		.find({_id : deleteTeam[0]},function(err,foundUser){
-			console.log("name==============>",foundUser[0].name);
+			// console.log("name==============>",foundUser[0].name);
 			async.forEach(foundUser, function (item, callback){ 
     		console.log("item------>",item)
     		userDetails.push(item);
@@ -184,7 +184,7 @@ projectController.updateProjectById = function(req,res){
 				console.log("deleteTeam member");
 				var obj = {
 					"subject" :"Team member terminated.",
-					"content" : "For the notes, "+userDetails[0].name+ " is terminated from "+req.body. uniqueId+ " team as "+userDetails[0].userRole+ ".",
+					// "content" : "For the notes, "+userDetails[0].name+ " is terminated from "+req.body. uniqueId+ " team as "+userDetails[0].userRole+ ".",
 					// "content" : "Team member terminated from <strong>"+req.body.uniqueId + "</strong> team.",
 					"sendTo" : req.body.Teams,
 					"type" : "other",

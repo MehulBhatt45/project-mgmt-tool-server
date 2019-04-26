@@ -32,7 +32,7 @@ requirementController.deleteRequirementById = function(req,res){
 		else if(deletedrequirement){
 			projectModel.findOne({_id: deletedrequirement.projectId})
 			.exec((err, resp)=>{
-				if (err) res.status(500).send(err);
+				if (err) res.status(400).send(err);
 				else if(resp){
 					resp.requirementId.splice(_.findIndex(resp.requirementId, deletedrequirement._id), 1);
 					resp.save();

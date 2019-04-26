@@ -43,7 +43,7 @@ leaveController.applyLeave = function(req,res){
 	}, function(err,files){
 	if(err){
 	console.log(err);
-	res.status(500).send(err);
+	res.status(415).send(err);
 	}else{
 	console.log(files);
 	var fileNames = [];
@@ -57,7 +57,7 @@ leaveController.applyLeave = function(req,res){
 	.exec((err,uploadFile)=>{
 	if(err){
 	console.log(err);
-	res.status(500).send(err);
+	res.status(404).send(err);
 	}else{
 	projectModel
 	.find({Teams : mongoose.Types.ObjectId(leave.id)})
@@ -462,7 +462,7 @@ leaveController.updateLeaves = function(req,res){
 	.findOne({userId: projects})
 	.exec((err, user)=>{
 	if (err) {
-	res.status(500).send(err);
+	res.status(404).send(err);
 	}else{
 	console.log("admin===========>",user);
 
@@ -576,7 +576,7 @@ leaveController.updateLeaves = function(req,res){
 	.find({userId: object})
 	.exec((err, user)=>{
 	if (err) {
-	res.status(500).send(err);
+	res.status(404).send(err);
 	}else{
 	console.log("userrrrrrrrrrrrrrrr====>",user);
 	projects = [];
@@ -608,7 +608,7 @@ leaveController.updateLeaves = function(req,res){
 	.findOne({userId: projects})
 	.exec((err, user)=>{
 	if (err) {
-	res.status(500).send(err);
+	res.status(404).send(err);
 	}else{
 	console.log("admin===========>",user);
 	pushNotification.postCode(obj2.subject,obj2.type,[user.token]);

@@ -22,7 +22,7 @@ sendnotificationController.addNotification = function(req, res){
 			console.log("req.body.sendTo.length=======>",req.body.sendTo.length);
 			if (err) {
 				console.log("errrr",err);
-				res.status(500).send(err);
+				res.status(404).send(err);
 			}else{
 				if(req.body.sendTo.length > 1){
 					console.log("first============================>");
@@ -51,7 +51,7 @@ sendnotificationController.addNotification = function(req, res){
 						console.log("userr====>",user);
 						if (err) {
 							console.log("err",err);
-							res.status(500).send(err);
+							res.status(404).send(err);
 						}else{
 							req.session.user = user;
 							req.session.userarray = [];
