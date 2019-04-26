@@ -161,8 +161,6 @@ leaveController.applyLeave = function(req,res){
 
 	})
 
-
-	
 	
 	// })
 	
@@ -205,37 +203,37 @@ leaveController.applyLeave = function(req,res){
 	`;
 
 	var transporter = nodemailer.createTransport({
-	host: "smtp.gmail.com",
-	port: 465,
-	secure: true,
-	service: 'gmail',
+		host: "smtp.gmail.com",
+		port: 465,
+		secure: true,
+		service: 'gmail',
 
-	auth: {
-	user: 'raoinfotechp@gmail.com',
-	pass: 'raoinfotech@123'
-	}
+		auth: {
+			user: 'raoinfotechp@gmail.com',
+			pass: 'raoinfotech@123'
+		}
 	});
 
 
 	var mailOptions = {
-	from: 'raoinfotechp@gmail.com',
-	to: 'foramtrada232@gmail.com',
-	subject: 'Testing Email',
-	text: 'Hi, this is a testing email from node server',
-	html: output
+		from: 'raoinfotechp@gmail.com',
+		to: 'foramtrada232@gmail.com',
+		subject: 'Testing Email',
+		text: 'Hi, this is a testing email from node server',
+		html: output
 	};
 
 	transporter.sendMail(mailOptions, function(error, info){
-	if (error) {
-	console.log("Error",error);
-	} else {
-	console.log('Email sent: ' + info.response);
-	
-	}
+		if (error) {
+			console.log("Error",error);
+		} else {
+			console.log('Email sent: ' + info.response);
+			
+		}
 	});
 	res.status(200).send(leave)
-	}
-	})
+}
+})
 }
 })
 }
@@ -249,22 +247,22 @@ leaveController.getTeamsByPmanagerId = function(req, res){
 	.find({pmanagerId :pmanagerId})
 	.select('projects Teams')
 	.exec((err , found)=>{
-	if( err) res.send(err);
-	else{
-	res.send(found);
-	}
+		if( err) res.send(err);
+		else{
+			res.send(found);
+		}
 	})
 }
 leaveController.getLeaves = function(req,res){
 	leaveModel.find({status: "pending"})
 	.exec((err,resp)=>{
-	if(err){ 
-	console.log("error======>",err);
-	res.status(500).send(err) 
-	}
-	else{
-	res.status(200).send(resp)
-	}
+		if(err){ 
+			console.log("error======>",err);
+			res.status(500).send(err) 
+		}
+		else{
+			res.status(200).send(resp)
+		}
 	})
 }
 
@@ -272,27 +270,27 @@ leaveController.getLeaves = function(req,res){
 leaveController.getLeavesById = function(req,res){
 	leaveModel.find({email:req.body.email})
 	.exec((err,respond)=>{
-	if(err){
-	console.log("error",err);
-	res.status(500).send(err)
-	}
-	else{
-	console.log("response============<<<<<<<<<<<<<",respond);
-	res.status(200).send(respond);
-	}
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("response============<<<<<<<<<<<<<",respond);
+			res.status(200).send(respond);
+		}
 	})
 }
 leaveController.getAllLeaves = function(req,res){
 	leaveModel.find({})
 	.exec((err,respond)=>{
-	if(err){
-	console.log("error",err);
-	res.status(500).send(err)
-	}
-	else{
-	console.log("response============<<<<<<<<<<<<<",respond);
-	res.status(200).send(respond);
-	}
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("response============<<<<<<<<<<<<<",respond);
+			res.status(200).send(respond);
+		}
 	})
 }
 
@@ -301,14 +299,14 @@ leaveController.getByUserId = function(req,res){
 	console.log("userid==========>>>>",useremail);
 	leaveModel.find({email:useremail})
 	.exec((err,respond)=>{
-	if(err){
-	console.log("error",err);
-	res.status(500).send(err)
-	}
-	else{
-	console.log("response============<<<<<<<<<<<<<",respond);
-	res.status(200).send(respond);
-	}
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("response============<<<<<<<<<<<<<",respond);
+			res.status(200).send(respond);
+		}
 	})
 }
 
@@ -317,14 +315,14 @@ leaveController.getById = function(req,res){
 
 	leaveModel.find({_id:leaveId})
 	.exec((err,respond)=>{
-	if(err){
-	console.log("error",err);
-	res.status(500).send(err)
-	}
-	else{
-	console.log("response============<<<<<<<<<<<<<",respond);
-	res.status(200).send(respond);
-	}
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("response============<<<<<<<<<<<<<",respond);
+			res.status(200).send(respond);
+		}
 	})
 }
 
@@ -332,14 +330,14 @@ leaveController.getById = function(req,res){
 leaveController.getApprovedLeaves = function(req,res){
 	leaveModel.find({status:'approved'})
 	.exec((err,respond)=>{
-	if(err){
-	console.log("error",err);
-	res.status(500).send(err);
-	}
-	else{
-	console.log("respnose of approved",respond);
-	res.status(200).send(respond);
-	}
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err);
+		}
+		else{
+			console.log("respnose of approved",respond);
+			res.status(200).send(respond);
+		}
 	})
 }
 
@@ -348,14 +346,14 @@ leaveController.getApprovedLeaves = function(req,res){
 leaveController.getRejectedLeaves = function(req,res){
 	leaveModel.find({status: 'rejected'})
 	.exec((err,negative)=>{
-	if(err){
-	console.log("errrrrrr",err);
-	res.status(500).send(err);
-	}
-	else{
-	console.log("negative response=======>",negative);
-	res.status(200).send(negative);
-	}
+		if(err){
+			console.log("errrrrrr",err);
+			res.status(500).send(err);
+		}
+		else{
+			console.log("negative response=======>",negative);
+			res.status(200).send(negative);
+		}
 	})
 }
 
@@ -380,14 +378,14 @@ leaveController.getRejectedLeaves = function(req,res){
 leaveController.getAllLeavesApps = function(req,res){
 	leaveModel.find({})
 	.exec((err,listOfLeaves)=>{
-	if(err){
-	console.log("error",err);
-	res.status(500).send(err)
-	}
-	else{
-	console.log("list of all leaves application",listOfLeaves);
-	res.status(200).send(listOfLeaves);
-	}
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("list of all leaves application",listOfLeaves);
+			res.status(200).send(listOfLeaves);
+		}
 	})
 }
 
@@ -396,50 +394,50 @@ leaveController.updateLeaves = function(req,res){
 	console.log("req boddy1 =======++>" , req.params);
 	console.log("final date=============>",req.body.startingDate);
 	leaveModel.findOneAndUpdate({_id: req.params.id},req.body,{upsert:true , new: true},function(err,update){
-	console.log("Updated ==================>" , update);
-	var status = update.status;
-	var email = update.email;
-	var duration = update.leaveDuration;
-	console.log("Duration===================>",duration);
-	
-	if(status == "approved"){
-	projectModel
-	.find({Teams : update.id})
-	.exec((err,project)=>{
-	console.log("projects=========>",project);
-	projects = [];
-	for(i=0;i<project.length;i++){
-	console.log("push");
-	projects.push(project[i].pmanagerId);
-	}
-	console.log("pmanagerId array======>",projects);
-	var object = [].concat.apply([],projects);
-	console.log("USERRRRR========>",object);
-	notificationModel
-	.find({userId: object})
-	.exec((err, user)=>{
-	if (err) {
-	res.status(500).send(err);
-	}else{
-	console.log("userrrrrrrrrrrrrrrr====>",user);
-	projects = [];
-	for(i=0;i<user.length;i++){
-	console.log("push");
-	projects.push(user[i].userId);
-	}
-	console.log("pmanagerId array======>",projects);
-	userModel
-	.find({_id : projects})
-	.exec((err,users)=>{
-	if(err){
-	console.log("ERROR====>",err);
-	}else{
-	console.log("userRole========>",users);
-	userrole = [];
-	for(i=0;i<users.length;i++){
-	userrole.push(users[i].userRole)
-	console.log("projectManager=======>",userrole);
-	}
+		console.log("Updated ==================>" , update);
+		var status = update.status;
+		var email = update.email;
+		var duration = update.leaveDuration;
+		console.log("Duration===================>",duration);
+		
+		if(status == "approved"){
+			projectModel
+			.find({Teams : update.id})
+			.exec((err,project)=>{
+				console.log("projects=========>",project);
+				projects = [];
+				for(i=0;i<project.length;i++){
+					console.log("push");
+					projects.push(project[i].pmanagerId);
+				}
+				console.log("pmanagerId array======>",projects);
+				var object = [].concat.apply([],projects);
+				console.log("USERRRRR========>",object);
+				notificationModel
+				.find({userId: object})
+				.exec((err, user)=>{
+					if (err) {
+						res.status(500).send(err);
+					}else{
+						console.log("userrrrrrrrrrrrrrrr====>",user);
+						projects = [];
+						for(i=0;i<user.length;i++){
+							console.log("push");
+							projects.push(user[i].userId);
+						}
+						console.log("pmanagerId array======>",projects);
+						userModel
+						.find({_id : projects})
+						.exec((err,users)=>{
+							if(err){
+								console.log("ERROR====>",err);
+							}else{
+								console.log("userRole========>",users);
+								userrole = [];
+								for(i=0;i<users.length;i++){
+									userrole.push(users[i].userRole)
+									console.log("projectManager=======>",userrole);
+								}
 	// if(userrole == 'projectManager'){
 	if( duration == "1" || duration == "0.5"){
 	var obj2 = {
@@ -704,6 +702,7 @@ leaveController.updateLeaves = function(req,res){
 	console.log("mail not send");
 
 	}
+
 	})
 
 }
@@ -714,14 +713,14 @@ leaveController.AddComments = function(req,res){
 	console.log("comment",comment);
 	leaveModel.findOneAndUpdate({_id:leaveId},{$set:{comment:comment}},{upsert:true, new:true})
 	.exec((err,comments)=>{
-	if(err){
-	console.log("error",err);
-	res.status(500).send(err)
-	}
-	else{
-	console.log("id==============>",comments.id)
-	res.status(200).send(comments);
-	}
+		if(err){
+			console.log("error",err);
+			res.status(500).send(err)
+		}
+		else{
+			console.log("id==============>",comments.id)
+			res.status(200).send(comments);
+		}
 	})
 }
 

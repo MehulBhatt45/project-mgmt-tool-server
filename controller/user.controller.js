@@ -21,7 +21,6 @@ var nodemailer = require('nodemailer');
 var jwt = require('jsonwebtoken'); // Import JWT Package
 var secret = 'secret'; // Create custom secret for use in JWT
 
-
 userController.addUser = function(req,res){
 	console.log("req body ===>" , req.body);
 	userModel.findOne({email: req.body.email})
@@ -330,6 +329,7 @@ userController.getDevelpoersNotInProjectTeam = function(req, res){
 
 userController.forgotPassword = function (req,res) {
 	console.log("forgot password");
+	console.log(req.headers.referer);
 	userModel.findOne({ email : req.body.email } )
 	.exec((err, user)=>{
 		if (err) {
@@ -351,13 +351,26 @@ userController.forgotPassword = function (req,res) {
 				}
 			});
 
-			var mailOptions = {
-				from: 'tnrtesting2394@gmail.com',
-				to: req.body.email,
-				subject: 'Localhost Forgot Password Request',
-				text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="http://localhost:4200/#/forgotpwd/'+ user.temporarytoken,
-				html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 10 minutes.<br><br><a href="http://localhost:4200/#/forgotpwd/' + user.temporarytoken + '">http://localhost:4200/#/forgotpwd/</a>'
-			};
+
+			if(req.headers.referer == "http://localhost:4200/"){
+				var mailOptions = {
+					from: 'tnrtesting2394@gmail.com',
+					to: req.body.email,
+					subject: 'Localhost Forgot Password Request',
+					text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="http://localhost:4200/#/forgotpwd/'+ user.temporarytoken,
+					html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 10 minutes.<br><br><a href="http://localhost:4200/#/forgotpwd/' + user.temporarytoken + '">http://localhost:4200/#/forgotpwd/</a>'
+				};
+			}
+
+			else if (req.headers.referer == "https://raoinfotech-conduct.tk/"){
+				var mailOptions = {
+					from: 'tnrtesting2394@gmail.com',
+					to: req.body.email,
+					subject: 'Localhost Forgot Password Request',
+					text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="https://raoinfotech-conduct.tk/#/forgotpwd/'+ user.temporarytoken,
+					html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 10 minutes.<br><br><a href="https://raoinfotech-conduct.tk/#/forgotpwd/' + user.temporarytoken + '">https://raoinfotech-conduct.tk/#/forgotpwd/</a>'
+				};
+			}
 
 			transporter.sendMail(mailOptions, function(error, info){
 				if (error) {

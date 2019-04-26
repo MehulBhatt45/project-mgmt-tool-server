@@ -73,18 +73,54 @@ sendnotificationController.addNotification = function(req, res){
 
 sendnotificationController.getNotificationByUserId = function(req,res){
 	var sendTo = req.params.id;
-	sendnotificationModel.find({sendTo : sendTo})
+	sendnotificationModel
+	.find({sendTo : sendTo})
 	.populate('sendTo , projectId')
 	.exec((err,user)=>{
 		if (err) {
 			res.status(500).send(err);
 		}else{
 			console.log("userrr=>>>",user);
+			console.log("length==========>",user.length);
+			for(i=0;i<user.length;i++){
+			sendnotificationModel
+			.findOneAndUpdate({_id:user[i]._id} , {upsert:true,new:true})
+			.exec((err , updatedFlag)=>{
+				if(err){
+					res.status(500).send(err);
+				}
+				else{
+					updatedFlag.seenFlag = true;
+					updatedFlag.save();
+				}
+			})	
+				}
 			res.status(200).send(user);
 		}
 	})
 }
 
+sendnotificationController.getUnreadNotification = function(req,res){
+	var seenFlag = 'false';
+	var unreadNotification = [];
+	var sendTo = req.params.id;
+	sendnotificationModel
+	.find({sendTo : sendTo})
+	.exec((err,unread)=>{
+		if(err){
+			res.status(500).send(err);
+		}else{
+		for(i=0;i<unread.length;i++){
+			if (unread[i].seenFlag == false) {
+				console.log("data=======>",unread);
+				unreadNotification.push(unread);
+			}
+		}
+		console.log("length===============>",unreadNotification.length);
+		res.status(200).send(unreadNotification);
+		}
+	})
+}
 module.exports = sendnotificationController; 
 
 
