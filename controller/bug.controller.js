@@ -107,7 +107,7 @@ bugController.updateBugStatusById = function(req,res){
 			else res.status(404).send("Not Found");
 		})
 	}else{
-		res.status(403).send("Bad Request");
+		res.status(400).send("Bad Request");
 	}
 }
 
@@ -126,7 +126,7 @@ bugController.updateBugStatusToComplete = function(req,res){
 			else res.status(404).send("Not Found");
 		})
 	}else{
-		res.status(403).send("Bad Request");
+		res.status(400).send("Bad Request");
 	}
 }
 
