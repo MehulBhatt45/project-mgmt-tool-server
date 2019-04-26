@@ -203,6 +203,7 @@ userController.getAllUsersByProjectManager = function(req, res){
 	var uniqueArray = [];
 	projectModel
 	.find({pmanagerId: req.body.pmId})
+	.populate('tasks')
 	.exec((err, project)=>{
 		if(err){
 			res.status(500).send(err);
