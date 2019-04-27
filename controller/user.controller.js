@@ -14,12 +14,16 @@ var path = require('path');
 var fs = require('fs');
 var dir = require('node-dir');
 var _ = require('lodash');
+var notificationModel = require('../model/notification.model'); 
+var sendnotificationModel = require('../model/sendNotification.model');
 
 var nodemailer = require ('nodemailer');
 const smtpTransport = require ('nodemailer-smtp-transport');
 var nodemailer = require('nodemailer');
 var jwt = require('jsonwebtoken'); // Import JWT Package
 var secret = 'secret'; // Create custom secret for use in JWT
+var pushNotification = require('./../service/push-notification.service');
+
 
 userController.addUser = function(req,res){
 	console.log("req body ===>" , req.body);

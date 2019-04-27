@@ -21,147 +21,146 @@ leaveController.applyLeave = function(req,res){
 	var leave = new leaveModel(req.body);
 	var duration = leave.leaveDuration;
 	leave.save(function(err,leave){
-	if(err) {
-	res.status(500).send(err)
-	}else{	
-	console.log("APPLY LEAVE++++++===================>", leave);
-	var uploadPath = path.join(__dirname, "../uploads/"+leave._id+"/");
-	console.log("upload path=======<",uploadPath);
-	req.file('attechment').upload({
-	maxBytes: 50000000,
-	dirname: uploadPath,
-	saveAs: function (__newFileStream, next){
-	dir.files(uploadPath, function(err,files){
-	if (err){
-	mkdir(uploadPath, 0775);
-	return next(undefined, __newFileStream.filename);
-	}else {
-	return next(undefined, __newFileStream.filename);
-	}
-	});
-	}
-	}, function(err,files){
-	if(err){
-	console.log(err);
-	res.status(415).send(err);
-	}else{
-	console.log(files);
-	var fileNames = [];
-	if (files.length>0){
-	_.forEach(files, (gotFile)=>{
-	fileNames.push(gotFile.fd.split('/uploads/').reverse()[0]);
-	})
-	}
-	leave['attechment'] = fileNames;
-	leaveModel.findOneAndUpdate({_id:leave._id}, {$set:{attechment:fileNames}},{upsert:true, new:true} )
-	.exec((err,uploadFile)=>{
-	if(err){
-	console.log(err);
-	res.status(404).send(err);
-	}else{
-	projectModel
-	.find({Teams : mongoose.Types.ObjectId(leave.id)})
-	.exec((err,project)=>{
-	console.log("projects=========>",project);
-	console.log("uniqueId==============================>",project.uniqueId)
-	projects = [];
-	for(i=0;i<project.length;i++){
-	console.log("push");
-	projects.push(project[i].pmanagerId);
-	}
-	console.log("pmanagerId array======>",projects);
-	
-	if(duration == "0.5" || duration == "1"){
-	var obj = {
-	"subject" :"Your Team member has applied for leave .",
-	"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " + req.body.leaveDuration+ " day leave (" +req.body.startingDate+ ")",
-	"sendTo" : projects,
-	"type" : "leave",
-	} 
-	
-	}else{
-	var obj = {
-	"subject" :"Your Team member has applied for leave .",
-	"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " +req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
-	"sendTo" : projects,
-	"type" : "leave",
-	} 
-	}
-	console.log("obj==================>",obj);
-	var notification1 = new sendnotificationModel(obj);
-	notification1.save(function(err,savedNotification){
-	var object = [].concat.apply([],projects);
-	console.log("USERRRRR========>",object);
-	notificationModel
-	.find({userId: object})
-	.exec((err, user)=>{
-	console.log("userr====>",user);
-	if (err) {
-	console.log("err",err);
-	res.status(500).send(err);
-	}else{
-	req.session.user = user;
-	req.session.userarray = [];
-	console.log("length===>",user.length);
-	for(i=0;i<user.length;i++){
-	req.session.userarray.push(req.session.user[i].token);
-	console.log("arrayyyy===>");
-	console.log("token array======>",req.session.userarray);
-	}
-	pushNotification.postCode(obj.subject,obj.type,req.session.userarray);
-	}
-	})
-	
-	})
-	
-	var admin = 'admin';
-	
-	userModel
-	.findOne({userRole : admin})
-	.exec((err, user)=>{
-	if (err) {
-	res.status(500).send(err);
-	}else{
-	console.log("admin===========>",user);
-	notificationModel
-	.find({userId : user._id})
-	.exec((err,admin)=>{
-	if (err){
-	res.status(500).send(err)
-	}else{
-	if(duration == "0.5" || duration == "1"){
-	var obj1 = {
-	"subject" :"leave Application.",
-	"content" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for "+req.body.leaveDuration+ " day leave (" +req.body.startingDate+ ")",
-	"sendTo" : user._id,
-	"type" : "leave",
-	} 
-	}else{
-	var obj1 = {
-	"subject" :"Leave Application",
-	"content" :  leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for "+ req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
-	"sendTo" : user._id,
-	"type" : "leave",
-	}
-	}
-	console.log("obj1==============================>",obj1);
-	var notification = new sendnotificationModel(obj1);
-	notification.save(function(err,SavedUser){
+		if(err) {
+			res.status(500).send(err)
+		}else{	
+			console.log("APPLY LEAVE++++++===================>", leave);
+			var uploadPath = path.join(__dirname, "../uploads/"+leave._id+"/");
+			console.log("upload path=======<",uploadPath);
+			req.file('attechment').upload({
+				maxBytes: 50000000,
+				dirname: uploadPath,
+				saveAs: function (__newFileStream, next){
+					dir.files(uploadPath, function(err,files){
+						if (err){
+							mkdir(uploadPath, 0775);
+							return next(undefined, __newFileStream.filename);
+						}else {
+							return next(undefined, __newFileStream.filename);
+						}
+					});
+				}
+			}, function(err,files){
+				if(err){
+					console.log(err);
+					res.status(415).send(err);
+				}else{
+					console.log(files);
+					var fileNames = [];
+					if (files.length>0){
+						_.forEach(files, (gotFile)=>{
+							fileNames.push(gotFile.fd.split('/uploads/').reverse()[0]);
+						})
+					}
+					leave['attechment'] = fileNames;
+					leaveModel.findOneAndUpdate({_id:leave._id}, {$set:{attechment:fileNames}},{upsert:true, new:true} )
+					.exec((err,uploadFile)=>{
+						if(err){
+							console.log(err);
+							res.status(404).send(err);
+						}else{
+							projectModel
+							.find({Teams : mongoose.Types.ObjectId(leave.id)})
+							.exec((err,project)=>{
+								console.log("projects=========>",project);
+								console.log("uniqueId==============================>",project.uniqueId)
+								projects = [];
+								for(i=0;i<project.length;i++){
+									console.log("push");
+									projects.push(project[i].pmanagerId);
+								}
+								console.log("pmanagerId array======>",projects);
 
-	})
-	console.log("token====>",admin);
-	console.log("admin tokjen===>",admin[0].token)
+								if(duration == "0.5" || duration == "1"){
+									var obj = {
+										"subject" :"Your Team member has applied for leave .",
+										"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " + req.body.leaveDuration+ " day leave (" +req.body.startingDate+ ")",
+										"sendTo" : projects,
+										"type" : "leave",
+									} 
 
-	pushNotification.postCode(obj1.subject,obj1.type,[admin[0].token]);
-	}
-	})
-	}
+								}else{
+									var obj = {
+										"subject" :"Your Team member has applied for leave .",
+										"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " +req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
+										"sendTo" : projects,
+										"type" : "leave",
+									} 
+								}
+								console.log("obj==================>",obj);
+								var notification1 = new sendnotificationModel(obj);
+								notification1.save(function(err,savedNotification){
+									var object = [].concat.apply([],projects);
+									console.log("USERRRRR========>",object);
+									notificationModel
+									.find({userId: object})
+									.exec((err, user)=>{
+										console.log("userr====>",user);
+										if (err) {
+											console.log("err",err);
+											res.status(500).send(err);
+										}else{
+											req.session.user = user;
+											req.session.userarray = [];
+											console.log("length===>",user.length);
+											for(i=0;i<user.length;i++){
+												req.session.userarray.push(req.session.user[i].token);
+												console.log("arrayyyy===>");
+												console.log("token array======>",req.session.userarray);
+											}
+											pushNotification.postCode(obj.subject,obj.type,req.session.userarray);
+										}
+									})
 
-	})
+								})
 
-	})
+								var admin = 'admin';
 
-	
+								userModel
+								.findOne({userRole : admin})
+								.exec((err, user)=>{
+									if (err) {
+										res.status(500).send(err);
+									}else{
+										console.log("admin===========>",user);
+										notificationModel
+										.find({userId : user._id})
+										.exec((err,admin)=>{
+											if (err){
+												res.status(500).send(err)
+											}else{
+												if(duration == "0.5" || duration == "1"){
+													var obj1 = {
+														"subject" :"leave Application.",
+														"content" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for "+req.body.leaveDuration+ " day leave (" +req.body.startingDate+ ")",
+														"sendTo" : user._id,
+														"type" : "leave",
+													} 
+												}else{
+													var obj1 = {
+														"subject" :"Leave Application",
+														"content" :  leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for "+ req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
+														"sendTo" : user._id,
+														"type" : "leave",
+													}
+												}
+												console.log("obj1==============================>",obj1);
+												var notification = new sendnotificationModel(obj1);
+												notification.save(function(err,SavedUser){
+												})
+												console.log("token====>",admin);
+												console.log("admin tokjen===>",admin[0].token)
+
+												pushNotification.postCode(obj1.subject,obj1.type,[admin[0].token]);
+											}
+										})
+									}
+
+								})
+
+							})
+
+
 	// })
 	
 	var output = `<!doctype html>
@@ -439,269 +438,269 @@ leaveController.updateLeaves = function(req,res){
 									console.log("projectManager=======>",userrole);
 								}
 	// if(userrole == 'projectManager'){
-	if( duration == "1" || duration == "0.5"){
-	var obj2 = {
-	"subject" : "approved leave", 
-	"content" : "<strong>" +update.name+ "</strong> has applied for leave on " +req.body.startingDate+ " and it's approved.",
-	"sendTo" : projects,
-	"type" : "leaveAccepted",
-	}
-	}else{
-	var obj2 = {
-	"subject" : "approved leave", 
-	"content" : "<strong>" +update.name+ "</strong> has applied for leave on " +req.body.startingDate+ " to " + req.body.endingDate+ " and it's approved.",
-	"sendTo" : projects,
-	"type" : "leaveAccepted",
-	}
-	}
-	var notification = new sendnotificationModel(obj2);
-	notification.save(function(err,SavedUser){
-	notificationModel
-	.findOne({userId: projects})
-	.exec((err, user)=>{
-	if (err) {
-	res.status(404).send(err);
-	}else{
-	console.log("admin===========>",user);
+		if( duration == "1" || duration == "0.5"){
+			var obj2 = {
+				"subject" : "approved leave", 
+				"content" : "<strong>" +update.name+ "</strong> has applied for leave on " +req.body.startingDate+ " and it's approved.",
+				"sendTo" : projects,
+				"type" : "leaveAccepted",
+			}
+		}else{
+			var obj2 = {
+				"subject" : "approved leave", 
+				"content" : "<strong>" +update.name+ "</strong> has applied for leave on " +req.body.startingDate+ " to " + req.body.endingDate+ " and it's approved.",
+				"sendTo" : projects,
+				"type" : "leaveAccepted",
+			}
+		}
+		var notification = new sendnotificationModel(obj2);
+		notification.save(function(err,SavedUser){
+			notificationModel
+			.findOne({userId: projects})
+			.exec((err, user)=>{
+				if (err) {
+					res.status(404).send(err);
+				}else{
+					console.log("admin===========>",user);
 
-	pushNotification.postCode(obj2.subject,obj2.content,[user.token]);
-	}
+					pushNotification.postCode(obj2.subject,obj2.content,[user.token]);
+				}
 
-	})
+			})
 
-	})
+		})
 	// }
-	}
-	})
-	}
-	
-	})
-	})
-	
-	if(duration == "0.5" || duration == "1"){
-	var	obj1 = {
-	"subject" :"Congratulations! Your leave has been approved.",
-	"content" : "Hello <span style='color:red;'>"+update.name+"</span>, your leave application for " +req.body.startingDate+ " is <strong> approved </strong>.", 
-	"sendTo" : update.id,
-	"type" : "leave-accepted"
-	}
-	console.log("obj=======>",obj1);
-	}else{
-	var	obj1 = {
-	"subject" :"Congratulations! Your leave has been approved.",
-	"content" : "Hello <span style='color:red;'>"+update.name+"</span>, your leave application form " +req.body.startingDate+ " to "+ req.body.endingDate+ " is <strong> approved </strong>.", 
-	"sendTo" : update.id,
-	"type" : "leave-accepted"
-	}
-	
-	console.log("obj=======>",obj1);
-	}
-	var notification = new sendnotificationModel(obj1);
-	notification.save(function(err,SavedUser){
-	notificationModel
-	.findOne({userId: update.id})
-	.exec((err, user)=>{
-	if (err) {
-	res.status(500).send(err);
-	}else{
-	console.log("useer==>",user);
-	pushNotification.postCode(obj1.subject,obj1.type,[user.token]);
-	}
-	})
-	console.log("Leave Accepted");
-	var output = `<!doctype html>
-	<html>
-	<head>
-	<title> title111</title>
-	</head>
-	<body>
-	<div style="width:75%;margin:0 auto;border-radius: 6px;
-	box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-	border: 1px solid #d3d3d3;">
-	<center>
-	<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-	<div style="margin-left:30px;padding:0;">
-	<p style="color:black;font-size:20px;">Your leave is <span style="color:#28B463;font-weight:bold;">APPROVED.</span></p>
-	</div>
-	</body>
-	</html>
-	`;
+}
+})
+					}
 
-	var transporter = nodemailer.createTransport({
-	host: "smtp.gmail.com",
-	port: 465,
-	secure: true,
-	service: 'gmail',
+				})
+			})
 
-	auth: {
-	user: 'raoinfotechp@gmail.com',
-	pass: 'raoinfotech@123'
-	}
-	});
+			if(duration == "0.5" || duration == "1"){
+				var	obj1 = {
+					"subject" :"Congratulations! Your leave has been approved.",
+					"content" : "Hello <span style='color:red;'>"+update.name+"</span>, your leave application for " +req.body.startingDate+ " is <strong> approved </strong>.", 
+					"sendTo" : update.id,
+					"type" : "leave-accepted"
+				}
+				console.log("obj=======>",obj1);
+			}else{
+				var	obj1 = {
+					"subject" :"Congratulations! Your leave has been approved.",
+					"content" : "Hello <span style='color:red;'>"+update.name+"</span>, your leave application form " +req.body.startingDate+ " to "+ req.body.endingDate+ " is <strong> approved </strong>.", 
+					"sendTo" : update.id,
+					"type" : "leave-accepted"
+				}
 
+				console.log("obj=======>",obj1);
+			}
+			var notification = new sendnotificationModel(obj1);
+			notification.save(function(err,SavedUser){
+				notificationModel
+				.findOne({userId: update.id})
+				.exec((err, user)=>{
+					if (err) {
+						res.status(500).send(err);
+					}else{
+						console.log("useer==>",user);
+						pushNotification.postCode(obj1.subject,obj1.type,[user.token]);
+					}
+				})
+				console.log("Leave Accepted");
+				var output = `<!doctype html>
+				<html>
+				<head>
+				<title> title111</title>
+				</head>
+				<body>
+				<div style="width:75%;margin:0 auto;border-radius: 6px;
+				box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+				border: 1px solid #d3d3d3;">
+				<center>
+				<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+				<div style="margin-left:30px;padding:0;">
+				<p style="color:black;font-size:20px;">Your leave is <span style="color:#28B463;font-weight:bold;">APPROVED.</span></p>
+				</div>
+				</body>
+				</html>
+				`;
 
-	var mailOptions = {
-	from: 'raoinfotechp@gmail.com',
-	to: email,
-	subject: 'Testing Email',
-	text: 'Hi, this is a testing email from node server',
-	html: output
-	};
+				var transporter = nodemailer.createTransport({
+					host: "smtp.gmail.com",
+					port: 465,
+					secure: true,
+					service: 'gmail',
 
-	transporter.sendMail(mailOptions, function(error, info){
-	if (error) {
-	console.log("Error",error);
-	} else {
-	console.log('Email sent: ' + info.response);
-	}
-	});
-	res.status(200).send(update);
-	})
-	}else if(status == "rejected"){
-	projectModel
-	.find({Teams : update.id})
-	.exec((err,project)=>{
-	console.log("projects=========>",project);
-	projects = [];
-	for(i=0;i<project.length;i++){
-	console.log("push");
-	projects.push(project[i].pmanagerId);
-	}
-	console.log("pmanagerId array======>",projects);
-	var object = [].concat.apply([],projects);
-	console.log("USERRRRR========>",object);
-	notificationModel
-	.find({userId: object})
-	.exec((err, user)=>{
-	if (err) {
-	res.status(404).send(err);
-	}else{
-	console.log("userrrrrrrrrrrrrrrr====>",user);
-	projects = [];
-	for(i=0;i<user.length;i++){
-	console.log("push");
-	projects.push(user[i].userId);
-	}
-	console.log("pmanagerId array======>",projects);
-	if(duration == "1" || duration == "0.5"){
-	var obj2 = {
-	"subject" : "rejected leave", 
-	"content" : "" +update.name+ " has applied for leave on " +req.body.startingDate+ " and it's <strong> rejected </strong>.",
-	"sendTo" : projects,
-	"type" : "leaveRejected",
-	}
-	}else{
-	var obj2 = {
-	"subject" : "rejected leave ", 
-	"content" : "" +update.name+ " has applied for leave on " +req.body.startingDate+ " to " + req.body.endingDate+ "and it's <strong> rejected </strong>.",
-	"sendTo" : projects,
-	"type" : "leaveRejected",
-	}
-	}
-	}
-	var notification = new sendnotificationModel(obj2);
-	notification.save(function(err,SavedUser){
-
-	notificationModel
-	.findOne({userId: projects})
-	.exec((err, user)=>{
-	if (err) {
-	res.status(404).send(err);
-	}else{
-	console.log("admin===========>",user);
-	pushNotification.postCode(obj2.subject,obj2.type,[user.token]);
-	}
-	})
-
-	})
-	})
-	})
-	if(duration == "1" || duration == "0.5"){
-	var	obj1 = {
-	"subject" :"Sorry! Your leave has been rejected.",
-	"content" : "Sorry "+update.name+", your leave application for " +req.body.startingDate+ " is <strong> rejected </strong>.", 
-	"sendTo" : update.id,
-	"type" : "leave-rejected"
-	}
-	console.log("obj=======>",obj1);
-	}else{
-	var	obj1 = {
-	"subject" :"Sorry! Your leave has been rejected.",
-	"content" : "Sorry "+update.name+", your leave application form " +req.body.startingDate+ " to "+ req.body.endingDate+ " is <strong> rejected </strong>.", 
-	"sendTo" : update.id,
-	"type" : "leave-rejected"
-	}
-	console.log("obj=======>",obj1);
-	}
-	var notification = new sendnotificationModel(obj1);
-	notification.save(function(err,SavedUser){
-	notificationModel
-	.findOne({userId: update.id})
-	.exec((err, user)=>{
-	console.log("useer==>",user);
-	if (err) {
-	res.status(500).send(err);
-	}else{
-
-	console.log("sucess");
-	pushNotification.postCode(obj1.subject,obj1.type,[user.token]);
-	}
-	})
-	})
-	console.log("Leave Rejected");
-	var output = `<!doctype html>
-	<html>
-	<head>
-	<title> title111</title>
-	</head>
-	<body>
-	<div style="width:75%;margin:0 auto;border-radius: 6px;
-	box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-	border: 1px solid #d3d3d3;">
-	<center>
-	<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-	<div style="margin-left:30px;padding:0;">
-	<p style="color:black;font-size:20px;">Your leave is <span style="color:#E74C3C;font-weight:bold;">REJECTED.</p>
-	</div>
-	</body>
-	</html>
-	`;
-
-	var transporter = nodemailer.createTransport({
-	host: "smtp.gmail.com",
-	port: 465,
-	secure: true,
-	service: 'gmail',
-
-	auth: {
-	user: 'raoinfotechp@gmail.com',
-	pass: 'raoinfotech@123'
-	}
-	});
+					auth: {
+						user: 'raoinfotechp@gmail.com',
+						pass: 'raoinfotech@123'
+					}
+				});
 
 
-	var mailOptions = {
-	from: 'raoinfotechp@gmail.com',
-	to: email,
-	subject: 'Testing Email',
-	text: 'Hi, this is a testing email from node server',
-	html: output
-	};
+				var mailOptions = {
+					from: 'raoinfotechp@gmail.com',
+					to: email,
+					subject: 'Testing Email',
+					text: 'Hi, this is a testing email from node server',
+					html: output
+				};
 
-	transporter.sendMail(mailOptions, function(error, info){
-	if (error) {
-	console.log("Error",error);
-	} else {
-	console.log('Email sent: ' + info.response);
-	}
-	})
+				transporter.sendMail(mailOptions, function(error, info){
+					if (error) {
+						console.log("Error",error);
+					} else {
+						console.log('Email sent: ' + info.response);
+					}
+				});
+				res.status(200).send(update);
+			})
+		}else if(status == "rejected"){
+			projectModel
+			.find({Teams : update.id})
+			.exec((err,project)=>{
+				console.log("projects=========>",project);
+				projects = [];
+				for(i=0;i<project.length;i++){
+					console.log("push");
+					projects.push(project[i].pmanagerId);
+				}
+				console.log("pmanagerId array======>",projects);
+				var object = [].concat.apply([],projects);
+				console.log("USERRRRR========>",object);
+				notificationModel
+				.find({userId: object})
+				.exec((err, user)=>{
+					if (err) {
+						res.status(404).send(err);
+					}else{
+						console.log("userrrrrrrrrrrrrrrr====>",user);
+						projects = [];
+						for(i=0;i<user.length;i++){
+							console.log("push");
+							projects.push(user[i].userId);
+						}
+						console.log("pmanagerId array======>",projects);
+						if(duration == "1" || duration == "0.5"){
+							var obj2 = {
+								"subject" : "rejected leave", 
+								"content" : "" +update.name+ " has applied for leave on " +req.body.startingDate+ " and it's <strong> rejected </strong>.",
+								"sendTo" : projects,
+								"type" : "leaveRejected",
+							}
+						}else{
+							var obj2 = {
+								"subject" : "rejected leave ", 
+								"content" : "" +update.name+ " has applied for leave on " +req.body.startingDate+ " to " + req.body.endingDate+ "and it's <strong> rejected </strong>.",
+								"sendTo" : projects,
+								"type" : "leaveRejected",
+							}
+						}
+					}
+					var notification = new sendnotificationModel(obj2);
+					notification.save(function(err,SavedUser){
 
-	res.status(200).send(update)
-	}
-	else{
-	console.log("mail not send");
+						notificationModel
+						.findOne({userId: projects})
+						.exec((err, user)=>{
+							if (err) {
+								res.status(404).send(err);
+							}else{
+								console.log("admin===========>",user);
+								pushNotification.postCode(obj2.subject,obj2.type,[user.token]);
+							}
+						})
 
-	}
+					})
+				})
+			})
+			if(duration == "1" || duration == "0.5"){
+				var	obj1 = {
+					"subject" :"Sorry! Your leave has been rejected.",
+					"content" : "Sorry "+update.name+", your leave application for " +req.body.startingDate+ " is <strong> rejected </strong>.", 
+					"sendTo" : update.id,
+					"type" : "leave-rejected"
+				}
+				console.log("obj=======>",obj1);
+			}else{
+				var	obj1 = {
+					"subject" :"Sorry! Your leave has been rejected.",
+					"content" : "Sorry "+update.name+", your leave application form " +req.body.startingDate+ " to "+ req.body.endingDate+ " is <strong> rejected </strong>.", 
+					"sendTo" : update.id,
+					"type" : "leave-rejected"
+				}
+				console.log("obj=======>",obj1);
+			}
+			var notification = new sendnotificationModel(obj1);
+			notification.save(function(err,SavedUser){
+				notificationModel
+				.findOne({userId: update.id})
+				.exec((err, user)=>{
+					console.log("useer==>",user);
+					if (err) {
+						res.status(500).send(err);
+					}else{
+
+						console.log("sucess");
+						pushNotification.postCode(obj1.subject,obj1.type,[user.token]);
+					}
+				})
+			})
+			console.log("Leave Rejected");
+			var output = `<!doctype html>
+			<html>
+			<head>
+			<title> title111</title>
+			</head>
+			<body>
+			<div style="width:75%;margin:0 auto;border-radius: 6px;
+			box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+			border: 1px solid #d3d3d3;">
+			<center>
+			<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+			<div style="margin-left:30px;padding:0;">
+			<p style="color:black;font-size:20px;">Your leave is <span style="color:#E74C3C;font-weight:bold;">REJECTED.</p>
+			</div>
+			</body>
+			</html>
+			`;
+
+			var transporter = nodemailer.createTransport({
+				host: "smtp.gmail.com",
+				port: 465,
+				secure: true,
+				service: 'gmail',
+
+				auth: {
+					user: 'raoinfotechp@gmail.com',
+					pass: 'raoinfotech@123'
+				}
+			});
+
+
+			var mailOptions = {
+				from: 'raoinfotechp@gmail.com',
+				to: email,
+				subject: 'Testing Email',
+				text: 'Hi, this is a testing email from node server',
+				html: output
+			};
+
+			transporter.sendMail(mailOptions, function(error, info){
+				if (error) {
+					console.log("Error",error);
+				} else {
+					console.log('Email sent: ' + info.response);
+				}
+			})
+
+			res.status(200).send(update)
+		}
+		else{
+			console.log("mail not send");
+
+		}
 
 	})
 

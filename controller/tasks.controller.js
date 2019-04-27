@@ -137,6 +137,8 @@ tasksController.addTasks = function(req , res){
 										console.log("project title=============>",foundTask.projectId.title);
 										console.log("final----->>>",foundTask.assignTo.email);
 										console.log("priority================================>",foundTask.priority);
+										var name = foundTask.assignTo.name;
+										console.log("name of assign usersssssss>>>>><<<<<<<",name);
 										var email = foundTask.assignTo.email;
 										console.log("email===>>>>>",email);
 
@@ -199,6 +201,8 @@ tasksController.addTasks = function(req , res){
 											r
 										}	
 										console.log("timeeeeeeeeeeeeeeeeeeeeeeeeeee",timePeriod);
+
+										// console.log("name nthi mdtu yr",savedTask.assignTo.name);
 										var notification = new sendnotificationModel(obj);
 										console.log("kaik notification mdi jaje==========<<>>>>>>>>>>>",notification);
 										notification.save(function(err,savedNotification){
@@ -215,7 +219,7 @@ tasksController.addTasks = function(req , res){
 													console.log("savedNotification======>>>>>",user);
 											pushNotification.postCode(obj.subject,obj.type,[user.token]);
 
-													res.status(200).send(savedTask);
+													res.status(200).send(foundTask);
 
 												}
 											})
