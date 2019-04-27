@@ -17,7 +17,7 @@ var UserSchema = new Schema({
     CV: String,
     projects:[{type:Schema.Types.ObjectId, ref: 'Project'}],
     tasks: [{type: Schema.Types.ObjectId , ref: 'Tasks'}],
-    isDelete : String,
+    isDelete : Boolean,
     
 },{timestamps: true});
 

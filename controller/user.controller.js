@@ -176,7 +176,7 @@ userController.updateUserById = function(req,res){
 	})
 }
 userController.getAllUsers = function(req, res){
-	userModel.find({})
+	userModel.find({isDelete: false})
 	.exec((err,users)=>{
 		if (err) {
 			res.status(500).send(err);
@@ -184,7 +184,7 @@ userController.getAllUsers = function(req, res){
 		else if (users){
 			res.status(200).send(users);
 		}else{
-			res.status(400).send( { msg : 'Users not found' });
+			res.status(404).send( { msg : 'Users not found' });
 		}
 	})
 }
@@ -435,13 +435,13 @@ userController.getProjectMngrNotInProject = function(req, res){
 
 userController.deleteUserById = function(req,res){
 
-	var userId = req.params.userId;
-	userModel.findOneAndDelete({_id:userId}).exec(function(err,user){
-		console.log("err==========>>>",err);
-		res.status(200).send(user);
-		console.log("user is========>",user);
-	})
-
+		var userId = req.params.userId;
+		userModel.findOneAndUpdate({_id:userId},{$set: {isDelete: true}}, {upsert:true, new:true}).exec(function(err,user){
+			console.log("err==========>>>",err);
+			res.status(200).send(user);
+			console.log("user is========>",user);
+		})
+	
 }
 
 module.exports = userController; 
