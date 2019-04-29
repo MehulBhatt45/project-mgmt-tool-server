@@ -80,8 +80,14 @@ sendnotificationController.getNotificationByUserId = function(req,res){
 		if (err) {
 			res.status(500).send(err);
 		}else{
+			pmArray = [];
+			for(i=0;i<user.length;i++){
+			userModel
+			.find({_id:user[i].pmId})
+			.populate('pmId')
+			}
 			console.log("userrr=>>>",user);
-			console.log("length==========>",user.length);
+			// console.log("length==========>",user.length);
 			for(i=0;i<user.length;i++){
 			sendnotificationModel
 			.findOneAndUpdate({_id:user[i]._id} , {upsert:true,new:true})
@@ -91,6 +97,7 @@ sendnotificationController.getNotificationByUserId = function(req,res){
 				}
 				else{
 					updatedFlag.seenFlag = true;
+					
 					updatedFlag.save();
 				}
 			})	
@@ -121,9 +128,94 @@ sendnotificationController.getUnreadNotification = function(req,res){
 		}
 	})
 }
+
+sendnotificationController.updateNotificationApprovedStatus = function(req,res){
+	var leaveId = req.params.id;
+	var leaveStatus = req.params.status;
+	// console.log("req.body--------->",req.body);
+	console.log("leaveId===================================>",leaveId);
+	console.log("leaveStatus===============================>",leaveStatus);
+		// var leaveForAdmin = 'leaveForAdmin'
+			sendnotificationModel
+			.findByIdAndUpdate({_id:leaveId} , {upsert:true,new:true})
+			.exec((err , notification)=>{
+				if (err) {
+					res.status(500).send(err);
+				}else{
+					console.log("notification===========>",notification);
+					sendnotificationModel
+					.findByIdAndUpdate({})
+					if(leaveStatus == 'approved') {
+						console.log("sxdsdxsdx----",notification.pmStatus[0].leaveStatus);
+					notification.pmStatus[0].leaveStatus = 'approved';
+					notification.save();
+					}else{
+					notification.pmStatus[0].leaveStatus = 'rejected';
+					notification.save();
+					}
+					console.log("new notification==============>",notification);
+
+						var admin = 'admin';
+								userModel
+								.findOne({userRole : admin})
+								.exec((err, user)=>{
+									if (err) {
+										res.status(500).send(err);
+									}else{
+										console.log("admin===========>",user);
+										notificationModel
+										.find({userId : user._id})
+										.exec((err,admin)=>{
+											if (err){
+												res.status(500).send(err)
+											}else{
+												// if(duration == "0.5" || duration == "1"){
+													var obj1 = {
+														"subject" :"leave Application.",
+														// "content" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for 1 day leave (" +req.body.startingDate+ ")",
+														"sendTo" : user._id,
+														"content" : "Hello",
+														"type" : "leaveForAdmin",
+														// "pmId" :object,
+														"leaveStatus" : "pending"
+													} 
+												
+												console.log("obj1==============================>",obj1);
+												// var notification = new sendnotificationModel(obj1);
+												// notification.save(function(err,SavedUser){
+												// 	console.log("SAVEDUSER----------------------->",SavedUser);
+												// })
+												// console.log("token====>",admin);
+												// console.log("admin tokjen===>",admin[0].token)
+
+												// pushNotification.postCode(obj1.subject,obj1.type,[admin[0].token]);
+											}
+										})
+									}
+
+								})
+
+					res.status(200).send(notification);
+				}
+			})
+}
+// sendnotificationController.updateNotificationRejectedStatus = function(req,res){
+// 	var leaveId = req.params.id;
+// 			sendnotificationModel
+// 			.findOneAndUpdate({_id:leaveId} , {upsert:true,new:true})
+// 			.exec((err , notification)=>{
+// 				if(err){
+// 					res.status(500).send(err);
+// 				}else{
+// 					console.log("notification===========>",notification);
+// 					notification.leaveStatus = 'rejected';
+// 					notification.save();
+// 					res.status(200).send(notification);
+// 				}
+// 			})
+
+// }
 module.exports = sendnotificationController; 
-
-
 
 
 
