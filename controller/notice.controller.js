@@ -31,7 +31,7 @@ noticeController.addNotice = function(req,res){
 			}, function(err, files){
 				if (err) {
 					console.log(err);
-					res.status(500).send(err);
+					res.status(415).send(err);
 				}else{
 					console.log(files);
 					var fileNames=[];
@@ -45,7 +45,7 @@ noticeController.addNotice = function(req,res){
 					.exec((err , notice)=>{
 						if (err) {
 							console.log(err);
-							res.status(500).send(err);
+							res.status(404).send(err);
 						}else{
 							res.status(200).send(notice);
 						}	
@@ -59,6 +59,7 @@ noticeController.addNotice = function(req,res){
 noticeController.updateNoticeById = function(req,res){
 	var noticeId = req.params.noticeId;
 	console.log("notice Id to update=>>>>>",noticeId);
+	req.body.images = req.body.images?req.body.images.split(','):req.body.images[0];
 
 	noticeModel
 	.findOneAndUpdate({_id:noticeId},req.body,{ upsert: true, new: true },function(err,newNotice){
@@ -85,21 +86,22 @@ noticeController.updateNoticeById = function(req,res){
 			}, function(err, files){
 				if (err) {
 					console.log(err);
-					res.status(500).send(err);
+					res.status(415).send(err);
 				}else{
 					console.log(files);
-					var fileNames=[];
+					var fileNames=req.body.images;
 					if(files.length>0){
 						_.forEach(files, (gotFile)=>{
 							fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
 						})
 					}
+					req.body['images'] = fileNames;
 					noticeModel
 					.findOneAndUpdate({_id: newNotice._id}, {$set: {images: fileNames}}, { upsert: true, new: true })
 					.exec((err , notice)=>{
 						if (err) {
 							console.log(err);
-							res.status(500).send(err);
+							res.status(404).send(err);
 						}else{
 							res.status(200).send(notice);
 						}	
@@ -204,7 +206,7 @@ noticeController.changePhotoById = function(req,res){
 			// getuser['profilePhoto'] = profile;
 			noticeModel.findOneAndUpdate({_id: noticeId}, {$set: {images:profile }}, {upsert:true, new:true}).exec((error,user)=>{
 				if (error){ 
-					res.status(500).send(error);
+					res.status(404).send(error);
 				}else{
 					console.log(user);
 					res.status(200).send(user);
