@@ -46,7 +46,6 @@ var attendenceRouter = require('./routes/attendence');
 
 
 
-
 // https
 // var privateKey = fs.readFileSync('/var/www/html/project_mgmt_tool/client/ssl/server.key', 'utf8');
 // var certificate = fs.readFileSync('/var/www/html/project_mgmt_tool/client/ssl/server.crt', 'utf8');

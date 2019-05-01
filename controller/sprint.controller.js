@@ -82,7 +82,7 @@ sprintController.completeSprint = function(req,res){
 			.findOneAndUpdate({_id:Sprint._id} , Sprint , {upsert:true,new:true})
 			.exec((err , updatedSprint)=>{
 				if(err){
-					res.status(500).send(err);
+					res.status(404).send(err);
 				}
 				else{
 					console.log(updatedSprint);
