@@ -149,21 +149,26 @@ projectController.deleteProjectById = function(req,res){
 }
 
 projectController.updateProjectById = function(req,res){
-	console.log("REQQQQQQ===========>",req.body);
-	// console.log("reqqqqqqqfile=================>",req.file);
-	console.log("New Team===================================>",req.body.Teams)
-	console.log("DELETE=========================================>",req.body.delete);
-	console.log("teamLength==========>",req.body.Teams.length);
-	var updatedTeam = req.body.Teams.length;
 	var projectId = req.params.projectId;
-	var deleteTeam = req.body.delete;
-	var addTeam = req.body.add;
-	console.log("deleteTeam===>",deleteTeam);
-	console.log("projectId====>",projectId);
-	// projectModel.findOneAndUpdate({_id:projectId},{$set:req.body},{upsert:true},function(err,projects){
-		// if(err){
-		// 	res.status(500).send(err);
-		// }else{
+	if (req.body.pmanagerId != undefined){
+		req.body.pmanagerId = typeof req.body.pmanagerId == 'string' ? [req.body.pmanagerId] : req.body.pmanagerId;
+	}else{
+		req.body.pmanagerId = [];
+	}
+	if (req.body.Teams) {
+		req.body.Teams = typeof req.body.Teams == 'string' ? [req.body.Teams] : req.body.Teams;
+	}else{
+		req.body.Teams = [];
+	}
+	req.body.delete = typeof req.body.delete == 'string' ? [req.body.delete] : req.body.delete;
+	req.body.add = typeof req.body.add == 'string' ? [req.body.add] : req.body.add;
+	console.log("IN UPDATE PROFILE=============>",req.body);
+	projectModel
+	.findOne({ _id: projectId})
+	.exec((error, resp)=>{
+		if (error) {
+			res.status(500).send(err);
+		}else if(resp){
 			var uploadPath = path.join(__dirname, "../uploads/"+projectId+"/avatar/");
 			console.log("IN UPDATE PROFILE=============>",uploadPath);
 			req.file('avatar').upload({
@@ -186,100 +191,259 @@ projectController.updateProjectById = function(req,res){
 				}else{
 					console.log(files);
 					console.log("files==========>",files)
-					var profile = req.body.avatar;
+					var profile = resp.avatar;
 					console.log('profile================>',profile);
 					if(files.length>0){
 						profile = files[0].fd.split('/uploads/').reverse()[0];
 					}
 					req.body['avatar'] = profile;
 					console.log("req. body =====+>" , req.body);
-			// getuser['profilePhoto'] = profile;
-			projectModel.findOneAndUpdate({_id: projectId}, {$set: req.body}, {upsert:true ,new: true},function(error,user){
-				if (error){ 
-					console.log("=====================================",error)
-					res.status(500).send(error);
-				}else{
-					console.log(user);
-					// res.status(200).send(user);
-				// }
-			// })
-		// }
-
-	// })
-
-
-	console.log("saved console 5",user);	
-		// console.log("old TEAM=================================================>",user.user);
-		var teamLength = user.Teams.length;
-		console.log("teamLength",teamLength);
-		userDetails = [];
-		userModel
-		.find({_id : deleteTeam[0]},function(err,foundUser){
-			// console.log("name==============>",foundUser[0].name);
-			async.forEach(foundUser, function (item, callback){ 
-				console.log("item------>",item)
-				userDetails.push(item);
-				console.log("team========>",userDetails);
-				console.log("name=========================>",userDetails[0].name);
-				callback(); 
-			});  
-			userModel
-			.find({_id : addTeam})
-			.exec((err,add)=>{
-
-				if(teamLength != updatedTeam){
-					if(teamLength > updatedTeam){
-						console.log("deleteTeam member");
-						var obj = {
-							"subject" :"Team member terminated.",
-							"content" : "For the notes, "+userDetails[0].name+ " is terminated from "+req.body. uniqueId+ " team as "+userDetails[0].userRole+ ".",
-					// "content" : "Team member terminated from <strong>"+req.body.uniqueId + "</strong> team.",
-					"sendTo" : req.body.Teams,
-					"type" : "other",
-				} 
-			}else if(teamLength < updatedTeam){
-				console.log("add Team member");
-				var obj = {
-					"subject" :"New team member added.",
-					"content" : "For the notes, "+add[0].name+ " is added in "+req.body. uniqueId+ " team as "+add[0].userRole+ ".",
-					// "content" : "New Team member added in "+req.body. uniqueId+ " team.",
-					"sendTo" : req.body.Teams,
-					"type" : "other",
-				} 
-			}
-			var notification = new sendnotificationModel(obj);
-			notification.save(function(err,savedNotification){
-				if(err){
-					res.status(500).send(err);		
+					projectModel
+					.findOneAndUpdate({_id: projectId}, {$set: req.body}, {new: true},function(error,user){
+						if (error){ 
+							console.log("=====================================",error)
+							res.status(500).send(error);
+						}else{
+							if(req.body.add && req.body.add.length){
+								userModel
+								.find({_id : user.Teams})
+								.exec((err,add)=>{
+									if (err) {
+										res.status(500).send(err);		
+									}else{
+										console.log("add Team member");
+										var obj = {
+											"subject" :"New team member added.",
+											"content" : "For the notes, "+add[0].name+ " is added in "+req.body.uniqueId+ " team as "+add[0].userRole+ ".",
+											// "content" : "New Team member added in "+req.body. uniqueId+ " team.",
+											"sendTo" : req.body.Teams,
+											"type" : "other",
+										}
+										var notification = new sendnotificationModel(obj);
+										notification.save(function(err,savedNotification){
+											if(err){
+												res.status(500).send(err);		
+											}
+											console.log("TEAM============>",req.body.Teams);
+											var Teams = req.body.Teams;
+											team = [];
+											notificationModel
+											.find({userId : Teams}, function(err, foundUser){
+												console.log("TOKEN==================>",foundUser);
+												req.session.user = foundUser;
+												req.session.userarray = [];
+												async.forEach(foundUser, function (item, callback){ 
+													console.log("item------>",item)
+													team.push(item.token);
+													console.log("team========>",team);
+													callback(); 
+												});  
+												pushNotification.postCode(obj.subject,obj.type,team);
+											})
+										})
+									}
+								})
+							}
+							if (req.body.delete && req.body.delete.length) {
+								userModel
+								.find({_id : req.body.delete})
+								.exec((err,add)=>{
+									if (err) {
+										res.status(500).send(err);		
+									}else{
+										console.log("add Team member");
+										var obj = {
+											"subject" :"Team member terminated.",
+											"content" : "For the notes, "+add[0].name+ " is terminated from "+req.body.uniqueId+ " team as "+add[0].userRole+ ".",
+											// "content" : "Team member terminated from <strong>"+req.body.uniqueId + "</strong> team.",
+											"sendTo" : req.body.Teams,
+											"type" : "other",
+										} 
+										var notification = new sendnotificationModel(obj);
+										notification.save(function(err,savedNotification){
+											if(err){
+												res.status(500).send(err);		
+											}
+											console.log("TEAM============>",req.body.Teams);
+											var Teams = req.body.Teams;
+											team = [];
+											notificationModel
+											.find({userId : Teams}, function(err, foundUser){
+												console.log("TOKEN==================>",foundUser);
+												req.session.user = foundUser;
+												req.session.userarray = [];
+												async.forEach(foundUser, function (item, callback){ 
+													console.log("item------>",item)
+													team.push(item.token);
+													console.log("team========>",team);
+													callback(); 
+												});  
+												pushNotification.postCode(obj.subject,obj.type,team);
+											})
+										})
+									}
+								})	
+							}
+							res.status(200).send(user);
+						}
+					})
 				}
-				console.log("TEAM============>",req.body.Teams);
-				var Teams = req.body.Teams;
-				team = [];
-				notificationModel
-				.find({userId : Teams}, function(err, foundUser){
-					console.log("TOKEN==================>",foundUser);
-					req.session.user = foundUser;
-					req.session.userarray = [];
-					async.forEach(foundUser, function (item, callback){ 
-						console.log("item------>",item)
-						team.push(item.token);
-						console.log("team========>",team);
-						callback(); 
-					});  
-					pushNotification.postCode(obj.subject,obj.type,team);
-				})
 			})
+		}else{
+			res.status(404).json({msg: 'No project found'});
 		}
 	})
-		// })
-	})
-		res.status(200).send(user);
-	}
+}
+
+// projectController.updateProjectById = function(req,res){
+// 	// console.log("REQQQQQQ===========>",req.body);
+// 	// // console.log("reqqqqqqqfile=================>",req.file);
+// 	// console.log("New Team===================================>",req.body.Teams)
+// 	// console.log("DELETE=========================================>",req.body.delete);
+// 	// // var array = [];
+// 	// if (req.body.Teams == null){
+// 	// 	req.body.Teams = [];
+// 	// }
+// 	// console.log("teamLength==========>",req.body.Teams.length);
+// 	// var updatedTeam = req.body.Teams.length;
+// 	// var projectId = req.params.projectId;
+// 	// var deleteTeam = req.body.delete;
+// 	// var addTeam = req.body.add;
+// 	// console.log("deleteTeam===>",deleteTeam);
+// 	// console.log("projectId====>",projectId);
+// 	// projectModel.findOneAndUpdate({_id:projectId},{$set:req.body},{upsert:true},function(err,projects){
+// 		// if(err){
+// 		// 	res.status(500).send(err);
+// 		// }else{
+// 			var uploadPath = path.join(__dirname, "../uploads/"+projectId+"/avatar/");
+// 			console.log("IN UPDATE PROFILE=============>",uploadPath);
+// 			req.file('avatar').upload({
+// 				maxBytes: 50000000000000,
+// 				dirname: uploadPath,
+// 				saveAs: function (__newFileStream, next) {
+// 					dir.files(uploadPath, function(err, files) {
+// 						if (err){
+// 							mkdir(uploadPath, 0775);
+// 							return next(undefined, __newFileStream.filename);
+// 						}else {
+// 							return next(undefined, __newFileStream.filename);
+// 						}
+// 					});
+// 				}
+// 			}, function(err, files){
+// 				if (err) {
+// 					console.log(err);
+// 					res.status(500).send(err);
+// 				}else{
+// 					console.log(files);
+// 					console.log("files==========>",files)
+// 					var profile = req.body.avatar;
+// 					console.log('profile================>',profile);
+// 					if(files.length>0){
+// 						profile = files[0].fd.split('/uploads/').reverse()[0];
+// 					}
+// 					req.body['avatar'] = profile;
+// 					if (!req.body.Teams || req.body.Teams == 'null') {
+// 						console.log('inside: ');
+// 						delete req.body.Teams;
+// 					}
+// 					console.log("req. body =====+>" , req.body);
+
+// 			// getuser['profilePhoto'] = profile;
+// 			projectModel.findOneAndUpdate({_id: projectId}, {$set: req.body}, {upsert:true ,new: true},function(error,user){
+// 				if (error){ 
+// 					console.log("=====================================",error)
+// 					res.status(500).send(error);
+// 				}else{
+// 					console.log(user);
+// 					// res.status(200).send(user);
+// 				// }
+// 			// })
+// 		// }
+
+// 	// })
+
+
+// 	console.log("saved console 5",user);	
+// 		// console.log("old TEAM=================================================>",user.user);
+// 		var teamLength = user.Teams.length;
+// 		console.log("teamLength",teamLength);
+// 		userDetails = [];
+// 		userModel
+// 		.find({_id : deleteTeam},function(err,foundUser){
+// 			// console.log("name==============>",foundUser[0].name);
+// 			async.forEach(foundUser, function (item, callback){ 
+// 				console.log("item------>",item)
+// 				userDetails.push(item);
+// 				console.log("team========>",userDetails);
+// 				console.log("name=========================>",userDetails[0].name);
+// 				// callback();
+// 				projectModel.update(
+// 					{},
+// 					{ $pull: { Teams: { $in: item._id } } },
+// 					{ multi: true }
+// 					)
+// 				console.log("deleted: ",item._id); 
+// 				});
+
+// 			userModel
+// 			.find({_id : addTeam})
+// 			.exec((err,add)=>{
+// 				if(req.body.Teams){
+// 					if(teamLength != updatedTeam){
+// 						if(teamLength > updatedTeam){
+// 							console.log("deleteTeam member");
+// 							var obj = {
+// 								"subject" :"Team member terminated.",
+// 								"content" : "For the notes, "+userDetails[0].name+ " is terminated from "+req.body. uniqueId+ " team as "+userDetails[0].userRole+ ".",
+// 					// "content" : "Team member terminated from <strong>"+req.body.uniqueId + "</strong> team.",
+// 					"sendTo" : req.body.Teams,
+// 					"type" : "other",
+// 				} 
+// 			}else if(teamLength < updatedTeam){
+// 				console.log("add Team member");
+// 				var obj = {
+// 					"subject" :"New team member added.",
+// 					"content" : "For the notes, "+add[0].name+ " is added in "+req.body. uniqueId+ " team as "+add[0].userRole+ ".",
+// 					// "content" : "New Team member added in "+req.body. uniqueId+ " team.",
+// 					"sendTo" : req.body.Teams,
+// 					"type" : "other",
+// 				} 
+// 			}
+// 			var notification = new sendnotificationModel(obj);
+// 			notification.save(function(err,savedNotification){
+// 				if(err){
+// 					res.status(500).send(err);		
+// 				}
+// 				console.log("TEAM============>",req.body.Teams);
+// 				var Teams = req.body.Teams;
+// 				team = [];
+// 				notificationModel
+// 				.find({userId : Teams}, function(err, foundUser){
+// 					console.log("TOKEN==================>",foundUser);
+// 					req.session.user = foundUser;
+// 					req.session.userarray = [];
+// 					async.forEach(foundUser, function (item, callback){ 
+// 						console.log("item------>",item)
+// 						team.push(item.token);
+// 						console.log("team========>",team);
+// 						callback(); 
+// 					});  
+// 					pushNotification.postCode(obj.subject,obj.type,team);
+// 				})
+// 			})
+// 		}
+// 	}
+// })
+// 		// })
+// 	})
+// 		res.status(200).send(user);
+// 	}
 	
-})
-}
-})
-}
+// })
+// 		}
+// 	})
+// 		}
 
 
 		projectController.getAllProjectOrderByTitle = function(req,res){
