@@ -122,7 +122,6 @@ leaveController.applyLeave = function(req,res){
 								} 
 							}
 								console.log("obj==================>",obj);
-<<<<<<< HEAD
 								var notification = new sendnotificationModel(obj);
 								notification.save(function(err,SavedUser){
 									if(err){
