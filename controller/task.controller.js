@@ -206,7 +206,7 @@ taskController.deleteTaskById = function(req,res){
 		else if(deletedtask){
 			projectModel.findOne({_id: deletedtask.projectId})
 			.exec((err, resp)=>{
-				if (err) res.status(500).send(err);
+				if (err) res.status(400).send(err);
 				else if(resp){
 					resp.taskId.splice(_.findIndex(resp.taskId, deletedtask._id), 1);
 					resp.save();
@@ -241,7 +241,7 @@ taskController.updateTaskById = function(req,res){
 		else if(Updatedtask) {
 			projectModel.findOne({_id: Updatedtask.projectId})
 			.exec((err, resp)=>{
-				if (err) res.status(500).send(err);
+				if (err) res.status(404).send(err);
 				if(!_.includes(resp.Teams, Updatedtask.assignTo))
 					resp.Teams.push(Updatedtask.assignTo);
 				resp.save();
@@ -266,7 +266,7 @@ taskController.updateTaskStatusById = function(req,res){
 					operatedBy: req.body.operatorId
 				})
 				taskModel.findOneAndUpdate({_id:taskId},{$set:{status: req.body.status, timelog: timelog, startDate: req.body.status=='in progress'?Date.now():'' }},{upsert:true, new:true},function(err,Updatedtask){
-					if (err) res.status(500).send(err);
+					if (err) res.status(400).send(err);
 					else if(Updatedtask) res.status(200).send(Updatedtask);
 					else res.status(404).send("Not Found");
 				})
@@ -286,7 +286,7 @@ taskController.updateTaskStatusToComplete = function(req,res){
 			if (err) res.status(500).send(err);
 			else if(task){
 				taskModel.findOneAndUpdate({_id:taskId},{$set:{status: req.body.status, completedAt: Date.now()}},{upsert:true, new:true},function(err,Updatedtask){
-					if (err) res.status(500).send(err);
+					if (err) res.status(400).send(err);
 					else if(Updatedtask) res.status(200).send(Updatedtask);
 					else res.status(404).send("Not Found");
 				})

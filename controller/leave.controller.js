@@ -15,7 +15,7 @@ var dir = require('node-dir');
 var _ = require('lodash');
 var pushNotification = require('./../service/push-notification.service');
 var mongoose = require('mongoose');
-
+// var object = [];
 leaveController.applyLeave = function(req,res){
 	console.log("nthi mdtu ke mde che", req.body);
 	var leave = new leaveModel(req.body);
@@ -43,7 +43,7 @@ leaveController.applyLeave = function(req,res){
 			}, function(err,files){
 				if(err){
 					console.log(err);
-					res.status(500).send(err);
+					res.status(415).send(err);
 				}else{
 					console.log(files);
 					var fileNames = [];
@@ -57,90 +57,99 @@ leaveController.applyLeave = function(req,res){
 					.exec((err,uploadFile)=>{
 						if(err){
 							console.log(err);
-							res.status(500).send(err);
+							res.status(404).send(err);
 						}else{
 							projectModel
 							.find({Teams : mongoose.Types.ObjectId(leave.id)})
+							.populate('pmanagerId')
 							.exec((err,project)=>{
 								console.log("projects=========>",project);
 								console.log("uniqueId==============================>",project.uniqueId)
-								projects = [];
+								var projects = [];
 								for(i=0;i<project.length;i++){
-									console.log("push");
-									projects.push(project[i].pmanagerId);
+									projects.push(...project[i].pmanagerId);
 								}
-								console.log("pmanagerId array======>",projects);
-								var object = [].concat.apply([],projects);
-								console.log("OBJECT++++++++++++>",object);
-								
-								if(duration == "0.5" || duration == "1"){
-									var obj = {
-										"subject" :"Your Team member has applied for leave .",
-										"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " + req.body.leaveDuration+ " day leave on (" +req.body.startingDate+ ")",
-										"sendTo" : object,
-										"type" : "leave",
-									} 
-									
-								}else{
-									var obj = {
-										"subject" :"Your Team member has applied for leave .",
-										"content" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " +req.body.leaveDuration+ " days leaves on (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
-										"sendTo" : object,
-										"type" : "leave",
-									} 
-								}
-								console.log("obj==================>",obj);
-								var notification = new sendnotificationModel(obj);
-								notification.save(function(err,SavedUser){
-									if(err){
-										console.log(err);
-									// 	// res.status(500).send(err);
-									}else{
-									console.log("saveData=========================------->",SavedUser);
-									var object = [].concat.apply([],projects);
-									console.log("USERRRRR========>",object);
-									notificationModel
-									.find({userId: object})
-									.exec((err, user)=>{
-										console.log("userr====>",user);
-										if (err) {
-											console.log("err",err);
-											res.status(500).send(err);
-										}else{
-											req.session.user = user;
-											req.session.userarray = [];
-											console.log("length===>",user.length);
-											for(i=0;i<user.length;i++){
-												req.session.userarray.push(req.session.user[i].token);
-												console.log("arrayyyy===>");
-												console.log("token array======>",req.session.userarray);
-											}
-											pushNotification.postCode(obj.subject,obj.type,req.session.userarray);
-										}
-									})
-									}
-									
+								var object = [];
+								console.log("pmanagerId array======>",typeof projects);
+								_.forEach(projects, pro=>{
+									object.push({ pmanagerId: pro });
 								})
-								
-								var admin = 'admin';
-								
 								userModel
-								.findOne({userRole : admin})
+								.findOne({userRole : "admin"})
 								.exec((err, user)=>{
 									if (err) {
 										res.status(500).send(err);
 									}else{
-										console.log("admin===========>",user);
+										admin = [];
+										admin.push(user);
+										console.log("admin array------------->",admin);
+										var output = [];
+										_.forEach(object, ob=>{
+											output.push(ob.pmanagerId._id)
+										})
+										output.push(admin[0]._id);
+										console.log("output=================>",output);
+										console.log("output length=========================>",output.length);
+										console.log("OBJECT========>",object);
+										var pmName = [];
+										pmName.join({});
+										for(i=0;i<object.length;i++){
+											pmName.push(object[i].pmanagerId.name);
+										}
+									
+										console.log("object===================>",object);
+										console.log("pmName==================>",pmName);
+										if(duration == "0.5" || duration == "1"){
+									var obj = {
+										"subject" :"Your Team member has applied for leave .",
+										"contentForPm" : "Your teamMate <strong>" +leave.name+ "</strong> has applied for " + req.body.leaveDuration+ " day leave (" +req.body.startingDate+ ")",
+										"contentForAdmin" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for 1 day leave (" +req.body.startingDate+ ")",
+										"sendTo" : output,
+
+										"type" : "leave",
+										"pmStatus": object
+									} 
+
+								}else{
+									var obj = {
+										"subject" :"Your Team member has applied for leave .",
+										"contentForPm" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " +req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
+										"contentForAdmin" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for "+ req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
+										"sendTo" : output,
+
+										"type" : "leave",
+										"pmStatus": object
+								} 
+							}
+								console.log("obj==================>",obj);
+<<<<<<< HEAD
+								var notification = new sendnotificationModel(obj);
+								notification.save(function(err,SavedUser){
+									if(err){
+										console.log("err==========================================>",err);
+									}else{
+										console.log("saveData=========================------->",SavedUser);
+
 										notificationModel
-										.find({userId : user._id})
-										.exec((err,admin)=>{
-											if (err){
-												res.status(500).send(err)
+										.find({userId: output})
+										.exec((err, user)=>{
+											console.log("userr====>",user);
+											if (err) {
+												console.log("err",err);
+												res.status(500).send(err);
 											}else{
+												req.session.user = user;
+												req.session.userarray = [];
+												console.log("length===>",user.length);
+												for(i=0;i<user.length;i++){
+													req.session.userarray.push(req.session.user[i].token);
+												}
+													console.log("token array======>",req.session.userarray);
+												pushNotification.postCode(obj.subject,obj.type,req.session.userarray);
 												if(duration == "0.5" || duration == "1"){
 													var obj1 = {
 														"subject" :"leave Application.",
-														"content" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for 1 day leave (" +req.body.startingDate+ ")",
+														"content" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for "+req.body.leaveDuration+ " day leave (" +req.body.startingDate+ ")",
 														"sendTo" : user._id,
 														"type" : "leave",
 													} 
@@ -155,7 +164,6 @@ leaveController.applyLeave = function(req,res){
 												console.log("obj1==============================>",obj1);
 												var notification = new sendnotificationModel(obj1);
 												notification.save(function(err,SavedUser){
-													console.log("SAVEDUSER----------------------->",SavedUser);
 												})
 												console.log("token====>",admin);
 												console.log("admin tokjen===>",admin[0].token)
@@ -164,15 +172,16 @@ leaveController.applyLeave = function(req,res){
 											}
 										})
 									}
-
+									
 								})
-
+							}
+						})
+							
+								
+								
 							})
 
 
-							
-							
-	// })
 	
 	var output = `<!doctype html>
 	<html>
@@ -409,7 +418,6 @@ leaveController.updateLeaves = function(req,res){
 		var email = update.email;
 		var duration = update.leaveDuration;
 		console.log("Duration===================>",duration);
-		
 		if(status == "approved"){
 			projectModel
 			.find({Teams : update.id})
@@ -470,7 +478,7 @@ leaveController.updateLeaves = function(req,res){
 			.findOne({userId: projects})
 			.exec((err, user)=>{
 				if (err) {
-					res.status(500).send(err);
+					res.status(404).send(err);
 				}else{
 					console.log("admin===========>",user);
 
@@ -484,10 +492,10 @@ leaveController.updateLeaves = function(req,res){
 }
 })
 					}
-					
+
 				})
 			})
-			
+
 			if(duration == "0.5" || duration == "1"){
 				var	obj1 = {
 					"subject" :"Congratulations! Your leave has been approved.",
@@ -503,7 +511,7 @@ leaveController.updateLeaves = function(req,res){
 					"sendTo" : update.id,
 					"type" : "leave-accepted"
 				}
-				
+
 				console.log("obj=======>",obj1);
 			}
 			var notification = new sendnotificationModel(obj1);
@@ -584,7 +592,7 @@ leaveController.updateLeaves = function(req,res){
 				.find({userId: object})
 				.exec((err, user)=>{
 					if (err) {
-						res.status(500).send(err);
+						res.status(404).send(err);
 					}else{
 						console.log("userrrrrrrrrrrrrrrr====>",user);
 						projects = [];
@@ -598,14 +606,14 @@ leaveController.updateLeaves = function(req,res){
 								"subject" : "rejected leave", 
 								"content" : "" +update.name+ " has applied for leave on " +req.body.startingDate+ " and it's <strong> rejected </strong>.",
 								"sendTo" : projects,
-								"type" : "leaveRejected",
+								"type" : "leaveAccepted",
 							}
 						}else{
 							var obj2 = {
 								"subject" : "rejected leave ", 
 								"content" : "" +update.name+ " has applied for leave on " +req.body.startingDate+ " to " + req.body.endingDate+ "and it's <strong> rejected </strong>.",
 								"sendTo" : projects,
-								"type" : "leaveRejected",
+								"type" : "leaveAccepted",
 							}
 						}
 					}
@@ -616,7 +624,7 @@ leaveController.updateLeaves = function(req,res){
 						.findOne({userId: projects})
 						.exec((err, user)=>{
 							if (err) {
-								res.status(500).send(err);
+								res.status(404).send(err);
 							}else{
 								console.log("admin===========>",user);
 								pushNotification.postCode(obj2.subject,obj2.type,[user.token]);
@@ -712,6 +720,7 @@ leaveController.updateLeaves = function(req,res){
 			console.log("mail not send");
 
 		}
+
 	})
 
 }

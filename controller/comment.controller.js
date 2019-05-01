@@ -31,7 +31,7 @@ commentController.addComment = function(req,res){
 	}, function(err, files){
 		if (err) {
 			console.log(err);
-			res.status(500).send(err);
+			res.status(415).send(err);
 		}else{
 			console.log(files)
 			var comment = new commentModel(req.body);
