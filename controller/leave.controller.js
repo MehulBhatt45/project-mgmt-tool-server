@@ -122,7 +122,6 @@ leaveController.applyLeave = function(req,res){
 								} 
 							}
 								console.log("obj==================>",obj);
-<<<<<<< HEAD
 								var notification = new sendnotificationModel(obj);
 								notification.save(function(err,SavedUser){
 									if(err){
@@ -376,24 +375,6 @@ leaveController.getRejectedLeaves = function(req,res){
 	})
 }
 
-// leaveController.myLeaves = function(req,res){
-// 	var userId = req.params.id
-// 	console.log("userId is -------------======>",userId);
-// 	userModel.findByIdAndUpdate({_id:userId})
-// 	.exec((err,status)=>{
-// 	if(err){
-// 	res.status(500).send(err);
-// 	}else{
-// 	leaveModel.find({status:'approved'}, {status:'rejected'}), function(err,respond){
-// 	if(err){
-// 	res.status(500).send(err);
-// 	}else{
-// 	console.log("ressssssssssp",respond)
-// 	}
-// 	}	
-// 	}
-// 	})
-// }
 leaveController.getAllLeavesApps = function(req,res){
 	leaveModel.find({})
 	.exec((err,listOfLeaves)=>{
