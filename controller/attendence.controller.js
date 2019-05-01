@@ -145,11 +145,52 @@ attendenceController.AllemployeeAttendenceByDate = function(req , res){
 			}
 			console.log("obj-----------------------",obj);
 			user.push(obj);
-			//student[i]= obj;
 		}
 		res.send(user);
 	})
 }
+
+attendenceController.getAttendenceInInterval = function(req , res){
+
+	console.log('body: ', req.body);
+	req.body.fromDate = moment(req.body.fromDate).format("YYYY-MM-DD");
+	var fromDate = req.body.fromDate+"T00:00:00.000Z";
+	req.body.toDate = moment(req.body.toDate).format("YYYY-MM-DD");
+	console.log('todDate: ', req.body.toDate);
+	var toDate = req.body.toDate+"T00:00:00.000Z";
+	console.log('hey tododate: ', toDate);
+
+	var j;
+	var k = 0;
+	count = 0;
+	var nextDate;
+	var allItems = [];
+	console.log('body: ',typeof fromDate, typeof toDate);
+	console.log('body: ',fromDate, toDate);
+
+	attendenceModel.find({date : { $gte: fromDate, $lte: toDate }})
+	.populate('user_Id')
+	.exec(function(err , foundUser){
+		console.log("founduser===============",foundUser);
+		for(i = 0; i<foundUser.length; i++){
+			console.log("allItems==========", foundUser[i]);
+
+			var obj = {
+
+				UserName : foundUser[i].user_Id.name,
+				userId : foundUser[i].user_Id._id,
+				check: foundUser[i].in_out,
+				difference:foundUser[i].difference
+			}
+			// console.log("obj-----------------------",obj);
+			allItems.push(obj);
+
+		}
+		
+		res.send(allItems);
+	})
+}
+
 
 
 
