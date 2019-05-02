@@ -67,90 +67,105 @@ commentController.addComment = function(req,res){
 				taskModel
 				.findOne({ _id : comment.taskId})
 				.exec((error, task)=>{
-					userModel
-					.find({_id : comment.userId})
-					.exec((err, user)=>{
-						if(user[0].userRole == 'projectManager'){
-							 obj = {
-								"subject": "commented on your task",
-								"content": user[0].name+" commented on " + task.uniqueId+" "+ task.type+ ".",
-								"sendTo" : task.assignTo,
-								"type": "comment",
-							}
-							mailContent = obj.content;
-							console.log("content==========>",mailContent);
-							console.log("saved object===>",obj);
-							var notification = new sendnotificationModel(obj);
-							notification.save(function(err,SavedUser){
-								notificationModel
-								.find({userId: task.assignTo})
-								.exec((err,user)=>{
-									pushNotification.postCode(obj.subject,obj.type,[user[0].token]);
+					console.log("task=============>",task);
+					projectModel
+					.find({_id : task.projectId})
+					.exec((err,project)=>{
+						console.log("project=============>",project);
+
+						userModel
+						.find({_id : comment.userId})
+						.exec((err, user)=>{
+							if(user[0].userRole == 'projectManager'){
+								obj = {
+									"subject": "commented on your task",
+									"content": user[0].name+" commented on " + task.uniqueId+" "+ task.type+ ".",
+									"sendTo" : task.assignTo,
+									"type": "comment",
+								}
+								mailContent = obj.content;
+								console.log("content==========>",mailContent);
+								console.log("saved object===>",obj);
+								var notification = new sendnotificationModel(obj);
+								notification.save(function(err,SavedUser){
+									notificationModel
+									.find({userId: task.assignTo})
+									.exec((err,user)=>{
+										pushNotification.postCode(obj.subject,obj.type,[user[0].token]);
+									})
 								})
-							})
 
-						}else{
-							console.log("projectId------------->",task.projectId);
-							projectModel
-							.findOne({_id : task.projectId})
-					.exec((err,pmanager)=>{
-						var pmId = pmanager.pmanagerId[0];
-						 obj = {
-							"subject": "commented on your task",
-							"content": user[0].name+" reply of " + task.uniqueId+" "+ task.type+ ".",
-							"sendTo" : pmanager.pmanagerId[0],
-							"type": "comment",
-						}
-						var notification = new sendnotificationModel(obj);
-						notification.save(function(err,pmanager){
-							notificationModel
-							.find({userId : pmId})
-							.exec((err,pm)=>{
-								pushNotification.postCode(obj.subject,obj.type,[pm[0].token]);
+							}else{
+								console.log("projectId------------->",task.projectId);
+								projectModel
+								.findOne({_id : task.projectId})
+								.exec((err,pmanager)=>{
+
+									var pmId = pmanager.pmanagerId[0];
+									obj = {
+										"subject": "commented on your task",
+										"content": user[0].name+" reply of " + task.uniqueId+" "+ task.type+ ".",
+										"sendTo" : pmanager.pmanagerId[0],
+										"type": "comment",
+									}
+									var notification = new sendnotificationModel(obj);
+									notification.save(function(err,pmanager){
+										notificationModel
+										.find({userId : pmId})
+										.exec((err,pm)=>{
+											pushNotification.postCode(obj.subject,obj.type,[pm[0].token]);
+										})
+									})
+
+								})
+							}
+							userModel
+							.find({_id : task.assignTo})
+							.exec((err,mailId)=>{
+								maillist.push(mailId[0].email);
 							})
+							var output = `<!doctype html>
+							<html>
+							<head>
+							<title> title111</title>
+							</head>
+							<body>
+							<div style="width:100%;margin:0 auto;border-radius: 2px;
+							box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+							border: 1px solid #d3d3d3;background:#e7eaf0;">
+							<div style="border:10px solid #3998c5;background:#fff;margin:25px;">
+							<center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>
+							<div style="width:75%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; ">
+							<div style="margin-left:30px;padding:0;">
+							<p style="color:black;font-size:20px;">`+user[0].name+`  added a comment in <u>`+task.type+`</u></p>
+							<span style="color:black"><b>`+task.title+`</b></span>
+							<p>in `+project[0].title+`</p>
+							<span><b>`+user[0].name+` said:</b></span>
+							<p>`+comment.content+`</p>
+							</div>
+							</div>
+							</div>
+							</body>
+							</html>
+							`;
+							var mailOptions = {
+								from: 'tnrtesting2394@gmail.com',
+								to: maillist,
+								subject: 'For Comment',
+								text: 'Hi, this is a testing email from node server',
+								html: output
+							};
+
+							transporter.sendMail(mailOptions, function(error, info){
+								if (error) {
+									console.log("Error",error);
+								} else {
+									console.log('Email sent: ' + info.response);
+								}
+							});
+							res.status(200).send(comment);
 						})
-
 					})
-				}
-				userModel
-				.find({_id : task.assignTo})
-				.exec((err,mailId)=>{
-					maillist.push(mailId[0].email);
-				})
-				var output = `<!doctype html>
-				<html>
-				<head>
-				<title> title111</title>
-				</head>
-				<body>
-				<div style="width:75%;margin:0 auto;border-radius: 6px;
-				box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-				border: 1px solid #d3d3d3;">
-				<center>
-				<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-				<div style="margin-left:30px;padding:0;">
-				<p style="color:black;font-size:20px;">`+mailContent+`</p>
-				</div>
-				</body>
-				</html>
-				`;
-				var mailOptions = {
-					from: 'tnrtesting2394@gmail.com',
-					to: maillist,
-					subject: 'For Comment',
-					text: 'Hi, this is a testing email from node server',
-					html: output
-				};
-
-				transporter.sendMail(mailOptions, function(error, info){
-					if (error) {
-						console.log("Error",error);
-					} else {
-						console.log('Email sent: ' + info.response);
-					}
-				});
-				res.status(200).send(comment);
-			})
 				})
 			})
 		}
