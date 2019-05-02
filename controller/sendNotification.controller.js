@@ -4,6 +4,23 @@ var projectModel = require('../model/project.model');
 var userModel = require('../model/user.model');
 let sendnotificationController = {};
 var pushNotification = require('./../service/push-notification.service');
+var nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
+var pushNotification = require('./../service/push-notification.service');
+var maillist = [];
+var obj = {};
+var mailContent = {};
+
+var transporter = nodemailer.createTransport({
+	host: "smtp.gmail.com",
+	port: 465,
+	secure: true,
+	service: 'gmail',
+	auth: {
+		user: 'raoinfotechp@gmail.com',
+					pass: 'raoinfotech@123'
+	}
+});
 
 sendnotificationController.addNotification = function(req, res){
 	var temp =  req.body.sendTo;
@@ -17,29 +34,26 @@ sendnotificationController.addNotification = function(req, res){
 		if (err){
 			res.status(500).send(err);
 		}else{
-			console.log("project name=========>",projectId);
-			console.log("pmanagerIdpmanagerId====>",projectId.pmanagerId);
-			console.log("req.body.sendTo.length=======>",req.body.sendTo.length);
 			if (err) {
 				console.log("errrr",err);
 				res.status(404).send(err);
 			}else{
 				if(req.body.sendTo.length > 1){
-					console.log("first============================>");
-					var obj = {
+					 obj = {
 						"subject": "You have new notification from Pmanager.",
 						"content": projectId.uniqueId +" team," +req.body.content+".Regards " + req.body.pmanagerName+ ".",
 						"sendTo": req.body.sendTo,
 						"type" : "other"
 					}
+					mailContent = obj.content;
 				}else{
-					console.log("Second=========================================>");
-					var obj = {
+					 obj = {
 						"subject": "You have new notification from Pmanager.",
 						"content": "You have new notice from " +req.body.pmanagerName+ ".",
 						"sendTo": req.body.sendTo,
 						"type" : "other"
 					}
+					mailContent = obj.content;
 				}
 				console.log("saved object===>",obj);
 				var notification = sendnotificationModel(obj);
@@ -64,6 +78,49 @@ sendnotificationController.addNotification = function(req, res){
 							pushNotification.postCode(obj.subject,obj.content,req.session.userarray);
 						}
 					})
+					userModel
+					.find({_id : req.body.sendTo})
+					.exec((err,mailId)=>{
+						console.log("mailId========>",mailId);
+						for(i=0;i<mailId.length;i++){
+												maillist.push(mailId[i].email);
+											}
+											console.log("maillist=================>",maillist);
+					})
+				
+					var output = `<!doctype html>
+										<html>
+										<head>
+										<title> title111</title>
+										</head>
+										<body>
+										<div style="width:75%;margin:0 auto;border-radius: 6px;
+										box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+										border: 1px solid #d3d3d3;">
+										<center>
+										<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+										<div style="margin-left:30px;padding:0;">
+										<p style="color:black;font-size:20px;">`+mailContent+`</p>
+									
+										</div>
+										</body>
+										</html>
+										`;
+										var mailOptions = {
+											from: 'tnrtesting2394@gmail.com',
+											to: maillist,
+											subject: 'For New Notice',
+											text: 'Hi, this is a testing email from node server',
+											html: output
+										};
+
+										transporter.sendMail(mailOptions, function(error, info){
+											if (error) {
+												console.log("Error",error);
+											} else {
+												console.log('Email sent: ' + info.response);
+											}
+										});
 					res.status(200).send(SavedUser);
 				})
 			}

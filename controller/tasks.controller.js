@@ -20,8 +20,8 @@ var transporter = nodemailer.createTransport({
 	secure: true,
 	service: 'gmail',
 	auth: {
-		user: 'tnrtesting2394@gmail.com',
-		pass: 'raoinfotech09'
+		user: 'raoinfotechp@gmail.com',
+					pass: 'raoinfotech@123'
 	}
 });
 var uniqueId;
@@ -141,7 +141,8 @@ tasksController.addTasks = function(req , res){
 										console.log("name of assign usersssssss>>>>><<<<<<<",name);
 										var email = foundTask.assignTo.email;
 										console.log("email===>>>>>",email);
-
+										// var name = foundTask.createdBy.name;
+										// console.log("foundTask.createdBy.name======>",foundTask.createdBy.name);
 										var output = `<!doctype html>
 										<html>
 										<head>
@@ -198,7 +199,7 @@ tasksController.addTasks = function(req , res){
 										console.log("obj==================>",obj);
 										const timePeriod = obj.createdAt;
 										if (obj.createdAt==5 ) {
-											r
+											
 										}	
 										console.log("timeeeeeeeeeeeeeeeeeeeeeeeeeee",timePeriod);
 
@@ -321,7 +322,7 @@ tasksController.addTasks = function(req , res){
 			var mailOptions = {
 				from: 'tnrtesting2394@gmail.com',
 				to: email,
-				subject: 'Testing Email',
+				subject: 'For new task',
 				text: 'Hi, this is a testing email from node server',
 				html: output
 			};

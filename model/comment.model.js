@@ -6,6 +6,8 @@ var CommentSchema = new Schema({
 	userId: { type: Schema.Types.ObjectId, ref: 'User' , required:true},
 	taskId: { type: Schema.Types.ObjectId, ref: 'Task', required:true},
 	postedOn: { type: Date, default: Date.now ,required:true},
+	replies : [{type: Schema.Types.ObjectId,default:[]}],
+	repliedOn : [{type: Schema.Types.ObjectId,default:[]}],
 	images: [{type: String, default: []}]
 },{timestamps: true})
 
