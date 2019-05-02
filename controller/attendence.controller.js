@@ -180,14 +180,15 @@ attendenceController.getAttendenceInInterval = function(req , res){
 				UserName : foundUser[i].user_Id.name,
 				userId : foundUser[i].user_Id._id,
 				check: foundUser[i].in_out,
-				difference:foundUser[i].difference
+				difference:foundUser[i].difference,
+				date:foundUser[i].date
 			}
 			// console.log("obj-----------------------",obj);
 			allItems.push(obj);
 
 		}
 		
-		res.send(allItems);
+		res.status(200).send(allItems);
 	})
 }
 
