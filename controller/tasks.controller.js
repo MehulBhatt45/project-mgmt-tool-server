@@ -4,6 +4,7 @@ var projectModel = require('../model/project.model');
 var userModel = require('../model/user.model');
 var notificationModel = require('../model/notification.model');
 var sendnotificationModel = require('../model/sendNotification.model');
+var sprintModel = require('../model/sprint.model');
 var _ = require('lodash');
 let tasksController = {};
 var dir = require('node-dir');
@@ -21,7 +22,7 @@ var transporter = nodemailer.createTransport({
 	service: 'gmail',
 	auth: {
 		user: 'raoinfotechp@gmail.com',
-					pass: 'raoinfotech@123'
+		pass: 'raoinfotech@123'
 	}
 });
 var uniqueId;
@@ -130,17 +131,23 @@ tasksController.addTasks = function(req , res){
 										prior = "Low";
 									}
 									tasksModel.findOne({_id: savedTask._id})
-									.populate('assignTo createdBy projectId')
+									.populate('assignTo projectId createdBy')
 									.exec((err,foundTask)=>{
 										console.log(' found email send===>',foundTask);
-										// console.log("cretedby======>",foundTask.createdBy.name);
+										// console.log("cretedby======>",foundTask.createdBy);
 										console.log("project title=============>",foundTask.projectId.title);
 										console.log("final----->>>",foundTask.assignTo.email);
 										console.log("priority================================>",foundTask.priority);
 										var name = foundTask.assignTo.name;
 										console.log("name of assign usersssssss>>>>><<<<<<<",name);
 										var email = foundTask.assignTo.email;
+										var sprint = foundTask.sprint;
 										console.log("email===>>>>>",email);
+										// sprintModel
+										// .find({sprint : id})
+										// .exec((err,sprint)=>{
+										// 	console.log("sprint============>",sprint);
+										// })
 										// var name = foundTask.createdBy.name;
 										// console.log("foundTask.createdBy.name======>",foundTask.createdBy.name);
 										var output = `<!doctype html>
@@ -149,25 +156,38 @@ tasksController.addTasks = function(req , res){
 										<title> title111</title>
 										</head>
 										<body>
-										<div style="width:75%;margin:0 auto;border-radius: 6px;
+										<div style="width:100%;margin:0 auto;border-radius: 2px;
 										box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-										border: 1px solid #d3d3d3;">
-										<center>
-										<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+										border: 1px solid #d3d3d3;background:#e7eaf0;">
+										<div style="border:10px solid #3998c5;background:#fff;margin:25px;">
+										<center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>
+										<div style="width:85%;margin:0 auto;border-radius:4px;background:#fff;">
 										<div style="margin-left:30px;padding:0;">
-										<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+color+`">`+prior+`</span> priority task.</p>
-										<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
+										<p style="color:black;font-size:14px;"><b>Tirthraj Barot created a task: </b><span style="color:black;font-size:17px;"><b style="color:#bf4444;">`+req.body.title+`</b> in <span style="color:black;font-size:14px;"><b><u>`+foundTask.projectId.title+`.</u></b></span></span></p>
 										<table style="color:black;">
 										<tr style="height: 50px;width: 100%;">
-										<td><b>Title</b></td>
-										<td style="padding-left: 50px;">`+req.body.title+`</td></tr>
+										<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Sprint: </b><span >`+foundTask.sprint+`</span></td>
+										<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%"><b>Due date: </b><span>`+req.body.dueDate+`</span></td>
+										</tr>
 										<tr style="height: 50px;">
-										<td><b>Description</b></td>
-										<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
-										<tr  style="height: 50px;">
-										<td><b>Priority</b></td>
-										<td style="padding-left: 50px;">`+prior+`</td></tr>
+										<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Priority: </b><span style="color:`+color+`">`+prior+`</span></td>
+										<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;"><b>Estimated time: </b><span>`+foundTask.estimatedTime+`</span></td>
+										</tr>
 										</table>
+										
+										<div style="border-bottom:1px solid #ccc;margin:5px 0 10px;height:1px"></div>
+										<div class="m_-7949690059544268696content" style="font-family:'Trebuchet MS',Arial,Helvetica,sans-serif;color:#444;line-height:1.6em;font-size:15px">
+										<p><b>Description: </b>`+req.body.desc+`</p>
+										<center>
+										<a href="http://localhost:4200/#/project-details/`+foundTask.projectId._id+`">
+										<button style="background-color: #3998c5;border: none;color: white;padding: 10px 25px;text-align: center;text-decoration: none;
+										display: inline-block;border-radius: 4px;margin-bottom: 20px;font-size: 16px;">View Item
+										</button>
+										</a>
+										</center>
+										</div>
+										</div>
+										</div>
 										</div>
 										</body>
 										</html>
@@ -189,7 +209,7 @@ tasksController.addTasks = function(req , res){
 										});
 										var obj = {
 											"subject" :" You have been assigned a new task",
-											"content" : "A new task in <strong>" +foundTask.projectId.title + " </strong> is been created by <strong>" +foundTask.createdBy.name + " </strong> and assigned to you.",
+											"content" : "A new task in <strong>" +foundTask.projectId.title + " </strong> is been created by <strong>" +foundTask.createdBy.name+ " </strong> and assigned to you.",
 											"sendTo" : foundTask.assignTo._id,
 											"type" : "task",
 											"priority" : foundTask.priority,
@@ -218,7 +238,7 @@ tasksController.addTasks = function(req , res){
 													res.status(400).send(err);
 												}else{
 													console.log("savedNotification======>>>>>",user);
-											pushNotification.postCode(obj.subject,obj.type,[user.token]);
+													pushNotification.postCode(obj.subject,obj.type,[user.token]);
 
 													res.status(200).send(foundTask);
 
@@ -229,7 +249,7 @@ tasksController.addTasks = function(req , res){
 											
 										}) 
 									})
-								})
+})
 
 }
 })
