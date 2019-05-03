@@ -117,10 +117,10 @@ leaveController.applyLeave = function(req,res){
 										var pmName = [];
 										pmName.join({});
 										for(i=0;i<object.length;i++){
-											pmName.push(object[i].pmanagerId.name);
+											var pmanagerId = object[i].pmanagerId.name;
+											pmName.push({pmanagerId});
 										}
-										console.log("object===================>",object);
-										console.log("pmName==================>",pmName);
+										
 										if(duration == "0.5" || duration == "1"){
 											var obj = {
 												"subject" :"Your Team member has applied for leave .",
@@ -128,7 +128,7 @@ leaveController.applyLeave = function(req,res){
 												"contentForAdmin" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for 1 day leave (" +req.body.startingDate+ ")",
 												"sendTo" : output,
 												"type" : "leave",
-												"pmStatus": object
+												"pmStatus": pmName
 											} 
 										}else{
 											var obj = {
@@ -137,7 +137,7 @@ leaveController.applyLeave = function(req,res){
 												"contentForAdmin" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for "+ req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
 												"sendTo" : output,
 												"type" : "leave",
-												"pmStatus": object
+												"pmStatus": pmName
 											} 
 										}
 										console.log("obj==================>",obj);

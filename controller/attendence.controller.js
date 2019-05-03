@@ -158,6 +158,7 @@ attendenceController.AllemployeeAttendenceByDate = function(req , res){
 			console.log("obj-----------------------",obj);
 			user.push(obj);
 		}
+		
 		res.send(user);
 	})
 }

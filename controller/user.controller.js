@@ -343,7 +343,52 @@ userController.forgotPassword = function (req,res) {
 			// console.log(user.name);
 			user.temporarytoken = jwt.sign({ name: user.name, email: user.email }, secret, { expiresIn: '10min' }); // Create a token for activating account through e-mail
 			// console.log(user.temporarytoken);
-			var output = "Hello";
+			var output = `<!doctype html>
+								<html>
+								<head>
+								<title> title111</title>
+								</head>
+								<body background="cid:image@raoinfotech.com">
+								<div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+								border: 1px solid #d3d3d3;background:#e7eaf0;">
+								<div style="border:10px solid #3998c5;background:#fff;margin:25px;">
+								<center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>								
+								<center style="font-size:20px;"><b>Hello `+ user.name +`</center>
+								<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background:white;box-sizing: border-box; ">
+								<div style="margin-left:30px;padding:0;">
+								<p style="font-size:15px;">You, or someone else, requested an new password for this account on Project Management Tool</p>
+								<p style="font-size:15px;">You can reset your password using given link below. When you do nothing, your password or account will not change.</p>
+								<p style="font-size:15px;"><a href="http://localhost:4200/#/forgotpwd/` + user.temporarytoken + `">http://localhost:4200/#/forgotpwd</a></p>
+								<p style="font-size:15px;">This link will expires in 10 minutes.</p>
+								</div>
+								</div>
+								</div>
+								</body>
+								</html>
+								`;
+			var outputLive = `<!doctype html>
+								<html>
+								<head>
+								<title> title111</title>
+								</head>
+								<body background="cid:image@raoinfotech.com">
+								<div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+								border: 1px solid #d3d3d3;background:#e7eaf0;">
+								<div style="border:10px solid #3998c5;background:#fff;margin:25px;">
+								<center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>								
+								<center style="font-size:20px;"><b>Hello `+ user.name +`</center>
+								<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background:white;box-sizing: border-box; ">
+								<div style="margin-left:30px;padding:0;">
+								<p style="font-size:15px;">You, or someone else, requested an new password for this account on Project Management Tool</p>
+								<p style="font-size:15px;">You can reset your password using given link below. When you do nothing, your password or account will not change.</p>
+								<p style="font-size:15px;"><a href="https://raoinfotech-conduct.tk/#/forgotpwd/` + user.temporarytoken + `">https://raoinfotech-conduct.tk/#/forgotpwd</a></p>
+								<p style="font-size:15px;">This link will expires in 10 minutes.</p>
+								</div>
+								</div>
+								</div>
+								</body>
+								</html>
+								`;
 			var transporter = nodemailer.createTransport({
 				host: "smtp.gmail.com",
 				port: 465,
@@ -351,29 +396,29 @@ userController.forgotPassword = function (req,res) {
 				service: 'gmail',
 
 				auth: {
-					user: 'tnrtesting2394@gmail.com',
-					pass: 'raoinfotech09'
+					user: 'raoinfotechp@gmail.com',
+					pass: 'raoinfotech@123'
 				}
 			});
 
 
 			if(req.headers.referer == "http://localhost:4200/"){
 				var mailOptions = {
-					from: 'tnrtesting2394@gmail.com',
+					from: 'raoinfotechp@gmail.com',
 					to: req.body.email,
 					subject: 'Localhost Forgot Password Request',
 					text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="http://localhost:4200/#/forgotpwd/'+ user.temporarytoken,
-					html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 10 minutes.<br><br><a href="http://localhost:4200/#/forgotpwd/' + user.temporarytoken + '">http://localhost:4200/#/forgotpwd/</a>'
+					html: output
 				};
 			}
 
 			else if (req.headers.referer == "https://raoinfotech-conduct.tk/"){
 				var mailOptions = {
-					from: 'tnrtesting2394@gmail.com',
+					from: 'raoinfotechp@gmail.com',
 					to: req.body.email,
 					subject: 'Localhost Forgot Password Request',
 					text: 'Hello ' + user.name + ', You recently request a password reset link. Please click on the link below to reset your password:<br><br><a href="https://raoinfotech-conduct.tk/#/forgotpwd/'+ user.temporarytoken,
-					html: 'Hello<strong> ' + user.name + '</strong>,<br><br>You recently request a password reset link. Please click on the link below to reset your password.This link will expires in 10 minutes.<br><br><a href="https://raoinfotech-conduct.tk/#/forgotpwd/' + user.temporarytoken + '">https://raoinfotech-conduct.tk/#/forgotpwd/</a>'
+					html: outputLive
 				};
 			}
 
