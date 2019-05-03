@@ -142,12 +142,14 @@ tasksController.addTasks = function(req , res){
 										console.log("name of assign usersssssss>>>>><<<<<<<",name);
 										var email = foundTask.assignTo.email;
 										var sprint = foundTask.sprint;
+										console.log("sprint==========>",sprint);
 										console.log("email===>>>>>",email);
-										// sprintModel
-										// .find({sprint : id})
-										// .exec((err,sprint)=>{
-										// 	console.log("sprint============>",sprint);
-										// })
+										console.log("duedate==========>",req.body.dueDate);
+										sprintModel
+										.find({_id : sprint})
+										.exec((err,sprint)=>{
+											console.log("sprint============>",sprint);
+
 										// var name = foundTask.createdBy.name;
 										// console.log("foundTask.createdBy.name======>",foundTask.createdBy.name);
 										var output = `<!doctype html>
@@ -166,7 +168,7 @@ tasksController.addTasks = function(req , res){
 										<p style="color:black;font-size:14px;"><b>Tirthraj Barot created a task: </b><span style="color:black;font-size:17px;"><b style="color:#bf4444;">`+req.body.title+`</b> in <span style="color:black;font-size:14px;"><b><u>`+foundTask.projectId.title+`.</u></b></span></span></p>
 										<table style="color:black;">
 										<tr style="height: 50px;width: 100%;">
-										<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Sprint: </b><span >`+foundTask.sprint+`</span></td>
+										<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Sprint: </b><span >`+sprint[0].title+`</span></td>
 										<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%"><b>Due date: </b><span>`+req.body.dueDate+`</span></td>
 										</tr>
 										<tr style="height: 50px;">
@@ -207,6 +209,7 @@ tasksController.addTasks = function(req , res){
 												console.log('Email sent: ' + info.response);
 											}
 										});
+									})
 										var obj = {
 											"subject" :" You have been assigned a new task",
 											"content" : "A new task in <strong>" +foundTask.projectId.title + " </strong> is been created by <strong>" +foundTask.createdBy.name+ " </strong> and assigned to you.",
