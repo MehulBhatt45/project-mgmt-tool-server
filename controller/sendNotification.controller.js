@@ -80,18 +80,45 @@ sendnotificationController.addNotification = function(req, res){
 									console.log("arrayyyy===>");
 									console.log("token array======>",req.session.userarray);
 								}
-								pushNotification.postCode(obj.subject,obj.content,req.session.userarray);
-							}
-						})
-						userModel
-						.find({_id : req.body.sendTo})
-						.exec((err,mailId)=>{
-							console.log("mailId========>",mailId);
-							for(i=0;i<mailId.length;i++){
-								maillist.push(mailId[i].email);
-							}
-							console.log("maillist=================>",maillist);
-						})
+							pushNotification.postCode(obj.subject,obj.content,req.session.userarray);
+						}
+					})
+					userModel
+					.find({_id : req.body.sendTo})
+					.exec((err,mailId)=>{
+						console.log('name===============>',name);
+						console.log("mailId========>",mailId);
+						for(i=0;i<mailId.length;i++){
+												maillist.push(mailId[i].email);
+											}
+											console.log("maillist=================>",maillist);
+					})
+				
+					var output = `<!doctype html>
+										<html>
+										<head>
+										<title> title111</title>
+										</head>
+										<body>
+										<div style="width:75%;margin:0 auto;border-radius: 6px;
+										box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+										border: 1px solid #d3d3d3;">
+										<center>
+										<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+										<div style="margin-left:30px;padding:0;">
+										<p style="color:black;font-size:20px;">`+mailContent+`</p>
+									
+										</div>
+										</body>
+										</html>
+										`;
+										var mailOptions = {
+											from: 'tnrtesting2394@gmail.com',
+											to: maillist,
+											subject: 'For New Notice',
+											text: 'Hi, this is a testing email from node server',
+											html: output
+										};
 
 
 						var output = `<!doctype html>
