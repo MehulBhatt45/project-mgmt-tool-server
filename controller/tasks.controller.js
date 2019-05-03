@@ -195,7 +195,7 @@ tasksController.addTasks = function(req , res){
 										var mailOptions = {
 											from: 'tnrtesting2394@gmail.com',
 											to: email,
-											subject: 'Testing Email',
+											subject: 'For New Task',
 											text: 'Hi, this is a testing email from node server',
 											html: output
 										};
