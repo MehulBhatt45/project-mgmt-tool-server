@@ -16,7 +16,7 @@ var SendnotificationSchema = new Schema({
 	pmStatus : [
 		{
 			_id: false,
-			pmanagerId: {type: Schema.Types.ObjectId , ref: 'User'},
+			pmanagerId: {type: String},
 			leaveStatus : {type:String, default:'pending'}
 		}
 	]

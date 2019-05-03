@@ -46,7 +46,7 @@ sendnotificationController.addNotification = function(req, res){
 					if(req.body.sendTo.length > 1){
 						obj = {
 							"subject": "You have new notification from Pmanager.",
-							"content": projectId.uniqueId +" team," +req.body.content+".Regards " + req.body.pmanagerName+ ".",
+							"content" : req.body.pmanagerName + " project manager of " +project[0].title+ " notified to all team member that "+req.body.content+ ".",
 							"sendTo": req.body.sendTo,
 							"type" : "other"
 						}
@@ -54,7 +54,7 @@ sendnotificationController.addNotification = function(req, res){
 					}else{
 						obj = {
 							"subject": "You have new notification from Pmanager.",
-							"content": "You have new notice from " +req.body.pmanagerName+ ".",
+							"content" : req.body.pmanagerName + " project manager of " +project[0].title+ " notified to you that "+req.body.content+ ".",
 							"sendTo": req.body.sendTo,
 							"type" : "other"
 						}
@@ -77,7 +77,7 @@ sendnotificationController.addNotification = function(req, res){
 								console.log("length===>",user.length);
 								for(i=0;i<user.length;i++){
 									req.session.userarray.push(req.session.user[i].token);
-									console.log("arrayyyy===>");
+									
 									console.log("token array======>",req.session.userarray);
 								}
 							pushNotification.postCode(obj.subject,obj.content,req.session.userarray);
@@ -120,7 +120,31 @@ sendnotificationController.addNotification = function(req, res){
 											html: output
 										};
 
+						var output = `<!doctype html>
+						<html>
+						<head>
+						<title> title111</title>
+						</head>
+						<body>
+						<div style="width:75%;margin:0 auto;border-radius: 6px;
+						box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
+						border: 1px solid #d3d3d3;">
+						<center>
+						<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+						<div style="margin-left:30px;padding:0;">
+						<p style="color:black;font-size:20px;">`+mailContent+`</p>
 
+						</div>
+						</body>
+						</html>
+						`;
+						var mailOptions = {
+							from: 'tnrtesting2394@gmail.com',
+							to: maillist,
+							subject: 'For New Notice',
+							text: 'Hi, this is a testing email from node server',
+							html: output
+						};
 						var output = `<!doctype html>
 						<html>
 						<head>
@@ -159,27 +183,24 @@ sendnotificationController.addNotification = function(req, res){
 						res.status(200).send(SavedUser);
 					})
 				})
-			}
-		}
-	})
+}
+}
+})
 }
 
 sendnotificationController.getNotificationByUserId = function(req,res){
 	var sendTo = req.params.id;
+	console.log("sendTo=========>",sendTo);
 	sendnotificationModel
 	.find({sendTo : sendTo})
-	.populate('sendTo projectId')
+	// .populate('sendTo projectId pmStatus')
 	.exec((err,user)=>{
 		if (err) {
+			console.log("err==========>",err);
+
 			res.status(500).send(err);
 		}else{
-			pmArray = [];
-			for(i=0;i<user.length;i++){
-				userModel
-				.find({_id:user[i].pmId})
-				.populate('pmId')
-			}
-			console.log("userrr=>>>",user);
+			
 			for(i=0;i<user.length;i++){
 				sendnotificationModel
 				.findOneAndUpdate({_id:user[i]._id} , {upsert:true,new:true})
@@ -194,6 +215,7 @@ sendnotificationController.getNotificationByUserId = function(req,res){
 					}
 				})	
 			}
+			// 
 			res.status(200).send(user);
 		}
 	})
