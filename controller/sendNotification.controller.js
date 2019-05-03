@@ -86,7 +86,7 @@ sendnotificationController.addNotification = function(req, res){
 					userModel
 					.find({_id : req.body.sendTo})
 					.exec((err,mailId)=>{
-						console.log('name===============>',name);
+
 						console.log("mailId========>",mailId);
 						for(i=0;i<mailId.length;i++){
 												maillist.push(mailId[i].email);
