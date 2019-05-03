@@ -137,11 +137,12 @@ commentController.addComment = function(req,res){
 							<center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>
 							<div style="width:75%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; ">
 							<div style="margin-left:30px;padding:0;">
-							<p style="color:black;font-size:20px;">`+user[0].name+`  added a comment in <u>`+task.type+`</u></p>
-							<span style="color:black"><b>`+task.title+`</b></span>
-							<p>in `+project[0].title+`</p>
-							<span><b>`+user[0].name+` said:</b></span>
-							<p>`+comment.content+`</p>
+							<p style="color: #444;font-size: 15px;line-height: 25px;">`+user[0].name+`  added a comment in <span style="text-decoration: underline;">`+task.type+`</span></p>
+							<span style="color: #444;font-size: 15px; font-weight: 600;line-height: 19px;">`+task.title+`</span></br>
+							<span style="color: #444;font-size: 15px;line-height: 25px;">in `+project[0].title+`</span>
+							<div style="border-bottom:1px solid #ccc;margin:5px 0px 30px 0px;height:1px"></div>
+							<span style="color: #444;font-weight: 600;font-size: 15px;">`+user[0].name+` said:</span>
+							<p style="color: #444;">`+comment.content+`</p>
 							</div>
 							</div>
 							</div>
