@@ -238,12 +238,20 @@ tasksController.addTasks = function(req , res){
 											.findOne({userId : assignTo})
 											.exec((err, user)=>{
 												if (err) {
+													if(user == null){
+														res.status(404).send({msg : "token not generated"})
+													}
 													res.status(400).send(err);
 												}else{
-													console.log("savedNotification======>>>>>",user);
+													if(user == null){
+														res.status(200).send(savedTask);
+													}else{
 													pushNotification.postCode(obj.subject,obj.type,[user.token]);
-
 													res.status(200).send(foundTask);
+
+													}
+													// console.log("savedNotification======>>>>>",user);
+
 
 												}
 											})
