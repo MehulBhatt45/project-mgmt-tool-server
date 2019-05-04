@@ -100,13 +100,11 @@ leaveController.applyLeave = function(req,res){
 										userModel
 										.find({_id : output})
 										.exec((err,mailId)=>{
-											console.log("mailId---------",mailId)
 											for(i=0;i<mailId.length;i++){
 												maillist.push(mailId[i].email);
 											}
 											console.log("maillist=================>",maillist);
 										})
-										console.log("OBJECT========>",object);
 										var pmName = [];
 										pmName.join({});
 										for(i=0;i<object.length;i++){

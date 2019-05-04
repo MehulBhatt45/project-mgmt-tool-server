@@ -290,10 +290,13 @@ tasksController.addTasks = function(req , res){
 					if (err) {
 						res.status(404).send(err);
 					}else{
-
+						if(user == null){
+							res.status(200).send(savedTask);
+						}else{
 						console.log("savedNotification======>>>>>",user);
 						pushNotification.postCode(obj.subject,obj.type,[user.token]);
 						res.status(200).send(savedTask);
+						}
 					}
 				})
 
@@ -305,7 +308,6 @@ tasksController.addTasks = function(req , res){
 })
 }
 })
-// })
 }
 
 tasksController.getTaskByProjectId = function(req , res){
