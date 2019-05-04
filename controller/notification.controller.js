@@ -4,33 +4,6 @@ let notificationController = {};
 var pushNotification = require('./../service/push-notification.service');
 
 
-// notificationController.addNotification = function(req, res){
-// 	var notification = new sendnotificationModel(req.body);
-// 	console.log(req.body);
-// 	notification.save(function(err,SavedUser){
-// 		if (err) {
-// 			res.status(500).send(err);
-// 		}else{
-// 			console.log("notification",SavedUser);
-// 			var obj = {
-// 				"id": SavedUser.sendTo._id,
-// 				"title": SavedUser.subject,
-// 				"desc": SavedUser.content
-// 			}
-// 			console.log("saved object===>",obj);
-// 			notificationModel
-// 			.findOne({userId: SavedUser.sendTo})
-// 			.exec((err, user)=>{
-// 				if (err) {
-// 					res.status(500).send(err);
-// 				}else{
-// 					pushNotification.postCode(obj,user.token);
-// 				}
-// 			})
-// 			res.status(200).send(SavedUser);
-// 		}
-// 	});
-// }
 	notificationController.addUser = function(req,res){
 		console.log("notificatiion data",req.body);
 		var userId = req.body.userId;
