@@ -67,11 +67,7 @@ tasksController.addTasks = function(req , res){
 					res.status(404).send(err);
 				}else if(foundTask && foundTask.length == 1){
 					var projectId = foundTask[0].projectId;
-					console.log("FINAL PROJECT ID====>",projectId);
-					console.log("found Task =================================>" , foundTask);
-					console.log("pID====>",foundTask[0].projectId);
-					console.log("pmanager=============>", foundTask.createdBy);
-					console.log("errTask ====>" , err);
+				
 					foundTask = foundTask[0].uniqueId.split("-");
 					var count = +foundTask[1]+ +1;
 					console.log("found Task ====>" , +foundTask[1]+ +1);
@@ -124,7 +120,7 @@ tasksController.addTasks = function(req , res){
 										prior = "High";
 										color = "#ff8100";
 									}else if(priority1 == '3'){
-										color = "#ffee21";
+										color = "#cabb08";
 										prior = "Medium";
 									}else{
 										color="#0087ff";
@@ -143,54 +139,8 @@ tasksController.addTasks = function(req , res){
 										var email = foundTask.assignTo.email;
 										var sprint = foundTask.sprint;
 										console.log("email===>>>>>",email);
-										// sprintModel
-										// .find({sprint : id})
-										// .exec((err,sprint)=>{
-										// 	console.log("sprint============>",sprint);
-										// })
-										// var name = foundTask.createdBy.name;
-										// console.log("foundTask.createdBy.name======>",foundTask.createdBy.name);
-										var output = `<!doctype html>
-										<html>
-										<head>
-										<title> title111</title>
-										</head>
-										<body>
-										<div style="width:100%;margin:0 auto;border-radius: 2px;
-										box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-										border: 1px solid #d3d3d3;background:#e7eaf0;">
-										<div style="border:10px solid #3998c5;background:#fff;margin:25px;">
-										<center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>
-										<div style="width:85%;margin:0 auto;border-radius:4px;background:#fff;">
-										<div style="margin-left:30px;padding:0;">
-										<p style="color:black;font-size:14px;"><b>Tirthraj Barot created a task: </b><span style="color:black;font-size:17px;"><b style="color:#bf4444;">`+req.body.title+`</b> in <span style="color:black;font-size:14px;"><b><u>`+foundTask.projectId.title+`.</u></b></span></span></p>
-										<table style="color:black;">
-										<tr style="height: 50px;width: 100%;">
-										<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Sprint: </b><span >`+foundTask.sprint+`</span></td>
-										<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%"><b>Due date: </b><span>`+req.body.dueDate+`</span></td>
-										</tr>
-										<tr style="height: 50px;">
-										<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Priority: </b><span style="color:`+color+`">`+prior+`</span></td>
-										<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;"><b>Estimated time: </b><span>`+foundTask.estimatedTime+`</span></td>
-										</tr>
-										</table>
 										
-										<div style="border-bottom:1px solid #ccc;margin:5px 0 10px;height:1px"></div>
-										<div class="m_-7949690059544268696content" style="font-family:'Trebuchet MS',Arial,Helvetica,sans-serif;color:#444;line-height:1.6em;font-size:15px">
-										<p><b>Description: </b>`+req.body.desc+`</p>
-										<center>
-										<a href="http://localhost:4200/#/project-details/`+foundTask.projectId._id+`">
-										<button style="background-color: #3998c5;border: none;color: white;padding: 10px 25px;text-align: center;text-decoration: none;
-										display: inline-block;border-radius: 4px;margin-bottom: 20px;font-size: 16px;">View Item
-										</button>
-										</a>
-										</center>
-										</div>
-										</div>
-										</div>
-										</div>
-										</body>
-										</html>
+										var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;background:#fff;"><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:14px;"><b>Tirthraj Barot created a task: </b><span style="color:black;font-size:17px;"><b style="color:#bf4444;">`+req.body.title+`</b> in <span style="color:black;font-size:14px;"><b><u>`+foundTask.projectId.title+`.</u></b></span></span></p><table style="color:black;"><tr style="height: 50px;width: 100<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Sprint: </b><span >`+foundTask.sprint+`</span></td><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%"><b>Due date: </b><span>`+req.body.dueDate+`</span></td></tr><tr style="height: 50px;"><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Priority: </b><span style="color:`+color+`">`+prior+`</span></td><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;"><b>Estimated time: </b><span>`+foundTask.estimatedTime+`</span></td></tr></table><div style="border-bottom:1px solid #ccc;margin:5px 0 10px;height:1px"></div><div class="m_-7949690059544268696content" style="font-family:'Trebuchet MS',Arial,Helvetica,sans-serif;color:#444;line-height:1.6em;font-size:15px"><p><b>Description: </b>`+req.body.desc+`</p><center><a href="http://localhost:4200/#/project-details/`+foundTask.projectId._id+`"><button style="background-color: #3998c5;border: none;color: white;padding: 10px 25px;text-align: center;text-decoration: none;display: inline-block;border-radius: 4px;margin-bottom: 20px;font-size: 16px;">View Item</button></a></center></div></div></div></div></body></html>
 										`;
 										var mailOptions = {
 											from: 'tnrtesting2394@gmail.com',
@@ -208,22 +158,12 @@ tasksController.addTasks = function(req , res){
 											}
 										});
 										var obj = {
-											"subject" :" You have been assigned a new task",
-											"content" : "A new task in <strong>" +foundTask.projectId.title + " </strong> is been created by <strong>" +foundTask.createdBy.name+ " </strong> and assigned to you.",
-											"sendTo" : foundTask.assignTo._id,
-											"type" : "task",
-											"priority" : foundTask.priority,
-											"projectId" : projectId,
+											"subject" :" You have been assigned a new task","content" : "A new task in <strong>" +foundTask.projectId.title + " </strong> is been created by <strong>" +foundTask.createdBy.name+ " </strong> and assigned to you.",
+											"sendTo" : foundTask.assignTo._id,"type" : "task","priority" : foundTask.priority,"projectId" : projectId,
 											"createdAt":foundTask.createdAt,
 										} 
 										console.log("obj==================>",obj);
-										const timePeriod = obj.createdAt;
-										if (obj.createdAt==5 ) {
-											
-										}	
-										console.log("timeeeeeeeeeeeeeeeeeeeeeeeeeee",timePeriod);
-
-										// console.log("name nthi mdtu yr",savedTask.assignTo.name);
+										
 										var notification = new sendnotificationModel(obj);
 										console.log("kaik notification mdi jaje==========<<>>>>>>>>>>>",notification);
 										notification.save(function(err,savedNotification){
@@ -356,16 +296,11 @@ tasksController.addTasks = function(req , res){
 				}
 			});
 			var obj = {
-				"subject" :" You have been assigned anew task",
-				"content" : "A new task in " +foundTask.projectId.title + " project is been created by " +foundTask.createdBy.name + " and assigned to you.",
-				"sendTo" : foundTask.assignTo._id,
-				"type" : "task",
-				"priority" : foundTask.priority,
-				"createdAt":foundTask.createdAt,
+				"subject" :" You have been assigned anew task","content" : "A new task in " +foundTask.projectId.title + " project is been created by " +foundTask.createdBy.name + " and assigned to you.",
+				"sendTo" : foundTask.assignTo._id,"type" : "task","priority" : foundTask.priority,"createdAt":foundTask.createdAt,
 			} 
 			console.log("obj==================>",obj);
 			var notification = new sendnotificationModel(obj);
-			console.log("notificationnnnnnnnnnnnnnnnnnnnn=========>",notification);
 			notification.save(function(err,savedNotification){
 				if(err){
 					res.status(406).send(err);		
@@ -379,7 +314,7 @@ tasksController.addTasks = function(req , res){
 					}else{
 
 						console.log("savedNotification======>>>>>",user);
-						pushNotification.postCode('dynamic title','dynamic content',[user.token]);
+						pushNotification.postCode(obj.subject,obj.type,[user.token]);
 						res.status(200).send(savedTask);
 					}
 				})
@@ -492,18 +427,14 @@ tasksController.updateTaskById = function(req , res){
 tasksController.getAllTask = function(req , res){
 	tasksModel
 	.find({})
-
 	.populate('projectId assignTo createdBy timelog1 sprint')
-
 	.exec((err , allTasks)=>{
 		if(err) res.send('err');
 		else res.send(allTasks);
-		console.log('res====================>',allTasks)
 	})
 }
 tasksController.updateTaskStatusById = function(req , res){
 	var taskId = req.body._id;
-	console.log("taskID ========>" , taskId);
 	if(req.body.status!=='complete'){
 		tasksModel.findOne({_id: taskId}).exec((err, task)=>{
 			if (err) res.status(500).send(err);

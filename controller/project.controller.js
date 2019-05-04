@@ -515,7 +515,9 @@ projectController.updateProjectById = function(req,res){
 			projectModel
 			.findOne({_id: projectId})
 			.select('Teams ')
-			.populate('Teams ')
+
+			.populate('Teams')
+
 			.exec((err , foundTeam)=>{
 				if(err) res.send(err)
 					else res.status(200).send(foundTeam);
@@ -589,6 +591,7 @@ projectController.updateProjectById = function(req,res){
 		}
 
 	})
+
 		}
 
 		module.exports = projectController;

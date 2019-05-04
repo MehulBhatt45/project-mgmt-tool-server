@@ -40,7 +40,6 @@ leaveController.applyLeave = function(req,res){
 		}else{	
 			console.log("APPLY LEAVE++++++===================>", leave);
 			var uploadPath = path.join(__dirname, "../uploads/"+leave._id+"/");
-			console.log("upload path=======<",uploadPath);
 			req.file('attechment').upload({
 				maxBytes: 50000000,
 				dirname: uploadPath,
@@ -77,14 +76,11 @@ leaveController.applyLeave = function(req,res){
 							.find({Teams : mongoose.Types.ObjectId(leave.id)})
 							.populate('pmanagerId')
 							.exec((err,project)=>{
-								console.log("projects=========>",project);
-								console.log("uniqueId==============================>",project.uniqueId)
 								var projects = [];
 								for(i=0;i<project.length;i++){
 									projects.push(...project[i].pmanagerId);
 								}
 								var object = [];
-								console.log("pmanagerId array======>",typeof projects);
 								_.forEach(projects, pro=>{
 									object.push({ pmanagerId: pro });
 								})
@@ -96,13 +92,11 @@ leaveController.applyLeave = function(req,res){
 									}else{
 										admin = [];
 										admin.push(user);
-										console.log("admin array------------->",admin);
 										var output = [];
 										_.forEach(object, ob=>{
 											output.push(ob.pmanagerId._id)
 										})
 										output.push(admin[0]._id);
-										console.log("output=================>",output);
 										userModel
 										.find({_id : output})
 										.exec((err,mailId)=>{
@@ -112,7 +106,6 @@ leaveController.applyLeave = function(req,res){
 											}
 											console.log("maillist=================>",maillist);
 										})
-										console.log("output length=========================>",output.length);
 										console.log("OBJECT========>",object);
 										var pmName = [];
 										pmName.join({});
@@ -123,21 +116,11 @@ leaveController.applyLeave = function(req,res){
 										
 										if(duration == "0.5" || duration == "1"){
 											var obj = {
-												"subject" :"Your Team member has applied for leave .",
-												"contentForPm" : "Your teamMate <strong>" +leave.name+ "</strong> has applied for " + req.body.leaveDuration+ " day leave (" +req.body.startingDate+ ")",
-												"contentForAdmin" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for 1 day leave (" +req.body.startingDate+ ")",
-												"sendTo" : output,
-												"type" : "leave",
-												"pmStatus": pmName
+												"subject" :"Your Team member has applied for leave .","contentForPm" : "Your teamMate <strong>" +leave.name+ "</strong> has applied for " + req.body.leaveDuration+ " day leave (" +req.body.startingDate+ ")","contentForAdmin" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for 1 day leave (" +req.body.startingDate+ ")","sendTo" : output,"type" : "leave","pmStatus": pmName
 											} 
 										}else{
 											var obj = {
-												"subject" :"Your Team member has applied for leave .",
-												"contentForPm" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " +req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
-												"contentForAdmin" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for "+ req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
-												"sendTo" : output,
-												"type" : "leave",
-												"pmStatus": pmName
+												"subject" :"Your Team member has applied for leave .","contentForPm" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " +req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")","contentForAdmin" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for "+ req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")","sendTo" : output,"type" : "leave","pmStatus": pmName
 											} 
 										}
 										console.log("obj==================>",obj);
@@ -188,76 +171,11 @@ leaveController.applyLeave = function(req,res){
 									leaveDuration = "Full Day"
 								}
 								
-								var output = `<!doctype html>
-								<html>
-								<head>
-								<title> title111</title>
-								</head>
-								<body>
-								<div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-								border: 1px solid #d3d3d3;background:#e7eaf0;">
-								<div style="border:10px solid #3998c5;background:#fff;margin:25px;">
-								<center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>								
-								<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background:white;box-sizing: border-box; ">
-								<div style="margin-left:30px;padding:0;">
-								<p style="color:black;font-size:20px;">You have a new Leave Application from <span style="font-weight:bold;">`+req.body.name+`</span></p>
-								<table style="color:black;">
-								<tr style="height: 50px;">
-								<td><b>Duration</b></td>
-								<td style="padding-left: 50px;">`+leaveDuration+`</td></tr>
-								<tr style="height: 50px;width: 100%;">
-								<td><b>Starting Date</b></td>
-								<td style="padding-left: 50px;color:#3998c5;">`+req.body.startingDate+`</td></tr>
-								<tr  style="height: 50px;">
-								<td><b>Type of leave</b></td>
-								<td style="padding-left: 50px;">`+leaveType+`</td></tr>
-								<tr style="height: 50px;">
-								<td><b>Reason</b></td>
-								<td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr>
-								</table>
-								</div>
-								</div>
-								</div>
-								</body>
-								</html>
+								var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:20px;">You have a new Leave Application from <span style="font-weight:bold;">`+req.body.name+`</span></p><table style="color:black;"><tr style="height: 50px;"><td><b>Duration</b></td><td style="padding-left: 50px;">`+leaveDuration+`</td></tr><tr style="height: 50px;width: 100%;"><td><b>Starting Date</b></td><td style="padding-left: 50px;color:#3998c5;">`+req.body.startingDate+`</td></tr><tr  style="height: 50px;"><td><b>Type of leave</b></td><td style="padding-left: 50px;">`+leaveType+`</td></tr><tr style="height: 50px;"><td><b>Reason</b></td><td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr></table></div></div></div></body></html>
 								`;
 
 							}else{
-								var output = `<!doctype html>
-								<html>
-								<head>
-								<title> title111</title>
-								</head>
-								<body>
-								<div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-								border: 1px solid #d3d3d3;background:#e7eaf0;">
-								<div style="border:10px solid #3998c5;background:#fff;margin:25px;">
-								<center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>								
-								<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; ">
-								<div style="margin-left:30px;padding:0;">
-								<p style="color:black;font-size:20px;">You have a new Leave Application from <span style="font-weight:bold;">`+req.body.name+`</span></p>
-								<table style="color:black;">
-								<tr style="height: 50px;">
-								<td><b>No. of days</b></td>
-								<td style="padding-left: 50px;">`+req.body.leaveDuration+` days</td></tr>
-								<tr style="height: 50px;width: 100%;">
-								<td><b>Starting Date</b></td>
-								<td style="padding-left: 50px;color:#3998c5;">`+req.body.startingDate+`</td></tr>
-								<tr style="height: 50px;width: 100%;">
-								<td><b>Ending Date</b></td>
-								<td style="padding-left: 50px;color:#3998c5;">`+req.body.endingDate+`</td></tr>
-								<tr  style="height: 50px;">
-								<td><b>Type of leave</b></td>
-								<td style="padding-left: 50px;">`+leaveType+`</td></tr>
-								<tr style="height: 50px;">
-								<td><b>Reason</b></td>
-								<td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr>
-								</table>
-								</div>
-								</div>
-								</div>
-								</body>
-								</html>
+								var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:20px;">You have a new Leave Application from <span style="font-weight:bold;">`+req.body.name+`</span></p><table style="color:black;"><tr style="height: 50px;"><td><b>No. of days</b></td><td style="padding-left: 50px;">`+req.body.leaveDuration+` days</td></tr><tr style="height: 50px;width: 100%;"><td><b>Starting Date</b></td><td style="padding-left: 50px;color:#3998c5;">`+req.body.startingDate+`</td></tr><tr style="height: 50px;width: 100%;"><td><b>Ending Date</b></td><td style="padding-left: 50px;color:#3998c5;">`+req.body.endingDate+`</td></tr><tr  style="height: 50px;"><td><b>Type of leave</b></td><td style="padding-left: 50px;">`+leaveType+`</td></tr><tr style="height: 50px;"><td><b>Reason</b></td><td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr></table></div></div></div></body></html>
 								`;
 
 							}
@@ -322,7 +240,6 @@ leaveController.getLeavesById = function(req,res){
 			res.status(500).send(err)
 		}
 		else{
-			console.log("response============<<<<<<<<<<<<<",respond);
 			res.status(200).send(respond);
 		}
 	})
@@ -335,7 +252,6 @@ leaveController.getAllLeaves = function(req,res){
 			res.status(500).send(err)
 		}
 		else{
-			console.log("response============<<<<<<<<<<<<<",respond);
 			res.status(200).send(respond);
 		}
 	})
@@ -351,7 +267,6 @@ leaveController.getByUserId = function(req,res){
 			res.status(500).send(err)
 		}
 		else{
-			console.log("response============<<<<<<<<<<<<<",respond);
 			res.status(200).send(respond);
 		}
 	})
@@ -367,7 +282,6 @@ leaveController.getById = function(req,res){
 			res.status(500).send(err)
 		}
 		else{
-			console.log("response============<<<<<<<<<<<<<",respond);
 			res.status(200).send(respond);
 		}
 	})
@@ -419,90 +333,63 @@ leaveController.getAllLeavesApps = function(req,res){
 }
 
 leaveController.updateLeaves = function(req,res){
-	console.log("req boddy =======++>" , req.body);
-	console.log("req boddy1 =======++>" , req.params);
-	console.log("final date=============>",req.body.startingDate);
 	leaveModel.findOneAndUpdate({_id: req.params.id},req.body,{upsert:true , new: true},function(err,update){
-		console.log("Updated ==================>" , update);
 		var status = update.status;
 		var email = update.email;
 		var duration = update.leaveDuration;
-		console.log("email=======>",email);
-		console.log("Duration===================>",duration);
 		if(status == "approved"){
 			projectModel
 			.find({Teams : update.id})
 			.exec((err,project)=>{
-				console.log("projects=========>",project);
 				projects = [];
 				for(i=0;i<project.length;i++){
 					console.log("push");
 					projects.push(project[i].pmanagerId);
 				}
-				console.log("pmanagerId array======>",projects);
 				var object = [].concat.apply([],projects);
-				console.log("USERRRRR========>",object);
 				notificationModel
 				.find({userId: object})
 				.exec((err, user)=>{
 					if (err) {
 						res.status(500).send(err);
 					}else{
-						console.log("userrrrrrrrrrrrrrrr====>",user);
 						projects = [];
 						for(i=0;i<user.length;i++){
 							console.log("push");
 							projects.push(user[i].userId);
 						}
-						console.log("pmanagerId array======>",projects);
 						userModel
 						.find({_id : projects})
 						.exec((err,users)=>{
 							if(err){
-								console.log("ERROR====>",err);
+								res.status(500).send(err);
 							}else{
-								console.log("userRole========>",users);
 								userrole = [];
 								for(i=0;i<users.length;i++){
 									userrole.push(users[i].userRole)
-									console.log("projectManager=======>",userrole);
 								}
 								if( duration == "1" || duration == "0.5"){
 									var obj2 = {
-										"subject" : "approved leave", 
-										"content" : "<strong>" +update.name+ "</strong> has applied for leave on " +req.body.startingDate+ " and it's approved.",
-										"sendTo" : projects,
-										"type" : "leaveAccepted",
+										"subject" : "approved leave","content" : "<strong>" +update.name+ "</strong> has applied for leave on " +req.body.startingDate+ " and it's approved.","sendTo" : projects,"type" : "leaveAccepted",
 									}
 									mailContent = update.name+ " has applied for leave on " +req.body.startingDate+ " and it's ";
-									// console.log("type of====>481", mailContent);
 								}else{
 									var obj2 = {
-										"subject" : "approved leave", 
-										"content" : "<strong>" +update.name+ "</strong> has applied for leave on " +req.body.startingDate+ " to " + req.body.endingDate+ " and it's ",
-										"sendTo" : projects,
-										"type" : "leaveAccepted",
+										"subject" : "approved leave","content" : "<strong>" +update.name+ "</strong> has applied for leave on " +req.body.startingDate+ " to " + req.body.endingDate+ " and it's ","sendTo" : projects,"type" : "leaveAccepted",
 									}
 
 									mailContent = update.name+ " has applied for leave on " +req.body.startingDate+ " to " + req.body.endingDate+ " and it's approved.";
-									// console.log("type of====>491", mailContent);
 
 								}
-								console.log("mailcontent===========>",mailContent);
+								
 								if(duration == "0.5" || duration == "1"){
 									var	obj1 = {
-										"subject" :"Congratulations! Your leave has been approved.",
-										"content" : "Hello <span style='color:red;'>"+update.name+"</span>, your leave application for " +req.body.startingDate+ " is <strong> approved </strong>.", 
-										"sendTo" : update.id,
-										"type" : "leave-accepted"
+										"subject" :"Congratulations! Your leave has been approved.","content" : "Hello <span style='color:red;'>"+update.name+"</span>, your leave application for " +req.body.startingDate+ " is <strong> approved </strong>.", "sendTo" : update.id,"type" : "leave-accepted"
 									}
 									console.log("obj=======>",obj1);
 								}else{
 									var	obj1 = {
-										"subject" :"Congratulations! Your leave has been approved.",
-										"content" : "Hello <span style='color:red;'>"+update.name+"</span>, your leave application form " +req.body.startingDate+ " to "+ req.body.endingDate+ " is <strong> approved </strong>.", 
-										"sendTo" : update.id,
-										"type" : "leave-accepted"
+										"subject" :"Congratulations! Your leave has been approved.","content" : "Hello <span style='color:red;'>"+update.name+"</span>, your leave application form " +req.body.startingDate+ " to "+ req.body.endingDate+ " is <strong> approved </strong>.","sendTo" : update.id,"type" : "leave-accepted"
 									}
 									
 									console.log("obj=======>",obj1);
@@ -519,26 +406,7 @@ leaveController.updateLeaves = function(req,res){
 											pushNotification.postCode(obj1.subject,obj1.type,[user.token]);
 										}
 									})
-									console.log("Leave Accepted");
-									var output = `<!doctype html>
-									<html>
-									<head>
-									<title> title111</title>
-									</head>
-									<body>
-									<div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-									border: 1px solid #d3d3d3;background:#e7eaf0;">
-									<div style="border:10px solid #3998c5;background:#fff;margin:25px;">
-									<center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>	
-									<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; ">
-									<div style="margin-left:30px;padding:0;">
-									<p style="color:black;font-size:20px;">Congratulation!` +req.body.name+` Your leave for ` + req.body.noOfDays+` on `+req.body.startingDate+` is <span style="color:#28B463;font-weight:bold;">APPROVED.</span></p>
-									</div>
-									</div>
-									</div>
-									</body>
-									</html>
-									`;
+									var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">Congratulation!` +req.body.name+` Your leave for ` + req.body.noOfDays+` on `+req.body.startingDate+` is <span style="color:#28B463;font-weight:bold;">APPROVED.</span></p>`;
 
 									var mailOptions = {
 										from: 'raoinfotechp@gmail.com',
@@ -554,26 +422,8 @@ leaveController.updateLeaves = function(req,res){
 											console.log('Email sent: 586' + info.response);
 										}
 									});
-									console.log("just before mail ============>",mailContent);
-									console.log("before email===============>",email);
-									var output1 = `<!doctype html>
-									<html>
-									<head>
-									<title> title111</title>
-									</head>
-									<body>
-									<div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-									border: 1px solid #d3d3d3;background:#e7eaf0;">
-									<div style="border:10px solid #3998c5;background:#fff;margin:25px;">
-									<center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>	
-									<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; ">
-									<div style="margin-left:30px;padding:0;">
-									<p style="color:black;font-size:20px;">Your teammate `+mailContent+` <span style="color:#35b139;"> Approved</span>.</p>
-									</div>
-									</div>
-									</div>
-									</body>
-									</html>
+									
+									var output1 = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">Your teammate `+mailContent+` <span style="color:#35b139;"> Approved</span>.</p></div></div></div></body></html>
 									`;
 									var mailOptions1 = {
 										from: 'raoinfotechp@gmail.com',
@@ -598,9 +448,7 @@ leaveController.updateLeaves = function(req,res){
 										if (err) {
 											res.status(500).send(err);
 										}else{
-											console.log("admin===========>",user);
-
-											pushNotification.postCode(obj2.subject,obj2.content,[user.token]);
+											pushNotification.postCode(obj2.subject,obj2.type,[user.token]);
 											res.status(200).send(update);
 										}
 
@@ -610,11 +458,9 @@ leaveController.updateLeaves = function(req,res){
 								userModel
 								.find({_id : projects})
 								.exec((err,mailId)=>{
-									console.log("mailId=======>",mailId);
 									for(i=0;i<mailId.length;i++){
 										maillist.push(mailId[i].email);
 									}
-									console.log("maillist===========>",maillist);
 								})
 							}
 						})
@@ -633,42 +479,33 @@ leaveController.updateLeaves = function(req,res){
 			console.log("push");
 			projects.push(project[i].pmanagerId);
 		}
-		console.log("pmanagerId array======>",projects);
 		var object = [].concat.apply([],projects);
-		console.log("USERRRRR========>",object);
 		notificationModel
 		.find({userId: object})
 		.exec((err, user)=>{
 			if (err) {
 				res.status(500).send(err);
 			}else{
-				console.log("userrrrrrrrrrrrrrrr====>",user);
 				projects = [];
 				for(i=0;i<user.length;i++){
 					console.log("push");
 					projects.push(user[i].userId);
 				}
-				console.log("pmanagerId array======>",projects);
 				if(duration == "1" || duration == "0.5"){
 					var obj2 = {
-						"subject" : "rejected leave", 
-						"content" : "" +update.name+ " has applied for leave on " +req.body.startingDate+ " and it's <strong> rejected </strong>.",
-						"sendTo" : projects,
-						"type" : "leaveAccepted",
+						"subject" : "rejected leave", "content" : "" +update.name+ " has applied for leave on " +req.body.startingDate+ " and it's <strong> rejected </strong>.",
+						"sendTo" : projects,"type" : "leaveAccepted",
 					}
 				}else{
 					var obj2 = {
-						"subject" : "rejected leave ", 
-						"content" : "" +update.name+ " has applied for leave on " +req.body.startingDate+ " to " + req.body.endingDate+ "and it's <strong> rejected </strong>.",
-						"sendTo" : projects,
-						"type" : "leaveAccepted",
+						"subject" : "rejected leave ", "content" : "" +update.name+ " has applied for leave on " +req.body.startingDate+ " to " + req.body.endingDate+ "and it's <strong> rejected </strong>.",
+						"sendTo" : projects,"type" : "leaveAccepted",
 					}
 				}
 			}
 			userModel
 			.find({_id : projects})
 			.exec((err,mailId)=>{
-				console.log("mailId=======>",mailId);
 				for(i=0;i<mailId.length;i++){
 					maillist.push(mailId[i].email);
 				}
@@ -683,24 +520,19 @@ leaveController.updateLeaves = function(req,res){
 					if (err) {
 						res.status(500).send(err);
 					}else{
-						console.log("admin===========>",user);
 						pushNotification.postCode(obj2.subject,obj2.type,[user.token]);
 					}
 				})
 				if(duration == "1" || duration == "0.5"){
 					var	obj1 = {
-						"subject" :"Sorry! Your leave has been rejected.",
-						"content" : "Sorry "+update.name+", your leave application for " +req.body.startingDate+ " is <strong> rejected </strong>.", 
-						"sendTo" : update.id,
-						"type" : "leave-rejected"
+						"subject" :"Sorry! Your leave has been rejected.","content" : "Sorry "+update.name+", your leave application for " +req.body.startingDate+ " is <strong> rejected </strong>.", 
+						"sendTo" : update.id,"type" : "leave-rejected"
 					}
 					mailContent = update.name+ " has applied for leave on " +req.body.startingDate+ " and it's";
 				}else{
 					var	obj1 = {
-						"subject" :"Sorry! Your leave has been rejected.",
-						"content" : "Sorry "+update.name+", your leave application form " +req.body.startingDate+ " to "+ req.body.endingDate+ " is <strong> rejected </strong>.", 
-						"sendTo" : update.id,
-						"type" : "leave-rejected"
+						"subject" :"Sorry! Your leave has been rejected.","content" : "Sorry "+update.name+", your leave application form " +req.body.startingDate+ " to "+ req.body.endingDate+ " is <strong> rejected </strong>.", 
+						"sendTo" : update.id,"type" : "leave-rejected"
 					}
 					mailContent = update.name+ " has applied for leave on " +req.body.startingDate+ " to " + req.body.endingDate+ " and it's";
 				}
@@ -719,26 +551,8 @@ leaveController.updateLeaves = function(req,res){
 						}
 					})
 				})
-				console.log("Leave Rejected");
-				console.log("before email===============>",email);
-				var output = `<!doctype html>
-				<html>
-				<head>
-				<title> title111</title>
-				</head>
-				<body>
-				<div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-				border: 1px solid #d3d3d3;background:#e7eaf0;">
-				<div style="border:10px solid #3998c5;background:#fff;margin:25px;">
-				<center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>	
-				<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; ">
-				<div style="margin-left:30px;padding:0;">
-				<p style="color:black;font-size:20px;">Sorry!` +req.body.name+` Your leave for ` + req.body.noOfDays+` on `+req.body.startingDate+` is <span style="color:#E74C3C;font-weight:bold;">REJECTED.</p>
-				</div>
-				</div>
-				</div>
-				</body>
-				</html>
+		
+				var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>	<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">Sorry!` +req.body.name+` Your leave for ` + req.body.noOfDays+` on `+req.body.startingDate+` is <span style="color:#E74C3C;font-weight:bold;">REJECTED.</p></div></div></div></body></html>
 				`;
 				var mailOptions = {
 					from: 'raoinfotechp@gmail.com',
@@ -754,25 +568,7 @@ leaveController.updateLeaves = function(req,res){
 						console.log('Email sent: ' + info.response);
 					}
 				})
-				console.log("before mail===========>",mailContent);
-				var output1 = `<!doctype html>
-				<html>
-				<head>
-				<title> title111</title>
-				</head>
-				<body>
-				<div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-				border: 1px solid #d3d3d3;background:#e7eaf0;">
-				<div style="border:10px solid #3998c5;background:#fff;margin:25px;">
-				<center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>	
-				<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; ">
-				<div style="margin-left:30px;padding:0;">
-				<p style="color:black;font-size:20px;">Your teammate `+mailContent+`<span style="color:#dc5871;"> Rejected</span>.</p>
-				</div>
-				</div>
-				</div>
-				</body>
-				</html>
+				var output1 = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">Your teammate `+mailContent+`<span style="color:#dc5871;"> Rejected</span>.</p></div></div></div></body></html>
 				`;
 
 				var mailOptions1 = {
@@ -798,7 +594,6 @@ leaveController.updateLeaves = function(req,res){
 
 }else{
 	console.log("mail not send");
-	console.log("mail not send");
 }
 })
 
@@ -806,8 +601,6 @@ leaveController.updateLeaves = function(req,res){
 leaveController.AddComments = function(req,res){
 	leaveId = req.body.leaveId;
 	comment = req.body.comment;
-	console.log("leaveid====>>",leaveId);
-	console.log("comment",comment);
 	leaveModel.findOneAndUpdate({_id:leaveId},{$set:{comment:comment}},{upsert:true, new:true})
 	.exec((err,comments)=>{
 		if(err){
@@ -815,7 +608,6 @@ leaveController.AddComments = function(req,res){
 			res.status(500).send(err)
 		}
 		else{
-			console.log("id==============>",comments.id)
 			res.status(200).send(comments);
 		}
 	})
