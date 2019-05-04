@@ -357,7 +357,7 @@ userController.forgotPassword = function (req,res) {
 								<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background:white;box-sizing: border-box; ">
 								<div style="margin-left:30px;padding:0;">
 								<p style="font-size:15px;">You, or someone else, requested an new password for this account on Project Management Tool</p>
-								<p style="font-size:15px;">You can reset your password using this link. When you do nothing, your password or account will not change.</p>
+								<p style="font-size:15px;">You can reset your password using given link below. When you do nothing, your password or account will not change.</p>
 								<p style="font-size:15px;"><a href="http://localhost:4200/#/forgotpwd/` + user.temporarytoken + `">http://localhost:4200/#/forgotpwd</a></p>
 								<p style="font-size:15px;">This link will expires in 10 minutes.</p>
 								</div>
@@ -380,7 +380,7 @@ userController.forgotPassword = function (req,res) {
 								<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background:white;box-sizing: border-box; ">
 								<div style="margin-left:30px;padding:0;">
 								<p style="font-size:15px;">You, or someone else, requested an new password for this account on Project Management Tool</p>
-								<p style="font-size:15px;">You can reset your password using this link. When you do nothing, your password or account will not change.</p>
+								<p style="font-size:15px;">You can reset your password using given link below. When you do nothing, your password or account will not change.</p>
 								<p style="font-size:15px;"><a href="https://raoinfotech-conduct.tk/#/forgotpwd/` + user.temporarytoken + `">https://raoinfotech-conduct.tk/#/forgotpwd</a></p>
 								<p style="font-size:15px;">This link will expires in 10 minutes.</p>
 								</div>

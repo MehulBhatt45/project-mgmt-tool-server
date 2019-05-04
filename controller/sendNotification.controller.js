@@ -78,7 +78,6 @@ sendnotificationController.addNotification = function(req, res){
 							}
 							console.log("maillist=================>",maillist);
 						})
-
 						var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:75%;margin:0 auto;border-radius: 6px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;"><center><img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">`+mailContent+`</p></div></body></html>
 						`;
 						var mailOptions = {
@@ -121,6 +120,7 @@ sendnotificationController.getNotificationByUserId = function(req,res){
 		if (err) {
 			res.status(500).send(err);
 		}else{
+
 			for(i=0;i<user.length;i++){
 				sendnotificationModel
 				.findOneAndUpdate({_id:user[i]._id} , {upsert:true,new:true})

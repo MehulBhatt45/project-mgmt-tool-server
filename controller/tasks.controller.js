@@ -67,7 +67,7 @@ tasksController.addTasks = function(req , res){
 					res.status(404).send(err);
 				}else if(foundTask && foundTask.length == 1){
 					var projectId = foundTask[0].projectId;
-				
+
 					foundTask = foundTask[0].uniqueId.split("-");
 					var count = +foundTask[1]+ +1;
 					console.log("found Task ====>" , +foundTask[1]+ +1);
@@ -138,25 +138,33 @@ tasksController.addTasks = function(req , res){
 										console.log("name of assign usersssssss>>>>><<<<<<<",name);
 										var email = foundTask.assignTo.email;
 										var sprint = foundTask.sprint;
+										console.log("sprint==========>",sprint);
 										console.log("email===>>>>>",email);
-										
-										var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;background:#fff;"><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:14px;"><b>Tirthraj Barot created a task: </b><span style="color:black;font-size:17px;"><b style="color:#bf4444;">`+req.body.title+`</b> in <span style="color:black;font-size:14px;"><b><u>`+foundTask.projectId.title+`.</u></b></span></span></p><table style="color:black;"><tr style="height: 50px;width: 100<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Sprint: </b><span >`+foundTask.sprint+`</span></td><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%"><b>Due date: </b><span>`+req.body.dueDate+`</span></td></tr><tr style="height: 50px;"><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Priority: </b><span style="color:`+color+`">`+prior+`</span></td><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;"><b>Estimated time: </b><span>`+foundTask.estimatedTime+`</span></td></tr></table><div style="border-bottom:1px solid #ccc;margin:5px 0 10px;height:1px"></div><div class="m_-7949690059544268696content" style="font-family:'Trebuchet MS',Arial,Helvetica,sans-serif;color:#444;line-height:1.6em;font-size:15px"><p><b>Description: </b>`+req.body.desc+`</p><center><a href="http://localhost:4200/#/project-details/`+foundTask.projectId._id+`"><button style="background-color: #3998c5;border: none;color: white;padding: 10px 25px;text-align: center;text-decoration: none;display: inline-block;border-radius: 4px;margin-bottom: 20px;font-size: 16px;">View Item</button></a></center></div></div></div></div></body></html>
-										`;
-										var mailOptions = {
-											from: 'tnrtesting2394@gmail.com',
-											to: email,
-											subject: 'For New Task',
-											text: 'Hi, this is a testing email from node server',
-											html: output
-										};
+										console.log("duedate==========>",req.body.dueDate);
+										sprintModel
+										.find({_id : sprint})
+										.exec((err,sprint)=>{
+											console.log("sprint============>",sprint);
 
-										transporter.sendMail(mailOptions, function(error, info){
-											if (error) {
-												console.log("Error",error);
-											} else {
-												console.log('Email sent: ' + info.response);
-											}
-										});
+
+											var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;background:#fff;"><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:14px;"><b>`foundTask.createdBy.name+` created a task: </b><span style="color:black;font-size:17px;"><b style="color:#bf4444;">`+req.body.title+`</b> in <span style="color:black;font-size:14px;"><b><u>`+foundTask.projectId.title+`.</u></b></span></span></p><table style="color:black;"><tr style="height: 50px;width: 100<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Sprint: </b><span >`+sprint[0].title+`</span></td><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%"><b>Due date: </b><span>`+req.body.dueDate+`</span></td></tr><tr style="height: 50px;"><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Priority: </b><span style="color:`+color+`">`+prior+`</span></td><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;"><b>Estimated time: </b><span>`+foundTask.estimatedTime+`</span></td></tr></table><div style="border-bottom:1px solid #ccc;margin:5px 0 10px;height:1px"></div><div class="m_-7949690059544268696content" style="font-family:'Trebuchet MS',Arial,Helvetica,sans-serif;color:#444;line-height:1.6em;font-size:15px"><p><b>Description: </b>`+req.body.desc+`</p><center><a href="http://localhost:4200/#/project-details/`+foundTask.projectId._id+`"><button style="background-color: #3998c5;border: none;color: white;padding: 10px 25px;text-align: center;text-decoration: none;display: inline-block;border-radius: 4px;margin-bottom: 20px;font-size: 16px;">View Item</button></a></center></div></div></div></div></body></html>
+											`;
+											var mailOptions = {
+												from: 'tnrtesting2394@gmail.com',
+												to: email,
+												subject: 'For New Task',
+												text: 'Hi, this is a testing email from node server',
+												html: output
+											};
+
+											transporter.sendMail(mailOptions, function(error, info){
+												if (error) {
+													console.log("Error",error);
+												} else {
+													console.log('Email sent: ' + info.response);
+												}
+											});
+										})
 										var obj = {
 											"subject" :" You have been assigned a new task","content" : "A new task in <strong>" +foundTask.projectId.title + " </strong> is been created by <strong>" +foundTask.createdBy.name+ " </strong> and assigned to you.",
 											"sendTo" : foundTask.assignTo._id,"type" : "task","priority" : foundTask.priority,"projectId" : projectId,
@@ -246,54 +254,27 @@ tasksController.addTasks = function(req , res){
 					prior = "Low";
 				}
 			});
+			sprintModel
+			.find({_id : sprint})
+			.exec((err,sprint)=>{
 
+				var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;background:#fff;"><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:14px;"><b>`foundTask.createdBy.name+` created a task: </b><span style="color:black;font-size:17px;"><b style="color:#bf4444;">`+req.body.title+`</b> in <span style="color:black;font-size:14px;"><b><u>`+foundTask.projectId.title+`.</u></b></span></span></p><table style="color:black;"><tr style="height: 50px;width: 100<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Sprint: </b><span >`+sprint[0].title+`</span></td><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%"><b>Due date: </b><span>`+req.body.dueDate+`</span></td></tr><tr style="height: 50px;"><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Priority: </b><span style="color:`+color+`">`+prior+`</span></td><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;"><b>Estimated time: </b><span>`+foundTask.estimatedTime+`</span></td></tr></table><div style="border-bottom:1px solid #ccc;margin:5px 0 10px;height:1px"></div><div class="m_-7949690059544268696content" style="font-family:'Trebuchet MS',Arial,Helvetica,sans-serif;color:#444;line-height:1.6em;font-size:15px"><p><b>Description: </b>`+req.body.desc+`</p><center><a href="http://localhost:4200/#/project-details/`+foundTask.projectId._id+`"><button style="background-color: #3998c5;border: none;color: white;padding: 10px 25px;text-align: center;text-decoration: none;display: inline-block;border-radius: 4px;margin-bottom: 20px;font-size: 16px;">View Item</button></a></center></div></div></div></div></body></html>`;
+				var mailOptions = {
+					from: 'tnrtesting2394@gmail.com',
+					to: email,
+					subject: 'For new task',
+					text: 'Hi, this is a testing email from node server',
+					html: output
+				};
 
-			var output = `<!doctype html>
-			<html>
-			<head>
-			<title> title111</title>
-			</head>
-			<body>
-			<div style="width:75%;margin:0 auto;border-radius: 6px;
-			box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-			border: 1px solid #d3d3d3;">
-			<center>
-			<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-			<div style="margin-left:30px;padding:0;">
-			<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+req.body.color+`">`+prior+`</span> priority task.</p>
-			<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
-			<table style="color:black;">
-			<tr style="height: 50px;width: 100%;">
-			<td><b>Title</b></td>
-			<td style="padding-left: 50px;">`+req.body.title+`</td></tr>
-			<tr style="height: 50px;">
-			<td><b>Description</b></td>
-			<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
-			<tr  style="height: 50px;">
-			<td><b>Priority</b></td>
-			<td style="padding-left: 50px;">`+prior+`</td></tr>
-			</table>
-			</div>
-			</body>
-			</html>
-			`;
+				transporter.sendMail(mailOptions, function(error, info){
+					if (error) {
+						console.log("Error",error);
+					} else {
+						console.log('Email sent: ' + info.response);
 
-
-			var mailOptions = {
-				from: 'tnrtesting2394@gmail.com',
-				to: email,
-				subject: 'For new task',
-				text: 'Hi, this is a testing email from node server',
-				html: output
-			};
-
-			transporter.sendMail(mailOptions, function(error, info){
-				if (error) {
-					console.log("Error",error);
-				} else {
-					console.log('Email sent: ' + info.response);
-
-				}
+					}
+				});
 			});
 			var obj = {
 				"subject" :" You have been assigned anew task","content" : "A new task in " +foundTask.projectId.title + " project is been created by " +foundTask.createdBy.name + " and assigned to you.",
@@ -321,7 +302,7 @@ tasksController.addTasks = function(req , res){
 
 			}) 
 		})
-	})
+})
 
 }
 })
@@ -376,8 +357,6 @@ tasksController.updateTaskById = function(req , res){
 			tasksModel.findOne({_id: taskId}, function(err , task){
 
 				var fileNames=req.body.images;
-			// fileNames.push(req.body.images);
-
 			if(files.length>0){
 				_.forEach(files, (gotFile)=>{
 					fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])

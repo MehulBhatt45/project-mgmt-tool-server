@@ -2,6 +2,18 @@ var attendenceModel = require('../model/attendence.model');
 var userModel = require('../model/user.model');
 let attendenceController = {};
 var moment = require('moment');
+var nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
+var transporter = nodemailer.createTransport({
+	host: "smtp.gmail.com",
+	port: 465,
+	secure: true,
+	service: 'gmail',
+	auth: {
+		user: 'raoinfotechp@gmail.com',
+		pass: 'raoinfotech@123'
+	}
+});
 
 
 
@@ -191,6 +203,72 @@ attendenceController.getAttendenceInInterval = function(req , res){
 		
 		res.status(200).send(allItems);
 	})
+}
+
+attendenceController.getDetailByMail = function(req,res){
+
+	req.body.date = moment(req.body.date).format("YYYY-MM-DD");
+	req.body.date = req.body.date+"T00:00:00.000+0000";
+	console.log("date ============>" , req.body.date);
+	var p = 0;
+	var totalTime = 0;
+	var milliSeconds ;
+	var user = [];
+	attendenceModel.find({date: req.body.date})
+	.populate('user_Id')
+	.exec(function(err , foundStudent){
+		console.log("found Student =================>", foundStudent);
+		// console.log("found Student =================>",foundStudent[].user_Id);
+		const studentLength = foundStudent.length;
+		for(var i = 0; i < studentLength; i++) {
+			
+			var obj = {
+
+				UserName : foundStudent[i].user_Id.name,
+				userId : foundStudent[i].user_Id._id,
+				
+				check: foundStudent[i].in_out,
+				difference:foundStudent[i].difference
+			}
+			user.push(obj);
+		}
+		console.log("user============",user);
+		
+		var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center style="margin-top:15px;"><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin-top: 20px;margin:0 auto;border-radius:4px;background:#fff;"><div style="margin-left:30px;padding: 30px;"><table style="color:black;border:1px solid black;"><tr style="height: 50px;width: 100%;border:1px solid black"><th style="border: 1px solid;">Name</th><th style="border: 1px solid;">checkIn</th><th style="border: 1px solid;">checkOut</th><th style="border: 1px solid;">Difference</th></tr>`;
+
+		
+		for (var i=0;i<user.length;i++) {
+			var use= [];
+			use = user[i].difference;
+			
+			console.log("split==================",use);
+			output = output + `<tr style="height: 50px;width: 100%;border:10px solid black;"><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;border:1px solid;padding:10px"><span >`+user[i].UserName+`</span></td><td style="font-size:15px;padding:10px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%;border:1px solid;"><span>`+new Date(user[i].check.slice(-1)[0].checkIn).toLocaleTimeString()+`</span></td><td style="font-size:15px;padding:10px;border:1px solid;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><span>`+new Date(user[i].check.slice(-1)[0].checkOut).toLocaleTimeString()+`</span></td><td style="font-size:15px;padding:10px;border:1px solid;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%"><span>`+user[i].difference+`</span></td>`;
+		}
+
+
+
+		output = output + `</table></div></div></div></div></body></html>`;		
+
+
+
+		var mailOptions = {
+			from: 'raoinfotechp@gmail.com',
+			to: 'dixit20051998@gmail.com',
+			subject: 'Testing Email',
+			text: 'Hi, this is a testing email from node server',
+			html: output
+		};
+		transporter.sendMail(mailOptions, function(error, info){
+			if (error) {
+				console.log("Error",error);
+			} else {
+				console.log('Email sent: ' + info.response);
+			}
+		});
+		res.send(user);
+	})
+
+
 }
 
 

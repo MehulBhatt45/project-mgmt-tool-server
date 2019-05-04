@@ -552,8 +552,7 @@ leaveController.updateLeaves = function(req,res){
 					})
 				})
 		
-				var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>	<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">Sorry!` +req.body.name+` Your leave for ` + req.body.noOfDays+` on `+req.body.startingDate+` is <span style="color:#E74C3C;font-weight:bold;">REJECTED.</p></div></div></div></body></html>
-				`;
+				var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>	<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">Sorry!` +req.body.name+` Your leave for ` + req.body.noOfDays+` on `+req.body.startingDate+` is <span style="color:#E74C3C;font-weight:bold;">REJECTED.</p></div></div></div></body></html>`;
 				var mailOptions = {
 					from: 'raoinfotechp@gmail.com',
 					to: email,
@@ -568,8 +567,7 @@ leaveController.updateLeaves = function(req,res){
 						console.log('Email sent: ' + info.response);
 					}
 				})
-				var output1 = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">Your teammate `+mailContent+`<span style="color:#dc5871;"> Rejected</span>.</p></div></div></div></body></html>
-				`;
+				var output1 = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">Your teammate `+mailContent+`<span style="color:#dc5871;"> Rejected</span>.</p></div></div></div></body></html>`;
 
 				var mailOptions1 = {
 					from: 'raoinfotechp@gmail.com',
