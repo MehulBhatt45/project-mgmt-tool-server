@@ -79,8 +79,8 @@ leaveController.applyLeave = function(req,res){
 								for(i=0;i<project.length;i++){
 									projects.push(...project[i].pmanagerId);
 								}
-								console.log("ARRAY==========>",projects);
-								console.log("before================>",project);
+
+								console.log("projects pdf pmmmmmmmmmmmmm",project);
 								var object = [];
 								_.forEach(projects, pro=>{
 									object.push({ pmanagerId: pro });

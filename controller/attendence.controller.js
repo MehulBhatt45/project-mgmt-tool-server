@@ -242,7 +242,7 @@ attendenceController.getDetailByMail = function(req,res){
 			use = user[i].difference;
 			
 			console.log("split==================",use);
-			output = output + `<tr style="height: 50px;width: 100%;border:10px solid black;"><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;border:1px solid;padding:10px"><span >`+user[i].UserName+`</span></td><td style="font-size:15px;padding:10px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%;border:1px solid;"><span>`+new Date(user[i].check.slice(-1)[0].checkIn).toLocaleTimeString()+`</span></td><td style="font-size:15px;padding:10px;border:1px solid;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><span>`+new Date(user[i].check.slice(-1)[0].checkOut).toLocaleTimeString()+`</span></td><td style="font-size:15px;padding:10px;border:1px solid;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%"><span>`+user[i].difference+`</span></td>`;
+			output = output + `<tr style="height: 50px;width: 100%;border:10px solid black;"><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;border:1px solid;padding:10px"><span >`+user[i].UserName+`</span></td><td style="font-size:15px;padding:10px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%;border:1px solid;"><span>`+new Date(user[i].check.slice(-1)[0].checkIn).toLocaleTimeString()+`</span></td><td style="font-size:15px;padding:10px;border:1px solid;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><span>`+new Date(user[i].check.slice(-1)[0].checkOut).toLocaleTimeString()+`</span></td><td style="font-size:15px;padding:10px;border:1px solid;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%"><span>`+new Date(user[i].difference).toLocaleTimeString()+`</span></td>`;
 		}
 
 
@@ -253,11 +253,12 @@ attendenceController.getDetailByMail = function(req,res){
 
 		var mailOptions = {
 			from: 'raoinfotechp@gmail.com',
-			to: 'dixit20051998@gmail.com',
+			to: 'vivekkbharda@gmail.com',
 			subject: 'Testing Email',
 			text: 'Hi, this is a testing email from node server',
 			html: output
 		};
+
 		transporter.sendMail(mailOptions, function(error, info){
 			if (error) {
 				console.log("Error",error);
