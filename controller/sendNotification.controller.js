@@ -144,17 +144,15 @@ sendnotificationController.getUnreadNotification = function(req,res){
 		}else{
 			for(i=0;i<unread.length;i++){
 				if (unread[i].seenFlag == false) {
-					console.log("data=======>",unread);
 					unreadNotification.push(unread);
 				}
 			}
-			console.log("length===============>",unreadNotification.length);
 			res.status(200).send(unreadNotification);
 		}
 	})
 }
 
-sendnotificationController.updateNotificationApprovedStatus = function(req,res){
+sendnotificationController.updateNotificationByStatus = function(req,res){
 	var leaveId = req.params.id;
 	var leaveStatus = req.params.status;
 	sendnotificationModel
