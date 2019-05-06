@@ -87,7 +87,6 @@ tasksController.addTasks = function(req , res){
 							var flag = 5;
 							var final = 1
 							var q = JSON.stringify(savedTask.assignTo);
-							console.log("type of ==>", typeof q);
 							for(var i = 0;i< resp.Teams.length ; i++){
 								var p = JSON.stringify(resp.Teams[i]);
 								flag = p.localeCompare(q);
@@ -96,7 +95,6 @@ tasksController.addTasks = function(req , res){
 									final = 0;
 								}
 							}
-							console.log("final ===>" , final);
 							if(final == 1){
 								resp.Teams.push(savedTask.assignTo);
 							}
@@ -128,18 +126,11 @@ tasksController.addTasks = function(req , res){
 									tasksModel.findOne({_id: savedTask._id})
 									.populate('assignTo projectId createdBy')
 									.exec((err,foundTask)=>{
-										console.log(' found email send===>',foundTask);
-										// console.log("cretedby======>",foundTask.createdBy);
-										console.log("project title=============>",foundTask.projectId.title);
-										console.log("final----->>>",foundTask.assignTo.email);
-										console.log("priority================================>",foundTask.priority);
 										var name = foundTask.assignTo.name;
 										console.log("name of assign usersssssss>>>>><<<<<<<",name);
 										var email = foundTask.assignTo.email;
 										var sprint = foundTask.sprint;
-										console.log("sprint==========>",sprint);
-										console.log("email===>>>>>",email);
-										console.log("duedate==========>",req.body.dueDate);
+			
 										sprintModel
 										.find({_id : sprint})
 										.exec((err,sprint)=>{
@@ -169,7 +160,6 @@ tasksController.addTasks = function(req , res){
 										console.log("obj==================>",obj);
 										
 										var notification = new sendnotificationModel(obj);
-										console.log("kaik notification mdi jaje==========<<>>>>>>>>>>>",notification);
 										notification.save(function(err,savedNotification){
 											if(err){
 												res.status(500).send(err);		
@@ -185,20 +175,20 @@ tasksController.addTasks = function(req , res){
 													res.status(400).send(err);
 												}else{
 													if(user == null){
-														res.status(200).send(savedTask);
+														res.status(200).send(foundTask);
 													}else{
-													pushNotification.postCode(obj.subject,obj.type,[user.token]);
-													res.status(200).send(foundTask);
+														console.log("savedNotification======>>>>>",user);
+														pushNotification.postCode(obj.subject,obj.type,[user.token]);
 
+														res.status(200).send(foundTask);
 													}
+
+													
 													// console.log("savedNotification======>>>>>",user);
 
 
 												}
 											})
-
-
-											
 										}) 
 									})
 })
@@ -282,7 +272,7 @@ tasksController.addTasks = function(req , res){
 				});
 			});
 			var obj = {
-				"subject" :" You have been assigned anew task","content" : "A new task in " +foundTask.projectId.title + " project is been created by " +foundTask.createdBy.name + " and assigned to you.",
+				"subject" :" You have been assigned a new task","content" : "A new task in " +foundTask.projectId.title + " project is been created by " +foundTask.createdBy.name + " and assigned to you.",
 				"sendTo" : foundTask.assignTo._id,"type" : "task","priority" : foundTask.priority,"createdAt":foundTask.createdAt,
 			} 
 			console.log("obj==================>",obj);
@@ -301,21 +291,21 @@ tasksController.addTasks = function(req , res){
 						if(user == null){
 							res.status(200).send(savedTask);
 						}else{
-						console.log("savedNotification======>>>>>",user);
-						pushNotification.postCode(obj.subject,obj.type,[user.token]);
-						res.status(200).send(savedTask);
+							console.log("savedNotification======>>>>>",user);
+							pushNotification.postCode(obj.subject,obj.type,[user.token]);
+							res.status(200).send(savedTask);
 						}
 					}
 				})
 
 			}) 
 		})
-})
+	})
 
+	}
+	})
 }
-})
-}
-})
+	})
 }
 
 tasksController.getTaskByProjectId = function(req , res){

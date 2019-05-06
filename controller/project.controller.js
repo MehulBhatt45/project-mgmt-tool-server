@@ -199,11 +199,12 @@ projectController.updateProjectById = function(req,res){
 					req.body['avatar'] = profile;
 					console.log("req. body =====+>" , req.body);
 					projectModel
-					.findOneAndUpdate({_id: projectId}, {$set: req.body}, {new: true},function(error,user){
+					.findOneAndUpdate({_id: projectId}, {$set: req.body}, {upsert: true},function(error,user){
 						if (error){ 
 							console.log("=====================================",error)
 							res.status(500).send(error);
 						}else{
+							console.log("update==========================================>",user);
 							if(req.body.add && req.body.add.length){
 								userModel
 								.find({_id : user.Teams})
@@ -255,7 +256,6 @@ projectController.updateProjectById = function(req,res){
 										var obj = {
 											"subject" :"Team member terminated.",
 											"content" : "For the notes, "+add[0].name+ " is terminated from "+req.body.uniqueId+ " team as "+add[0].userRole+ ".",
-											// "content" : "Team member terminated from <strong>"+req.body.uniqueId + "</strong> team.",
 											"sendTo" : req.body.Teams,
 											"type" : "other",
 										} 

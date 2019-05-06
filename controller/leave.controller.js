@@ -31,14 +31,13 @@ var transporter = nodemailer.createTransport({
 
 
 leaveController.applyLeave = function(req,res){
-	console.log("nthi mdtu ke mde che", req.body);
 	var leave = new leaveModel(req.body);
 	var duration = leave.leaveDuration;
 	leave.save(function(err,leave){
+		console.log("leave===========>",leave);
 		if(err) {
 			res.status(500).send(err)
 		}else{	
-			console.log("APPLY LEAVE++++++===================>", leave);
 			var uploadPath = path.join(__dirname, "../uploads/"+leave._id+"/");
 			req.file('attechment').upload({
 				maxBytes: 50000000,
@@ -80,6 +79,7 @@ leaveController.applyLeave = function(req,res){
 								for(i=0;i<project.length;i++){
 									projects.push(...project[i].pmanagerId);
 								}
+
 								console.log("projects pdf pmmmmmmmmmmmmm",project);
 								var object = [];
 								_.forEach(projects, pro=>{
@@ -112,21 +112,53 @@ leaveController.applyLeave = function(req,res){
 											var pmanagerId = object[i].pmanagerId.name;
 											pmName.push({pmanagerId});
 										}
-										
-										if(duration == "0.5" || duration == "1"){
-											var obj = {
-												"subject" :"Your Team member has applied for leave .","contentForPm" : "Your teamMate <strong>" +leave.name+ "</strong> has applied for " + req.body.leaveDuration+ " day leave (" +req.body.startingDate+ ")","contentForAdmin" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for 1 day leave (" +req.body.startingDate+ ")","sendTo" : output,"type" : "leave","pmStatus": pmName
-											} 
-										}else{
-											var obj = {
-												"subject" :"Your Team member has applied for leave .","contentForPm" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " +req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")","contentForAdmin" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for "+ req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")","sendTo" : output,"type" : "leave","pmStatus": pmName
-											} 
-										}
-										console.log("obj==================>",obj);
+										console.log("project=========>",projects);
+										userModel
+										.find({_id : leave.id})
+										.exec((err,pm)=>{
+											console.log("pmanager========================>",pm[0].userRole);
+											projectModel
+											.find({pmanagerId : leave.id})
+											.exec((err,pmanager)=>{
+												console.log("pmnager new============>",pmanager[0].title);
+											
+												if(pm[0].userRole == 'projectManager' ){
+													if(duration == "0.5" || duration == "1"){
+														var obj = {
+															"subject" : "Project manager leave",
+															"contentForAdmin" : leave.name+ " project manager of "+pmanager[0].title+ " has appiled for 1 day leave(" +req.body.startingDate+ ")",
+															"sendTo" : output,"type" : "leave","pmStatus": pmName
+														}
+													}else{
+														var obj = {
+															"subject" : "Project manager leave",
+															"contentForAdmin" : leave.name+ " project manager of "+pmanager[0].title+ " has appiled for "+req.body.duration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
+															"sendTo" : output,"type" : "leave","pmStatus": pmName
+														
+														}
+													}
+
+													
+												}else{
+													if(duration == "0.5" || duration == "1"){
+														var obj = {
+															"subject" :"Your Team member has applied for leave .",
+															"contentForPm" : "Your teamMate <strong>" +leave.name+ "</strong> has applied for " + req.body.leaveDuration+ " day leave (" +req.body.startingDate+ ")",
+															"contentForAdmin" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for 1 day leave (" +req.body.startingDate+ ")","sendTo" : output,"type" : "leave","pmStatus": pmName
+														} 
+													}else{
+														var obj = {
+															"subject" :"Your Team member has applied for leave .",
+															"contentForPm" : "Your teammate <strong>" +leave.name+ "</strong> has applied for " +req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")",
+															"contentForAdmin" : leave.name+" Team member of <strong>" +project[0].title+ "</strong> has applied for "+ req.body.leaveDuration+ " days leave (" +req.body.startingDate+ " to " +req.body.endingDate+ ")","sendTo" : output,"type" : "leave","pmStatus": pmName
+														} 
+													}
+												}
+												console.log("obj==================>",obj);
 										var notification = new sendnotificationModel(obj);
 										notification.save(function(err,SavedUser){
 											if(err){
-												console.log("err==========================================>",err);
+												res.status(500).send(err);
 											}else{
 												console.log("saveData=========================------->",SavedUser);
 												notificationModel
@@ -150,59 +182,61 @@ leaveController.applyLeave = function(req,res){
 											}
 
 										})
+									})
+										})
 									}
 								})
 							})
-							var type =req.body.typeOfLeave;
-							if(type == 'Sick_Leave'){
-								leaveType = "Sick leave";
-							}else if(type == 'Emergency_Leave'){
-								leaveType = "Emergency leave";
-							}else if(type == 'Leave_WithoutPay'){
-								leaveType = "Without pay";
-							}else{
-								leaveType = "Personal leave";
-							}
-							if(req.body.leaveDuration == 0.5 || req.body.leaveDuration == 1){
-								if(req.body.leaveDuration == 0.5){
-									leaveDuration = "Half Day"
-								}else{
-									leaveDuration = "Full Day"
-								}
-								
-								var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:20px;">You have a new Leave Application from <span style="font-weight:bold;">`+req.body.name+`</span></p><table style="color:black;"><tr style="height: 50px;"><td><b>Duration</b></td><td style="padding-left: 50px;">`+leaveDuration+`</td></tr><tr style="height: 50px;width: 100%;"><td><b>Starting Date</b></td><td style="padding-left: 50px;color:#3998c5;">`+req.body.startingDate+`</td></tr><tr  style="height: 50px;"><td><b>Type of leave</b></td><td style="padding-left: 50px;">`+leaveType+`</td></tr><tr style="height: 50px;"><td><b>Reason</b></td><td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr></table></div></div></div></body></html>
-								`;
-
-							}else{
-								var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:20px;">You have a new Leave Application from <span style="font-weight:bold;">`+req.body.name+`</span></p><table style="color:black;"><tr style="height: 50px;"><td><b>No. of days</b></td><td style="padding-left: 50px;">`+req.body.leaveDuration+` days</td></tr><tr style="height: 50px;width: 100%;"><td><b>Starting Date</b></td><td style="padding-left: 50px;color:#3998c5;">`+req.body.startingDate+`</td></tr><tr style="height: 50px;width: 100%;"><td><b>Ending Date</b></td><td style="padding-left: 50px;color:#3998c5;">`+req.body.endingDate+`</td></tr><tr  style="height: 50px;"><td><b>Type of leave</b></td><td style="padding-left: 50px;">`+leaveType+`</td></tr><tr style="height: 50px;"><td><b>Reason</b></td><td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr></table></div></div></div></body></html>
-								`;
-
-							}
-
-							var mailOptions = {
-								from: 'raoinfotechp@gmail.com',
-								to: maillist,
-								subject: 'New Leave Application',
-								text: 'Hi, this is a testing email from node server',
-								html: output
-							};
-
-							transporter.sendMail(mailOptions, function(error, info){
-								if (error) {
-									console.log("Error",error);
-								} else {
-									console.log('Email sent: ' + info.response);
-
-								}
-							});
-							res.status(200).send(leave)
 						}
 					})
+
+					var type =req.body.typeOfLeave;
+					if(type == 'Sick_Leave'){
+						leaveType = "Sick leave";
+					}else if(type == 'Emergency_Leave'){
+						leaveType = "Emergency leave";
+					}else if(type == 'Leave_WithoutPay'){
+						leaveType = "Without pay";
+					}else{
+						leaveType = "Personal leave";
+					}
+					if(req.body.leaveDuration == 0.5 || req.body.leaveDuration == 1){
+						if(req.body.leaveDuration == 0.5){
+							leaveDuration = "Half Day"
+						}else{
+							leaveDuration = "Full Day"
+						}
+
+						var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:20px;">You have a new Leave Application from <span style="font-weight:bold;">`+req.body.name+`</span></p><table style="color:black;"><tr style="height: 50px;"><td><b>Duration</b></td><td style="padding-left: 50px;">`+leaveDuration+`</td></tr><tr style="height: 50px;width: 100%;"><td><b>Starting Date</b></td><td style="padding-left: 50px;color:#3998c5;">`+req.body.startingDate+`</td></tr><tr  style="height: 50px;"><td><b>Type of leave</b></td><td style="padding-left: 50px;">`+leaveType+`</td></tr><tr style="height: 50px;"><td><b>Reason</b></td><td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr></table></div></div></div></body></html>`;
+
+					}else{
+						var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:20px;">You have a new Leave Application from <span style="font-weight:bold;">`+req.body.name+`</span></p><table style="color:black;"><tr style="height: 50px;"><td><b>No. of days</b></td><td style="padding-left: 50px;">`+req.body.leaveDuration+` days</td></tr><tr style="height: 50px;width: 100%;"><td><b>Starting Date</b></td><td style="padding-left: 50px;color:#3998c5;">`+req.body.startingDate+`</td></tr><tr style="height: 50px;width: 100%;"><td><b>Ending Date</b></td><td style="padding-left: 50px;color:#3998c5;">`+req.body.endingDate+`</td></tr><tr  style="height: 50px;"><td><b>Type of leave</b></td><td style="padding-left: 50px;">`+leaveType+`</td></tr><tr style="height: 50px;"><td><b>Reason</b></td><td style="padding-left: 50px;">`+req.body.reasonForLeave+`</td></tr></table></div></div></div></body></html>`;
+					}
+
+					var mailOptions = {
+						from: 'raoinfotechp@gmail.com',
+						to: maillist,
+						subject: 'New Leave Application',
+						text: 'Hi, this is a testing email from node server',
+						html: output
+					};
+
+					transporter.sendMail(mailOptions, function(error, info){
+						if (error) {
+							console.log("Error",error);
+						} else {
+							console.log('Email sent: ' + info.response);
+
+						}
+					});
+					res.status(200).send(leave)
+				}
+			})
 }
 })
 }
-})
-}
+// })
+// }
 
 
 leaveController.getTeamsByPmanagerId = function(req, res){
@@ -258,7 +292,6 @@ leaveController.getAllLeaves = function(req,res){
 
 leaveController.getByUserId = function(req,res){
 	useremail = req.params.useremail;
-	console.log("userid==========>>>>",useremail);
 	leaveModel.find({email:useremail})
 	.exec((err,respond)=>{
 		if(err){
@@ -550,7 +583,7 @@ leaveController.updateLeaves = function(req,res){
 						}
 					})
 				})
-		
+
 				var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>	<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">Sorry!` +req.body.name+` Your leave for ` + req.body.noOfDays+` on `+req.body.startingDate+` is <span style="color:#E74C3C;font-weight:bold;">REJECTED.</p></div></div></div></body></html>`;
 				var mailOptions = {
 					from: 'raoinfotechp@gmail.com',
@@ -586,7 +619,7 @@ leaveController.updateLeaves = function(req,res){
 				res.status(200).send(update)
 
 			})
-})
+		})
 })
 
 }else{
