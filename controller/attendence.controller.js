@@ -253,7 +253,7 @@ attendenceController.getDetailByMail = function(req,res){
 
 		var mailOptions = {
 			from: 'raoinfotechp@gmail.com',
-			to: 'dixit20051998@gmail.com',
+			to: 'vivekkbharda@gmail.com',
 			subject: 'Testing Email',
 			text: 'Hi, this is a testing email from node server',
 			html: output
