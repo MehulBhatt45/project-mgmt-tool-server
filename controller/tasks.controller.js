@@ -1,7 +1,10 @@
+
 var tasksModel = require('../model/tasks.model');
 var projectModel = require('../model/project.model');
 var userModel = require('../model/user.model');
 var notificationModel = require('../model/notification.model');
+var sendnotificationModel = require('../model/sendNotification.model');
+var sprintModel = require('../model/sprint.model');
 var _ = require('lodash');
 let tasksController = {};
 var dir = require('node-dir');
@@ -18,8 +21,8 @@ var transporter = nodemailer.createTransport({
 	secure: true,
 	service: 'gmail',
 	auth: {
-		user: 'tnrtesting2394@gmail.com',
-		pass: 'raoinfotech09'
+		user: 'raoinfotechp@gmail.com',
+		pass: 'raoinfotech@123'
 	}
 });
 var uniqueId;
@@ -44,7 +47,7 @@ tasksController.addTasks = function(req , res){
 	}, function(err, files){
 		if (err) {
 			console.log(err);
-			res.status(500).send(err);
+			res.status(415).send(err);
 		}else{
 			console.log(files)
 			var fileNames=[];
@@ -55,15 +58,16 @@ tasksController.addTasks = function(req , res){
 			}
 			tasksModel
 			.find({projectId : req.body.projectId})
+			.populate('createdBy ')
 			.sort({"_id" : -1})
 			.limit(1)
 			.exec((err , foundTask)=>{
 				if(err){
 					console.log(err);
-					res.status(500).send(err);
+					res.status(404).send(err);
 				}else if(foundTask && foundTask.length == 1){
-					console.log("found Task ====>" , foundTask);
-					console.log("errTask ====>" , err);
+					var projectId = foundTask[0].projectId;
+
 					foundTask = foundTask[0].uniqueId.split("-");
 					var count = +foundTask[1]+ +1;
 					console.log("found Task ====>" , +foundTask[1]+ +1);
@@ -105,95 +109,104 @@ tasksController.addTasks = function(req , res){
 									console.log("resp1 receive");
 
 									var priority1 = req.body.priority;
+
+									var color = req.body.color;
 									var color;
-									// var color;
 									if(priority1 == '1'){
+										prior = "Highest";
 										color = "#ff0000";
 									}else if(priority1 == '2'){
+										prior = "High";
 										color = "#ff8100";
 									}else if(priority1 == '3'){
-										color = "#ffee21";
+										color = "#cabb08";
+										prior = "Medium";
 									}else{
-										color="#0087ff"
+										color="#0087ff";
+										prior = "Low";
 									}
 									tasksModel.findOne({_id: savedTask._id})
-									.populate('assignTo')
+									.populate('assignTo projectId createdBy')
 									.exec((err,foundTask)=>{
 										console.log(' found email send===>',foundTask);
+										// console.log("cretedby======>",foundTask.createdBy);
+										console.log("project title=============>",foundTask.projectId.title);
 										console.log("final----->>>",foundTask.assignTo.email);
+										console.log("priority================================>",foundTask.priority);
+										var name = foundTask.assignTo.name;
+										console.log("name of assign usersssssss>>>>><<<<<<<",name);
 										var email = foundTask.assignTo.email;
+										var sprint = foundTask.sprint;
+										console.log("sprint==========>",sprint);
 										console.log("email===>>>>>",email);
+										console.log("duedate==========>",req.body.dueDate);
+										sprintModel
+										.find({_id : sprint})
+										.exec((err,sprint)=>{
+											console.log("sprint============>",sprint);
+											var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;background:#fff;"><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:14px;"><b>`+foundTask.createdBy.name+` created a task: </b><span style="color:black;font-size:17px;"><b style="color:#bf4444;">`+req.body.title+`</b> in <span style="color:black;font-size:14px;"><b><u>`+foundTask.projectId.title+`.</u></b></span></span></p><table style="color:black;"><tr style="height: 50px;width: 100<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Sprint: </b><span >`+sprint[0].title+`</span></td><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%"><b>Due date: </b><span>`+req.body.dueDate+`</span></td></tr><tr style="height: 50px;"><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Priority: </b><span style="color:`+color+`">`+prior+`</span></td><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;"><b>Estimated time: </b><span>`+foundTask.estimatedTime+`</span></td></tr></table><div style="border-bottom:1px solid #ccc;margin:5px 0 10px;height:1px"></div><div class="m_-7949690059544268696content" style="font-family:'Trebuchet MS',Arial,Helvetica,sans-serif;color:#444;line-height:1.6em;font-size:15px"><p><b>Description: </b>`+req.body.desc+`</p><center><a href="http://localhost:4200/#/project-details/`+foundTask.projectId._id+`"><button style="background-color: #3998c5;border: none;color: white;padding: 10px 25px;text-align: center;text-decoration: none;display: inline-block;border-radius: 4px;margin-bottom: 20px;font-size: 16px;">View Item</button></a></center></div></div></div></div></body></html>`;
+											var mailOptions = {
+												from: 'tnrtesting2394@gmail.com',
+												to: 'foramtrada232@gmail.com',
+												subject: 'For New Task',
+												text: 'Hi, this is a testing email from node server',
+												html: output
+											};
 
-										var output = `<!doctype html>
-										<html>
-										<head>
-										<title> title111</title>
-										</head>
-										<body>
-										<div style="width:75%;margin:0 auto;border-radius: 6px;
-										box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-										border: 1px solid #d3d3d3;">
-										<center>
-										<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
-
-
-										<div style="margin-left:30px;padding:0;">
-										<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+color+`">`+priority1+`</span> priority task.</p>
-										<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
-										<table style="color:black;">
-										<tr style="height: 50px;width: 100%;">
-										<td><b>Title</b></td>
-										<td style="padding-left: 50px;">`+req.body.title+`</td></tr>
-
-										<tr style="height: 50px;">
-										<td><b>Description</b></td>
-										<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
-
-
-										<tr  style="height: 50px;">
-										<td><b>Priority</b></td>
-										<td style="padding-left: 50px;">`+req.body.priority+`</td></tr>
-
-
-										</table>
-										</div>
-										</body>
-										</html>
-										`;
-										var mailOptions = {
-											from: 'tnrtesting2394@gmail.com',
-											to: email,
-											subject: 'Testing Email',
-											text: 'Hi, this is a testing email from node server',
-											html: output
-										};
-
-										transporter.sendMail(mailOptions, function(error, info){
-											if (error) {
-												console.log("Error",error);
-											} else {
-												console.log('Email sent: ' + info.response);
-											}
-										});
+											transporter.sendMail(mailOptions, function(error, info){
+												if (error) {
+													console.log("Error",error);
+												} else {
+													console.log('Email sent: ' + info.response);
+												}
+											});
+										})
 										var obj = {
-											"id": savedTask.assignTo._id,
-											"title": "You have new task",
-											"desc": "New task has been assigned to you by Project Manager"
-										}
-										var notification = new notificationModel(obj);
+											"subject" :" You have been assigned a new task","content" : "A new task in <strong>" +foundTask.projectId.title + " </strong> is been created by  and assigned to you.",
+											"sendTo" : foundTask.assignTo._id,"type" : "task","priority" : foundTask.priority,"projectId" : projectId,
+											"createdAt":foundTask.createdAt,
+										} 
+										console.log("obj==================>",obj);
+										
+										var notification = new sendnotificationModel(obj);
+										console.log("kaik notification mdi jaje==========<<>>>>>>>>>>>",notification);
 										notification.save(function(err,savedNotification){
 											if(err){
 												res.status(500).send(err);		
 											}
-											console.log(savedNotification);
-											pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
-											res.status(200).send(savedTask);
+											var assignTo = foundTask.assignTo._id;
+											notificationModel
+											.findOne({userId : assignTo})
+											.exec((err, user)=>{
+												if (err) {
+													if(user == null){
+														res.status(404).send({msg : "token not generated"})
+													}
+													res.status(400).send(err);
+												}else{
+													if(user == null){
+														res.status(200).send(savedTask);
+													}else{
+													pushNotification.postCode(obj.subject,obj.type,[user.token]);
+													res.status(200).send(foundTask);
+
+													}
+													// console.log("savedNotification======>>>>>",user);
+
+
+												}
+											})
+
+
+											
 										}) 
 									})
-								})
-							}
-						})
-					})
+})
+
+}
+})
+
+})
 }else{
 	projectModel.find({_id: req.body.projectId})
 	.exec((err , foundProject)=>{
@@ -233,96 +246,91 @@ tasksController.addTasks = function(req , res){
 				var priority1 = req.body.priority;
 				var color = req.body.color;
 				if(priority1 == '1'){
+					prior = "Highest";
 					color = "#ff0000";
 				}else if(priority1 == '2'){
+					prior = "High";
 					color = "#ff8100";
 				}else if(priority1 == '3'){
 					color = "#ffee21";
+					prior = "Medium";
 				}else{
-
-					color="#0087ff"
+					color="#0087ff";
+					prior = "Low";
 				}
 			});
+			sprintModel
+			.find({_id : sprint})
+			.exec((err,sprint)=>{
 
+				var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;background:#fff;"><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:14px;"><b>`+foundTask.createdBy.name+` created a task: </b><span style="color:black;font-size:17px;"><b style="color:#bf4444;">`+req.body.title+`</b> in <span style="color:black;font-size:14px;"><b><u>`+foundTask.projectId.title+`.</u></b></span></span></p><table style="color:black;"><tr style="height: 50px;width: 100<td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Sprint: </b><span >`+sprint[0].title+`</span></td><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:50%"><b>Due date: </b><span>`+req.body.dueDate+`</span></td></tr><tr style="height: 50px;"><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;width:65%;"><b>Priority: </b><span style="color:`+color+`">`+prior+`</span></td><td style="font-size:15px;color:#444;font-family:Helvetica Neue,Helvetica,sans-serif;"><b>Estimated time: </b><span>`+foundTask.estimatedTime+`</span></td></tr></table><div style="border-bottom:1px solid #ccc;margin:5px 0 10px;height:1px"></div><div class="m_-7949690059544268696content" style="font-family:'Trebuchet MS',Arial,Helvetica,sans-serif;color:#444;line-height:1.6em;font-size:15px"><p><b>Description: </b>`+req.body.desc+`</p><center><a href="http://localhost:4200/#/project-details/`+foundTask.projectId._id+`"><button style="background-color: #3998c5;border: none;color: white;padding: 10px 25px;text-align: center;text-decoration: none;display: inline-block;border-radius: 4px;margin-bottom: 20px;font-size: 16px;">View Item</button></a></center></div></div></div></div></body></html>`;
+				var mailOptions = {
+					from: 'tnrtesting2394@gmail.com',
+					to: email,
+					subject: 'For new task',
+					text: 'Hi, this is a testing email from node server',
+					html: output
+				};
 
-			var output = `<!doctype html>
-			<html>
-			<head>
-			<title> title111</title>
-			</head>
-			<body>
-			<div style="width:75%;margin:0 auto;border-radius: 6px;
-			box-shadow: 0 1px 3px 0 rgba(0,0,0,.5); 
-			border: 1px solid #d3d3d3;">
-			<center>
-			<img src="https://raoinformationtechnology.com/wp-content/uploads/2018/12/logo-median.png"></center>
+				transporter.sendMail(mailOptions, function(error, info){
+					if (error) {
+						console.log("Error",error);
+					} else {
+						console.log('Email sent: ' + info.response);
 
-
-			<div style="margin-left:30px;padding:0;">
-			<p style="color:black;font-size:20px;">You have been assigned a <span style="text-transform:uppercase;color:`+req.body.color+`">`+priority1+`</span> priority task.</p>
-			<p style="color:black;font-size:16px;">Please,Complete Your Task before deadline.</p>
-			<table style="color:black;">
-			<tr style="height: 50px;width: 100%;">
-			<td><b>Title</b></td>
-			<td style="padding-left: 50px;">`+req.body.title+`</td></tr>
-
-			<tr style="height: 50px;">
-			<td><b>Description</b></td>
-			<td style="padding-left: 50px;">`+req.body.desc+`</td></tr>
-
-
-			<tr  style="height: 50px;">
-			<td><b>Priority</b></td>
-			<td style="padding-left: 50px;">`+req.body.priority+`</td></tr>
-
-
-			</table>
-			</div>
-			</body>
-			</html>
-			`;
-
-
-			var mailOptions = {
-				from: 'tnrtesting2394@gmail.com',
-				to: email,
-				subject: 'Testing Email',
-				text: 'Hi, this is a testing email from node server',
-				html: output
-			};
-
-			transporter.sendMail(mailOptions, function(error, info){
-				if (error) {
-					console.log("Error",error);
-				} else {
-					console.log('Email sent: ' + info.response);
-
-				}
+					}
+				});
 			});
-			pushNotification.postCode('dynamic title','dynamic content',req.session.userarray);
+			var obj = {
+				"subject" :" You have been assigned anew task","content" : "A new task in " +foundTask.projectId.title + " project is been created by " +foundTask.createdBy.name + " and assigned to you.",
+				"sendTo" : foundTask.assignTo._id,"type" : "task","priority" : foundTask.priority,"createdAt":foundTask.createdAt,
+			} 
+			console.log("obj==================>",obj);
+			var notification = new sendnotificationModel(obj);
+			notification.save(function(err,savedNotification){
+				if(err){
+					res.status(406).send(err);		
+				}
+				var assignTo = foundTask.assignTo._id;
+				notificationModel
+				.findOne({userId : assignTo})
+				.exec((err, user)=>{
+					if (err) {
+						res.status(404).send(err);
+					}else{
+						if(user == null){
+							res.status(200).send(savedTask);
+						}else{
+						console.log("savedNotification======>>>>>",user);
+						pushNotification.postCode(obj.subject,obj.type,[user.token]);
+						res.status(200).send(savedTask);
+						}
+					}
+				})
 
-			res.status(200).send(savedTask);
+			}) 
 		})
-	})
+})
+
 }
 })
 }
 })
-
 }
-
-
 
 tasksController.getTaskByProjectId = function(req , res){
 	console.log("req.parasm :" , req.params);
 	var projectId = req.params.taskId;
 	tasksModel.find({projectId : projectId})
-	.populate('assignTo createdBy sprint')
+
+	.populate('assignTo createdBy timelog1 sprint')
+
 	.exec((err , foundTask)=>{
 		if(err) res.status(500).send(err);
 		else res.status(200).send(foundTask);
 	})
 }
+
 
 tasksController.updateTaskById = function(req , res){
 	var userId;
@@ -350,64 +358,62 @@ tasksController.updateTaskById = function(req , res){
 	}, function(err, files){
 		if (err) {
 			console.log(err);
-			res.status(500).send(err);
+			res.status(415).send(err);
 		}else{
-			console.log(files);
+			console.log("files of updated task", files);
 			tasksModel.findOne({_id: taskId}, function(err , task){
 
 				var fileNames=req.body.images;
-			// fileNames.push(req.body.images);
-
-			if(files.length>0){
-				_.forEach(files, (gotFile)=>{
-					fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
-				})
-			}
-			console.log(fileNames);
-			req.body['images'] = fileNames;
-			console.log("req. body =====+>" , req.body);
-			tasksModel.findOneAndUpdate({_id: taskId} , req.body , {upsert: true , new: true}, function(err , updatedData){
-				if(err) res.send("err");
-				else{
-					projectModel.findOne({_id: updatedData.projectId})
-					.exec((err , resp)=>{
-						var flag = 5;
-						var final = 1
-						var q = JSON.stringify(updatedData.assignTo);
-						console.log("type of ==>", typeof q);
-						for(var i = 0;i< resp.Teams.length ; i++){
-							var p = JSON.stringify(resp.Teams[i]);
-							flag = p.localeCompare(q);
-							console.log("flag ===>" , flag);
-							if(flag == 0){
-								final = 0;
-							}
-						}
-						console.log("final ===>" , final);
-						if(final == 1){
-							resp.Teams.push(updatedData.assignTo);
-						}
-						resp.save();	
-
-						console.log("final task======>" , updatedData);
-						userModel.findOne({_id: updatedData.assignTo})
-						.exec((err , user)=>{
-							user.tasks.push(updatedData._id);
-							user.save();	
-							console.log("final task======>" , updatedData);
-							res.status(200).send(updatedData);	
-						})
+				if(files.length>0){
+					_.forEach(files, (gotFile)=>{
+						fileNames.push(gotFile.fd.split('/uploads/').reverse()[0])
 					})
 				}
+				console.log(fileNames);
+				req.body['images'] = fileNames;
+				console.log("req. body =====+>" , req.body);
+				tasksModel.findOneAndUpdate({_id: taskId} , req.body , {upsert: true , new: true}, function(err , updatedData){
+					if(err) res.send("err");
+					else{
+						projectModel.findOne({_id: updatedData.projectId})
+						.exec((err , resp)=>{
+							var flag = 5;
+							var final = 1
+							var q = JSON.stringify(updatedData.assignTo);
+							console.log("type of ==>", typeof q);
+							for(var i = 0;i< resp.Teams.length ; i++){
+								var p = JSON.stringify(resp.Teams[i]);
+								flag = p.localeCompare(q);
+								console.log("flag ===>" , flag);
+								if(flag == 0){
+									final = 0;
+								}
+							}
+							console.log("final ===>" , final);
+							if(final == 1){
+								resp.Teams.push(updatedData.assignTo);
+							}
+							resp.save();	
+
+							console.log("final task======>" , updatedData);
+							userModel.findOne({_id: updatedData.assignTo})
+							.exec((err , user)=>{
+								user.tasks.push(updatedData._id);
+								user.save();	
+								console.log("final task======>" , updatedData);
+								res.status(200).send(updatedData);	
+							})
+						})
+					}
+				})
 			})
-		})
 		}
 	});
 }
 tasksController.getAllTask = function(req , res){
 	tasksModel
 	.find({})
-	.populate('projectId assignTo createdBy')
+	.populate('projectId assignTo createdBy timelog1 sprint')
 	.exec((err , allTasks)=>{
 		if(err) res.send('err');
 		else res.send(allTasks);
@@ -415,7 +421,6 @@ tasksController.getAllTask = function(req , res){
 }
 tasksController.updateTaskStatusById = function(req , res){
 	var taskId = req.body._id;
-	console.log("taskID ========>" , taskId);
 	if(req.body.status!=='complete'){
 		tasksModel.findOne({_id: taskId}).exec((err, task)=>{
 			if (err) res.status(500).send(err);
@@ -434,7 +439,8 @@ tasksController.updateTaskStatusById = function(req , res){
 			}
 			else res.status(404).send("Not Found");
 		})
-	}else{
+	}
+	else{
 		res.status(403).send("Bad Request");
 	}
 }
@@ -442,7 +448,7 @@ tasksController.updateTaskStatusCompleted = function(req , res){
 	console.log("hey it works");
 	var taskId = req.body._id;
 	console.log("req . body of complete ======>" , req.body);
-	if(req.body.status==='complete'){
+	if(req.body.status ==='complete'){
 		tasksModel.findOne({_id: taskId}).exec((err, task)=>{
 			if (err) res.status(500).send(err);
 			else if(task){
@@ -467,3 +473,4 @@ tasksController.deleteTaskById = function(req  , res){
 	});
 }
 module.exports = tasksController;
+

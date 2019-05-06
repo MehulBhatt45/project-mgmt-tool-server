@@ -40,6 +40,15 @@ var pushNotification = require('./service/push-notification.service');
 
 
 
+// var tasksRouter = require('./routes/tasks')
+var timeLogRouter = require('./routes/timeLog');
+
+var sprintRouter = require('./routes/sprint');
+
+var pushNotification = require('./service/push-notification.service');
+var attendenceRouter = require('./routes/attendence');
+
+
 
 // https
 // var privateKey = fs.readFileSync('/var/www/html/project_mgmt_tool/client/ssl/server.key', 'utf8');
@@ -84,7 +93,7 @@ app.use('/bug',bugRouter);
 app.use('/issue',issueRouter);
 app.use('/reque',requeRouter);
 app.use('/comment',commentRouter);
-app.use('/user', userRouter); 
+app.use('/user', userRouter); 	
 app.use('/employee',employeeRouter);
 app.use('/notice',noticeRouter);
 app.use('/sprint',sprintRouter);
@@ -92,7 +101,13 @@ app.use('/sprint',sprintRouter);
 app.use('/leave',leaveRouter);
 app.post('/email/send-email', emailController.sendEmail);
 app.use('/notification',notificationRouter);
+app.use('/timeLog',timeLogRouter);
+
 app.use('/sendNotification',sendNotificationRouter);
+
+app.use('/sprint',sprintRouter);
+app.use('/attendence',attendenceRouter);
+
 // catch 404 and forward to error handler
 
 app.use(function (req, res, next) {
@@ -125,7 +140,7 @@ res.render('error');
 
 cron.schedule('0 0 * * *', () => {
 	console.log('running a task every minute');
-	request('http://localhost:4000/notice/updatenotice',function (error, response, body) {
+	request('http://localhost:4001/notice/updatenotice',function (error, response, body) {
  console.log('error:', error); // Print the error if one occurred
  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
  console.log('body:', body); // Print the HTML for the Google homepage.
@@ -135,7 +150,7 @@ cron.schedule('0 0 * * *', () => {
 
 //API Calling for all User to notify
 
-request('http://localhost:4000/notification/allUsers',function (error, response, body) {
+request('http://localhost:4001/notification/allUsers',function (error, response, body) {
  console.log('error:', error); // Print the error if one occurred
  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
 });
@@ -155,7 +170,6 @@ request('http://localhost:4000/notification/allUsers',function (error, response,
 
 //pushnotification calling
 
-// pushNotification.postCode('dynamic title','dynamic content','ecCQmR59kvE:APA91bH41i0zPzxoA6HizVANTUnCu_Ac5nTCj90cd_KXANWtKu_bMS49aymzGWsG2Z33KB80R4YGcj4L7-RspDLtX22tKa1Usk2Y8a4WXSHyQe2Y5YKui_D6TRsF4LM3_fnvvR3xtvjg');
+
 
 module.exports = app;
-

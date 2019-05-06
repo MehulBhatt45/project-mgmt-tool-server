@@ -5,8 +5,6 @@ var NotificationSchema = new Schema({
 	
 	userId: {type:Schema.Types.ObjectId, ref: 'User'},
 	token: {type:String},
-
-	
 	id:{type:Schema.Types.ObjectId}
 	
 })

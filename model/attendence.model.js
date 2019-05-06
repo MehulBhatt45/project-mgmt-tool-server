@@ -12,6 +12,8 @@ var AttendenceSchema = new Schema({
 	}],
 	user_Id:{type:Schema.Types.ObjectId, ref:'User'},
 	date:Date,
+	fromDate:Date,
+	toDate:Date
 
 });
 module.exports = mongoose.model('attendence',AttendenceSchema);

@@ -1,4 +1,5 @@
 var sprintModel = require('../model/sprint.model');
+var moment = require('moment');
 var sprintController = {};
 
 sprintController.addSprint = function (req,res) {
@@ -12,7 +13,6 @@ sprintController.addSprint = function (req,res) {
 	})
 	console.log(req.body);
 }
-
 
 sprintController.getSprintByProject = function (req,res) {
 
@@ -61,6 +61,67 @@ sprintController.sprintBySprintId = function (req,res) {
 	})
 }
 
+sprintController.completeSprint = function(req,res){
+
+	var sprintId = req.params.sprintId;
+
+	sprintModel.findOne({_id:sprintId},function(err,Sprint){
+		if(err){
+			res.status(500).send(err);
+		}
+		else{
+			console.log("sprint=======>>>",Sprint);
+
+			Sprint.endDate = new Date();
+			var sprintEnd = moment(Sprint.endDate);
+			var duration = sprintEnd.diff(Sprint.startDate,'days');
+			Sprint.status = 'Complete';
+			Sprint.duration = duration;
+			console.log("updated sprint",Sprint);
+			sprintModel
+			.findOneAndUpdate({_id:Sprint._id} , Sprint , {upsert:true,new:true})
+			.exec((err , updatedSprint)=>{
+				if(err){
+					res.status(404).send(err);
+				}
+				else{
+					console.log(updatedSprint);
+					res.status(200).send(updatedSprint);
+				}
+
+			})	
+		}
+	})
+}
+
+
+sprintController.startSprint = function(req,res){
+
+	var sprintEnd = req.body.endDate; 
+	var sprintStart = req.body.startDate;
+
+	var sprintEnd = moment(sprintEnd);
+	var duration = sprintEnd.diff(sprintStart,'days');
+
+	console.log(req.body);
+	var startdata = {
+		startDate:req.body.startDate,
+		endDate:req.body.endDate,
+		duration:duration,
+		status:'Active'
+	}
+	console.log(startdata);
+
+	sprintModel.findOneAndUpdate({_id:req.body._id},{$set:startdata },function(err,updateSprint){
+		if(err){
+			res.status(500).send(err);
+		}
+		else{
+			console.log(updateSprint);
+			res.status(200).send(updateSprint);
+		}
+	})
+}
 
 module.exports = sprintController; 
 
