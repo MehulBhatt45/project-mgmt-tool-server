@@ -20,8 +20,14 @@ sprintController.getSprintByProject = function (req,res) {
 	console.log("projectid===>>>",projectId);
 	sprintModel.find({projectId:projectId})
 	.exec(function(err,sprints){
-		if (err) res.status(500).send(err);
+		if (err){
+			console.log("error of id=======>",err);
+		 res.status(500).send(err);
+		} else{
+			console.log("response of sprint id",sprints);
 		res.status(200).send(sprints);
+		}
+
 	})
 }
 

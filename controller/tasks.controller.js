@@ -232,7 +232,7 @@ tasksController.addTasks = function(req , res){
 					console.log("resp received");
 				}
 				resp.save();	
-				console.log("final task======>" , savedTask);
+				console.log("final task======>235" , savedTask);
 				var priority1 = req.body.priority;
 				var color = req.body.color;
 				if(priority1 == '1'){
@@ -385,12 +385,12 @@ tasksController.updateTaskById = function(req , res){
 							}
 							resp.save();	
 
-							console.log("final task======>" , updatedData);
+							console.log("final task======>388" , updatedData);
 							userModel.findOne({_id: updatedData.assignTo})
 							.exec((err , user)=>{
 								user.tasks.push(updatedData._id);
 								user.save();	
-								console.log("final task======>" , updatedData);
+								console.log("final task======>393" , updatedData);
 								res.status(200).send(updatedData);	
 							})
 						})

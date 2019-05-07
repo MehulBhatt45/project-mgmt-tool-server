@@ -98,6 +98,7 @@ projectController.getAllProject = function(req,res){
 	})
 	.exec(function(err,projects){
 		if (err) {
+			console.log("errrrrrrrrrrrror===================>", err);
 			res.status(500).send(err);
 		}else if(projects){
 			res.status(200).send(projects);

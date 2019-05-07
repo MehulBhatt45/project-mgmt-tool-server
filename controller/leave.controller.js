@@ -120,7 +120,8 @@ leaveController.applyLeave = function(req,res){
 											projectModel
 											.find({pmanagerId : leave.id})
 											.exec((err,pmanager)=>{
-												console.log("pmnager new============>",pmanager[0].title);
+
+												console.log("pmnager new============>",pmanager);
 											
 												if(pm[0].userRole == 'projectManager' ){
 													if(duration == "0.5" || duration == "1"){
@@ -480,8 +481,14 @@ leaveController.updateLeaves = function(req,res){
 										if (err) {
 											res.status(500).send(err);
 										}else{
-											pushNotification.postCode(obj2.subject,obj2.type,[user.token]);
-											res.status(200).send(update);
+											if(user == null){
+												res.status(200).send(update);
+
+											}else{
+
+												pushNotification.postCode(obj2.subject,obj2.type,[user.token]);
+												res.status(200).send(update);
+											}
 										}
 
 									})
@@ -502,7 +509,40 @@ leaveController.updateLeaves = function(req,res){
 })
 
 }else if(status == "rejected"){
-	projectModel
+
+
+				var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>	<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">Sorry!` +req.body.name+` Your leave for ` + req.body.noOfDays+` on `+req.body.startingDate+` is <span style="color:#E74C3C;font-weight:bold;">REJECTED.</p></div></div></div></body></html>`;
+				var mailOptions = {
+					from: 'raoinfotechp@gmail.com',
+					to: email,
+					subject: 'Leave Reject',
+					text: 'Hi, this is a testing email from node server',
+					html: output
+				};
+				transporter.sendMail(mailOptions, function(error, info){
+					if (error) {
+						console.log("Error",error);
+					} else {
+						console.log('Email sent: ' + info.response);
+					}
+				})
+				var output1 = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">Your teammate `+mailContent+`<span style="color:#dc5871;"> Rejected</span>.</p></div></div></div></body></html>`;
+
+				var mailOptions1 = {
+					from: 'raoinfotechp@gmail.com',
+					to: maillist,
+					subject: 'Leave Rejection',
+					text: 'Hi, this is a testing email from node server',
+					html: output1
+				};
+				transporter.sendMail(mailOptions1, function(error, info){
+					if (error) {
+						console.log("Error",error);
+					} else {
+						console.log('Email sent: ' + info.response);
+					}
+				});
+				projectModel
 	.find({Teams : update.id})
 	.exec((err,project)=>{
 		console.log("projects=========>",project);
@@ -577,44 +617,17 @@ leaveController.updateLeaves = function(req,res){
 						if (err) {
 							res.status(500).send(err);
 						}else{
+							if(user == null){
+								res.status(200).send(update)
+
+							}else{
 
 							console.log("sucess");
 							pushNotification.postCode(obj1.subject,obj1.type,[user.token]);
+							}
 						}
 					})
 				})
-
-				var output = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center>	<div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">Sorry!` +req.body.name+` Your leave for ` + req.body.noOfDays+` on `+req.body.startingDate+` is <span style="color:#E74C3C;font-weight:bold;">REJECTED.</p></div></div></div></body></html>`;
-				var mailOptions = {
-					from: 'raoinfotechp@gmail.com',
-					to: email,
-					subject: 'Leave Reject',
-					text: 'Hi, this is a testing email from node server',
-					html: output
-				};
-				transporter.sendMail(mailOptions, function(error, info){
-					if (error) {
-						console.log("Error",error);
-					} else {
-						console.log('Email sent: ' + info.response);
-					}
-				})
-				var output1 = `<!doctype html><html><head><title> title111</title></head><body><div style="width:100%;margin:0 auto;border-radius: 2px;box-shadow: 0 1px 3px 0 rgba(0,0,0,.5);border: 1px solid #d3d3d3;background:#e7eaf0;"><div style="border:10px solid #3998c5;background:#fff;margin:25px;"><center><span style="font-size:30px;color:#181123;"><b>Rao Infotech</b></span></center><div style="width:85%;margin:0 auto;border-radius:4px;border:1px solid white;background-color:white;box-sizing: border-box; "><div style="margin-left:30px;padding:0;"><p style="color:black;font-size:15px;">Your teammate `+mailContent+`<span style="color:#dc5871;"> Rejected</span>.</p></div></div></div></body></html>`;
-
-				var mailOptions1 = {
-					from: 'raoinfotechp@gmail.com',
-					to: maillist,
-					subject: 'Leave Rejection',
-					text: 'Hi, this is a testing email from node server',
-					html: output1
-				};
-				transporter.sendMail(mailOptions1, function(error, info){
-					if (error) {
-						console.log("Error",error);
-					} else {
-						console.log('Email sent: ' + info.response);
-					}
-				});
 
 				res.status(200).send(update)
 
